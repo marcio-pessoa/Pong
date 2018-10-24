@@ -1,6 +1,6 @@
 # Pong
 
-(Screenshot)[Documents/Images/screenshot.png]
+!(Screenshot)[Documents/Images/screenshot.png]
 
 ## Running
 ``` sh
