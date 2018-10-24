@@ -60,7 +60,7 @@ class UserArgumentParser():
                             version=self.version,
                             help='show version information and exit')
         if len(sys.argv) < 2:
-            self.run()
+            self.pong()
             sys.exit(False)
         args = parser.parse_args(sys.argv[1:2])
         if not hasattr(self, args.command):
@@ -69,7 +69,7 @@ class UserArgumentParser():
             sys.exit(True)
         getattr(self, args.command)()
 
-    def run(self):
+    def __start(self):
         self.window_title = self.program_description
         self.running = True
         self.screen_rate = 30  # FPS
@@ -90,21 +90,27 @@ class UserArgumentParser():
         self.clock = pygame.time.Clock()
         self.pong = Pong(self.screen)
         self.pong.start()
+
+    def __run(self):
         while self.running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                if event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
-                        self.running = False
-                self.pong.control(event)
+            self.__ctrl_check()
             self.pong.run()
             self.clock.tick(self.screen_rate)
             pygame.display.flip()
-        sys.exit(False)
 
-    def __ctrl_check(self, event):
-        pass
+    def __ctrl_check(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    self.running = False
+            self.pong.control(event)
+
+    def pong(self):
+        self.__start()
+        self.__run()
+        sys.exit(False)
 
 
 def main():
