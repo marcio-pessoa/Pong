@@ -1,0 +1,6 @@
+# Pong
+
+## Running
+``` sh
+./pong
+```
