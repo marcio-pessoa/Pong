@@ -1,6 +1,8 @@
 """
 pong.py
 
+Description: Pong package file
+
 Author: Marcio Pessoa <marcio.pessoa@gmail.com>
 Contributors: none
 
