@@ -32,6 +32,7 @@ class UserArgumentParser():
     http://chase-seibert.github.io/blog/
     """
     def __init__(self):
+        # Program description
         self.program_name = "pong"
         self.program_version = "0.2"
         self.program_date = "2018-10-24"
@@ -40,7 +41,7 @@ class UserArgumentParser():
         self.program_license = "GPLv2"
         self.program_website = "http://pessoa.eti.br/"
         self.program_contact = "Marcio Pessoa <marcio.pessoa@gmail.com>"
-        header = ('xc <command> [<args>]\n\n')
+        header = ('run \n\n')
         footer = (self.program_copyright + '\n' +
                   'License: ' + self.program_license + '\n' +
                   'Website: ' + self.program_website + '\n' +
@@ -50,6 +51,7 @@ class UserArgumentParser():
         self.version = (self.program_name + " " + self.program_version + " (" +
                         self.program_date + ")")
         epilog = (examples + '\n' + footer)
+        # Argument Parser
         parser = argparse.ArgumentParser(
             prog=self.program_name,
             formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -59,10 +61,12 @@ class UserArgumentParser():
         parser.add_argument('-V', '--version', action='version',
                             version=self.version,
                             help='show version information and exit')
+        # When no arguments were supplied
         if len(sys.argv) < 2:
             self.pong()
             sys.exit(False)
         args = parser.parse_args(sys.argv[1:2])
+        # When a unrecognized arguments were supplied
         if not hasattr(self, args.command):
             echoln('Unrecognized command')
             parser.print_help()
