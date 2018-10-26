@@ -77,39 +77,55 @@ class UserArgumentParser():
         self.window_title = self.program_description
         self.running = True
         self.screen_rate = 30  # FPS
-        self.screen_resolution = (480, 320)  # (width, height) pixels
-        # Window position
-        os.environ['SDL_VIDEO_CENTERED'] = '1'
-        # Initialise screen
-        pygame.init()
-        self.screen = pygame.display.set_mode(self.screen_resolution)
-        # Window caption
-        pygame.display.set_caption(self.window_title)
-        # Background
-        self.background = pygame.Surface(self.screen.get_size())
-        self.background.fill([0, 0, 0])  # Black
-        # Set keyboard speed
-        pygame.key.set_repeat(1, 100)
-        # Clockling
-        self.clock = pygame.time.Clock()
+        self.canvas_size = (480, 320)  # (width, height) pixels
+        self.__screen_set()
+        self.__ctrl_set()
         self.pong = Pong(self.screen)
         self.pong.start()
 
     def __run(self):
         while self.running:
-            self.__ctrl_check()
+            self.__check_event()
             self.pong.run()
             self.clock.tick(self.screen_rate)
             pygame.display.flip()
 
-    def __ctrl_check(self):
+    def __screen_set(self):
+        # Window position
+        os.environ['SDL_VIDEO_CENTERED'] = '1'
+        # Initialise screen
+        pygame.init()
+        self.screen = pygame.display.set_mode(self.canvas_size,
+                                              HWSURFACE |
+                                              DOUBLEBUF |
+                                              RESIZABLE)
+        # Window caption
+        pygame.display.set_caption(self.window_title)
+        # Clockling
+        self.clock = pygame.time.Clock()
+
+    def __screen_reset(self):
+        self.screen = pygame.display.set_mode(self.canvas_size,
+                                              HWSURFACE |
+                                              DOUBLEBUF |
+                                              RESIZABLE)
+        self.pong.size_reset()
+
+    def __check_event(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-            if event.type == KEYDOWN:
+            elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     self.running = False
+            elif event.type == VIDEORESIZE:
+                self.canvas_size = event.dict['size']
+                self.__screen_reset()
             self.pong.control(event)
+
+    def __ctrl_set(self):
+        # Set keyboard speed
+        pygame.key.set_repeat(1, 1)
 
     def pong(self):
         self.__start()

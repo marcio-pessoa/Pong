@@ -29,21 +29,41 @@ class Pong:
 
     def start(self):
         self.running = True
-        self.court = pygame.Surface([self.screen.get_size()[0],
-                                     self.screen.get_size()[1]])
-        self.play_area = pygame.Surface([self.court.get_size()[0] - 2,
-                                         self.court.get_size()[1] - 2],
-                                        pygame.SRCALPHA, 32)
-        self.play_area.convert_alpha()
-        self.ball_radius = int(self.play_area.get_size()[0] * 0.03 / 2)
-        self.pad_height_half = int(self.play_area.get_size()[1] * 0.2 / 2)
-        self.pad_width = int(self.play_area.get_size()[0] * 0.015)
-        self.pad_height = self.pad_height_half * 2
+        self.size_set()
         self.pad_acceleration = 1
         self.court_side = 1
         self.reset()
         self.set()
         self.ball_spawn()
+
+    def size_set(self):
+        self.screen_size = [self.screen.get_size()[0],
+                            self.screen.get_size()[1]]
+        self.court = pygame.Surface(self.screen_size)
+        self.play_area = pygame.Surface([self.court.get_size()[0] - 2,
+                                         self.court.get_size()[1] - 2],
+                                        pygame.SRCALPHA, 32)
+        self.play_area.convert_alpha()
+        # TODO: Set ball size based on both dimensions of window size
+        self.ball_radius = int(self.play_area.get_size()[0] * 0.03 / 2)
+        self.pad_height_half = int(self.play_area.get_size()[1] * 0.2 / 2)
+        self.pad_width = int(self.play_area.get_size()[0] * 0.015)
+        self.pad_height = self.pad_height_half * 2
+
+    def size_reset(self):
+        # Discover new size factor
+        x_factor = self.screen.get_size()[0] / self.screen_size[0]
+        y_factor = self.screen.get_size()[1] / self.screen_size[1]
+        # Set objects new size
+        self.ball_position[0] *= x_factor
+        self.ball_position[1] *= y_factor
+        # FIXME: Fix pads position
+        self.pad1_position *= y_factor 
+        self.pad2_position *= y_factor 
+        # FIXME: Fix ball speed
+        self.ball_velocity[0] *= x_factor
+        self.ball_velocity[1] *= y_factor
+        self.size_set()
 
     def set(self):
         self.pad1_position = int(self.play_area.get_size()[1] / 2)
