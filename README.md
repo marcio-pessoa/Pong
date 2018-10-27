@@ -1,8 +1,18 @@
-# Pong
-
-![Screenshot](Documents/Images/screenshot.png)
+# MArcade
+Márcio's Arcade games
 
 ## Running
 ``` sh
-./pong
+./marcade.py
 ```
+
+## Games
+
+### Pong
+![Pong](Screenshots/pong.png)
+
+<!---
+### Asteroids
+![Asteroids](Screenshots/asteroids.png)
+--->
+

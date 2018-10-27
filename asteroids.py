@@ -1,21 +1,13 @@
 """
-pong.py
+asteroids.py
 
-Description: Pong package file
+Description: Asteroids package file
 
 Author: Marcio Pessoa <marcio.pessoa@gmail.com>
 Contributors: none
 
 Change log:
-2018-10-26
-        * Version: 0.03
-        * Added: Window resizing support.
-
-2018-06-20
-        * Version: 0.02
-        * Fixed: Ball spawn to never raize balls without angle.
-
-2014-06-06
+2014-09-06
         * Version: 0.01
         * Added: First version.
 """
@@ -25,9 +17,9 @@ from pygame.locals import *
 import random
 
 
-class Pong:
+class Asteroids:
     def __init__(self, screen):
-        self.version = '0.03'
+        self.version = '0.02'
         self.screen = screen
         self.running = False
 
