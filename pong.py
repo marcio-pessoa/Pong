@@ -166,7 +166,7 @@ class Pong:
         upper left
         """
         self.set()
-        self.ball_velocity[0] = (random.randrange(100, 200) / 60.0 *
+        self.ball_velocity[0] = (random.randrange(100, 200) / 50.0 *
                                  self.court_side)
         self.ball_velocity[1] = 0
         # Make sure ball will never run without an angle
