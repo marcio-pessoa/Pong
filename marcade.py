@@ -14,14 +14,14 @@ Change log: Check CHANGELOG.md file.
 
 try:
     # Required modules
+    import sys
     import argparse
     import os
-    import sys
     import pygame
     from pygame.locals import *
     # Myself modules
-    from asteroids import Asteroids
-    from pong import Pong
+    from games.asteroids import Asteroids
+    from games.pong import Pong
 except ImportError as err:
     print("Could not load module. " + str(err))
     sys.exit(True)

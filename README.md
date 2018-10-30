@@ -1,6 +1,8 @@
 # MArcade
 Márcio's Arcade games
 
+[Change log](CHANGELOG.md)
+
 ## Running
 ``` sh
 ./marcade.py
