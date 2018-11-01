@@ -41,6 +41,7 @@ class UserArgumentParser():
         self.program_license = "GPLv2"
         self.program_website = "http://pessoa.eti.br/"
         self.program_contact = "Marcio Pessoa <marcio.pessoa@gmail.com>"
+        self.window_title = self.program_description
         header = ('marcade <game> [<args>]\n\n' +
                   'Games:\n' +
                   '  asteroids      amazing Asteroids space game\n' +
@@ -76,7 +77,6 @@ class UserArgumentParser():
         getattr(self, args.command)()
 
     def __screen_start(self):
-        self.window_title = self.program_description
         self.running = True
         self.screen_rate = 30  # FPS
         self.canvas_size = (480, 320)  # (width, height) pixels
@@ -129,6 +129,7 @@ class UserArgumentParser():
             prog=self.program_name + ' pong',
             description='classical Pong game')
         args = parser.parse_args(sys.argv[2:])
+        self.window_title = 'Pong'
         self.__screen_start()
         self.game = Pong(self.screen)
         self.game.start()
@@ -140,7 +141,8 @@ class UserArgumentParser():
             prog=self.program_name + ' asteroids',
             description='amazing Asteroids space game')
         args = parser.parse_args(sys.argv[2:])
-        self.__screen_start(args.fullscreen)
+        self.window_title = 'Asteroids'
+        self.__screen_start()
         self.game = Asteroids(self.screen)
         self.game.start()
         self.__run()
