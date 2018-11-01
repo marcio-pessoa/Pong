@@ -7,6 +7,10 @@ Author: Marcio Pessoa <marcio.pessoa@gmail.com>
 Contributors: none
 
 Change log:
+2018-11-dd
+        * Version: 0.02
+        * Added: Pygame version.
+
 2014-09-06
         * Version: 0.01
         * Added: First version.
@@ -233,3 +237,19 @@ class Asteroids:
                 self.court_side = 1
                 self.ball_spawn()
                 self.score[0] += 1
+
+class Ship: 
+    def __init__(self, position, speed, angle):
+        self.position = position
+        self.speed = speed
+        self.angle = angle
+
+    def get_position(self):
+        return self.position
+    
+    def get_radius(self):
+        return self.radius
+
+class Sprite:
+    def __init__(self):
+        pass
