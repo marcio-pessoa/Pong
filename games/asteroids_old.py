@@ -149,7 +149,7 @@ class Ship:
     
     def get_radius(self):
         return self.radius
-    
+
 # Sprite class
 class Sprite:
     def __init__(self, pos, vel, ang, ang_vel, image, info, sound = None):

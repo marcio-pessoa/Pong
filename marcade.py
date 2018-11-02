@@ -122,7 +122,7 @@ class UserArgumentParser():
 
     def __ctrl_set(self):
         # Set keyboard speed
-        pygame.key.set_repeat(1, 1)
+        pygame.key.set_repeat(1, 0)
 
     def pong(self):
         parser = argparse.ArgumentParser(

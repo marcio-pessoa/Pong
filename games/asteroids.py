@@ -16,7 +16,7 @@ Change log:
         * Added: First version.
 """
 
-# import math
+import math
 import pygame
 from pygame.locals import *
 import random
@@ -35,91 +35,38 @@ class Asteroids:
         self.court_side = 1
         self.reset()
         self.set()
-        self.ball_spawn()
+        self.ship.start()
+        self.rock.start()
 
     def size_set(self):
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
-        self.court = pygame.Surface(self.screen_size)
-        self.play_area = pygame.Surface([self.court.get_size()[0] - 2,
-                                         self.court.get_size()[1] - 2],
-                                        pygame.SRCALPHA, 32)
-        self.play_area.convert_alpha()
-        # TODO: Set ball size based on both dimensions of window size
-        self.ball_radius = int(self.play_area.get_size()[0] * 0.03 / 2)
-        self.pad_height_half = int(self.play_area.get_size()[1] * 0.2 / 2)
-        self.pad_width = int(self.play_area.get_size()[0] * 0.015)
-        self.pad_height = self.pad_height_half * 2
+        self.space = pygame.Surface(self.screen_size,
+                                    HWSURFACE | SRCALPHA, 32)
+        self.space.convert_alpha()
 
     def size_reset(self):
         # Discover new size factor
         x_factor = self.screen.get_size()[0] / self.screen_size[0]
         y_factor = self.screen.get_size()[1] / self.screen_size[1]
-        # Set objects new size
-        self.ball_position[0] *= x_factor
-        self.ball_position[1] *= y_factor
-        # FIXME: Fix pads position
-        self.pad1_position *= y_factor 
-        self.pad2_position *= y_factor 
-        # FIXME: Fix ball speed
-        self.ball_velocity[0] *= x_factor
-        self.ball_velocity[1] *= y_factor
         self.size_set()
+        self.ship.screen_reset()
 
     def set(self):
-        self.pad1_position = int(self.play_area.get_size()[1] / 2)
-        self.pad2_position = int(self.play_area.get_size()[1] / 2)
-        self.pad1_vel = 0
-        self.pad2_vel = 0
-        self.ball_velocity = [0, 0]
-        self.pad1_pressed = False
-        self.pad2_pressed = False
-        self.ball_position = [self.play_area.get_size()[0] / 2,
-                              self.play_area.get_size()[1] / 2]
+        self.ship = Ship(self.space)
+        self.rock = Sprite(self.space)
 
     def reset(self):
-        self.score = [0, 0]
-
-    def draw_ball(self):
-        pygame.draw.rect(self.play_area, (200, 200, 200),
-                         [self.ball_position[0] - self.ball_radius,
-                          self.ball_position[1] - self.ball_radius,
-                          self.ball_radius * 2, self.ball_radius * 2])
-
-    def draw_pad1(self):
-        self.pad1_position += self.pad1_vel
-        if self.pad1_position - self.pad_height_half < 0:
-            self.pad1_position = 0 + self.pad_height_half
-        if self.pad1_position + self.pad_height_half > self.court.get_size()[1]:
-            self.pad1_position = self.court.get_size()[1] - self.pad_height_half
-        pygame.draw.rect(self.play_area, (160, 160, 160),
-                         [0,
-                          self.pad1_position - self.pad_height_half,
-                          self.pad_width,
-                          self.pad_height])
-
-    def draw_pad2(self):
-        self.pad2_position += self.pad2_vel
-        if self.pad2_position - self.pad_height_half < 0:
-            self.pad2_position = 0 + self.pad_height_half
-        if self.pad2_position + self.pad_height_half > self.court.get_size()[1]:
-            self.pad2_position = self.court.get_size()[1] - self.pad_height_half
-        pygame.draw.rect(self.play_area, (160, 160, 160),
-                         [self.play_area.get_size()[0] - self.pad_width,
-                          self.pad2_position - self.pad_height_half,
-                          self.pad_width,
-                          self.pad_height])
+        self.lives = 3
 
     def run(self):
-        self.draw_court()
-        self.draw_pad1()
-        self.draw_pad2()
-        self.draw_ball()
-        self.ball_check()
-        self.screen.blit(self.court, [0, 0])
-        self.screen.blit(self.play_area, [1, 1])
-        # codeln("    Position: " + str(self.ball_position))
-        # codeln("    Velocity: " + str(self.ball_velocity))
+        # Draw Space
+        self.space.fill([0, 0, 0])  # Black
+        # Draw objects (ship, rocks, etc...)
+        self.ship.update()
+        self.rock.update()
+        # Join everything
+        self.screen.blit(self.space, [0, 0])
         return False
 
     def stop(self):
@@ -130,126 +77,176 @@ class Asteroids:
         if event.type == KEYDOWN:
             if event.key == K_ESCAPE:
                 self.stop()
-            if event.key == K_w:
-                self.pad1_vel -= self.pad_acceleration
-                self.pad1_pressed += 1
-            if event.key == K_s:
-                self.pad1_vel += self.pad_acceleration
-                self.pad1_pressed += 1
             if event.key == K_UP:
-                self.pad2_vel -= self.pad_acceleration
-                self.pad2_pressed += 1
-            if event.key == K_DOWN:
-                self.pad2_vel += self.pad_acceleration
-                self.pad2_pressed += 1
+                self.ship.thrust_on()
+            if event.key == K_RIGHT:
+                self.ship.decrement_angle_vel()
+            if event.key == K_LEFT:
+                self.ship.increment_angle_vel()
+            if event.key == K_SPACE:
+                self.ship.shoot()
         if event.type == KEYUP:
-            if event.key == K_w:
-                self.pad1_vel = 0
-                self.pad1_pressed -= 1
-            if event.key == K_s:
-                self.pad1_vel = 0
-                self.pad1_pressed -= 1
             if event.key == K_UP:
-                self.pad2_vel = 0
-                self.pad2_pressed -= 1
-            if event.key == K_DOWN:
-                self.pad2_vel = 0
-                self.pad2_pressed -= 1
+                self.ship.thrust_off()
 
-    def ball_spawn(self):
-        """
-        initialize ball_pos and ball_vel for new bal in middle of table
-        if direction is RIGHT, the ball's velocity is upper right, else
-        upper left
-        """
+
+class Ship:
+    def __init__(self, screen):
+        self.screen = screen
         self.set()
-        self.ball_velocity[0] = (random.randrange(100, 200) / 60.0 *
-                                 self.court_side)
-        self.ball_velocity[1] = 0
-        # Make sure ball will never run without an angle
-        while self.ball_velocity[1] == 0:
-            self.ball_velocity[1] = (random.randrange(-100, 100) / 60.0) * -1
-        if self.ball_velocity[1] >= -0.5 or self.ball_velocity[1] <= 0.5:
-            self.ball_velocity[1] *= 2
 
-    def draw_court(self):
-        # Clear court
-        self.court.fill([0, 0, 0])  # Black
-        self.play_area.fill([0, 0, 0])  # Black
-        # Draw gutters
-        pygame.draw.line(self.court, (100, 100, 100),
-                         [0, 0],
-                         [0,
-                          self.court.get_size()[1] - 1])
-        pygame.draw.line(self.court, (100, 100, 100),
-                         [0, 0],
-                         [self.court.get_size()[0] - 1, 0])
-        pygame.draw.line(self.court, (100, 100, 100),
-                         [self.court.get_size()[0] - 1, 0],
-                         [self.court.get_size()[0] - 1,
-                          self.court.get_size()[1]])
-        pygame.draw.line(self.court, (100, 100, 100),
-                         [0,
-                          self.court.get_size()[1] - 1],
-                         [self.court.get_size()[0] - 1,
-                          self.court.get_size()[1] - 1])
-        # Draw mid dashed line
-        for y in range(0, self.play_area.get_size()[1], 5):
-            pygame.draw.line(self.play_area, (128, 128, 128),
-                             [self.play_area.get_size()[0] / 2,
-                              4 + (y * 5)],
-                             [self.play_area.get_size()[0] / 2,
-                              16 + (y * 5)])
+    def set(self):
+        self.screen_reset()
+        self.reset()
 
-    def ball_check(self):
-        # update ball position
-        self.ball_position[0] += self.ball_velocity[0]
-        self.ball_position[1] += self.ball_velocity[1]
-        # Bounces off of the top
-        if self.ball_position[1] - self.ball_radius < 0:
-            self.ball_velocity[1] *= -1
-        # Bounces off of the bottom
-        if self.ball_position[1] + self.ball_radius > \
-           self.play_area.get_size()[1]:
-            self.ball_velocity[1] *= -1
-        # Bounces off of the left
-        if self.ball_position[0] - self.ball_radius < self.pad_width:
-            if ((self.ball_position[1] + self.ball_radius) >
-                (self.pad1_position - self.pad_height_half)) and \
-               ((self.ball_position[1] - self.ball_radius) <
-               (self.pad1_position + self.pad_height_half)):
-                self.ball_velocity[0] *= -1.1
-                self.ball_velocity[1] *= 1.1
-            else:
-                self.court_side = -1
-                self.ball_spawn()
-                self.score[1] += 1
-        # Bounces off of the right
-        if self.ball_position[0] + self.ball_radius > \
-           self.play_area.get_size()[0] - self.pad_width:
-            if ((self.ball_position[1] + self.ball_radius) >
-                (self.pad2_position - self.pad_height_half)) and \
-               ((self.ball_position[1] - self.ball_radius) <
-               (self.pad2_position + self.pad_height_half)):
-                self.ball_velocity[0] *= -1.1
-                self.ball_velocity[1] *= 1.1
-            else:
-                self.court_side = 1
-                self.ball_spawn()
-                self.score[0] += 1
+    def reset(self):
+        self.position = [self.screen_size[0] / 2,
+                         self.screen_size[1] / 2]
+        self.speed = [0, 0]
+        self.angle = math.pi / -2
+        self.thrust = False
+        self.angle_vel = 0
 
-class Ship: 
-    def __init__(self, position, speed, angle):
-        self.position = position
-        self.speed = speed
-        self.angle = angle
+    def screen_reset(self):
+        self.screen_size = [self.screen.get_size()[0],
+                            self.screen.get_size()[1]]
+
+    def start(self):
+        ship_size = [31, 31]
+        position = [0, 0]
+        ship = pygame.Surface(ship_size, SRCALPHA)
+        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        pygame.draw.polygon(ship, (200, 200, 200),
+                            [(0, 30), (15, 0), (30, 30), (15, 23)], 1)
+        self.ship = pygame.Surface([48, 48], SRCALPHA)
+        # self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
+        ship = pygame.transform.rotate(ship, 90)
+        position[0] = self.ship.get_rect().center[0] - ship.get_rect().center[0]
+        position[1] = self.ship.get_rect().center[1] - ship.get_rect().center[1]
+        self.ship.blit(ship, position)
+        # TODO: Draw thrust when ship is moving
+        if self.thrust:
+            pass
+
+    def update(self):
+        # Angle
+        acc = []
+        self.angle += self.angle_vel
+        # Position
+        self.position[0] = ((self.position[0] + self.speed[0]) %
+                            self.screen_size[0])
+        self.position[1] = ((self.position[1] + self.speed[1]) %
+                            self.screen_size[1])
+        # Speed
+        if self.thrust:
+            acc = [-math.cos(self.angle), math.sin(self.angle)]
+            self.speed[0] += acc[0] * .2
+            self.speed[1] += acc[1] * .2
+        # Slow down
+        self.speed[0] *= .99
+        self.speed[1] *= .99
+        # Draw
+        orig_rect = self.ship.get_rect()
+        rot_image = pygame.transform.rotate(self.ship, math.degrees(self.angle))
+        rot_rect = orig_rect.copy()
+        rot_rect.center = rot_image.get_rect().center
+        ship = rot_image.subsurface(rot_rect).copy()
+        # ship = pygame.transform.rotate(self.ship, math.degrees(self.angle))
+        self.screen.blit(ship, [self.position[0]-24, self.position[1]-24])
+
+    def thrust_on(self):
+        # TODO: Play sound using code here
+        # ship_thrust_sound.rewind()
+        # ship_thrust_sound.play()
+        self.thrust = True
+
+    def thrust_off(self):
+        # ship_thrust_sound.pause()
+        self.thrust = False
+
+    def increment_angle_vel(self):
+        self.angle_vel += math.radians(math.pi / 50)
+
+    def decrement_angle_vel(self):
+        self.angle_vel -= math.radians(math.pi / 50)
+
+    def shoot(self):
+        forward = angle_to_vector(self.angle)
+        missile_pos = [self.position[0] + self.radius * forward[0],
+                       self.position[1] + self.radius * forward[1]]
+        missile_vel = [self.speed[0] + 6 * forward[0],
+                       self.speed[1] + 6 * forward[1]]
+        a_missile = Sprite(missile_pos, missile_vel, self.angle, 0,
+                           missile_image, missile_info, missile_sound)
+        missile_group.add(a_missile)
 
     def get_position(self):
         return self.position
-    
+
     def get_radius(self):
         return self.radius
 
+
 class Sprite:
-    def __init__(self):
-        pass
+    def __init__(self, screen):
+        self.screen = screen
+        self.set()
+
+    def set(self):
+        self.screen_reset()
+        self.reset()
+
+    def reset(self):
+        self.position = [self.screen_size[0] / 2,
+                         self.screen_size[1] / 2]
+        self.speed = [0, 0]
+        self.angle = math.pi / -2
+        self.angle_vel = 0
+
+    def screen_reset(self):
+        self.screen_size = [self.screen.get_size()[0],
+                            self.screen.get_size()[1]]
+
+    def start(self):
+        ship_size = [31, 31]
+        position = [0, 0]
+        ship = pygame.Surface(ship_size, SRCALPHA)
+        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        color_tone = random.randrange(50, 200)
+        pygame.draw.polygon(ship, 
+                            [color_tone, color_tone, color_tone],
+                            [(random.randrange(0, 10), random.randrange(0, 15)),
+                             (random.randrange(10, 20), random.randrange(0, 15)),
+                             (random.randrange(25, 30), random.randrange(0, 15)),
+                             (random.randrange(25, 30), random.randrange(20, 30)),
+                             (random.randrange(10, 20), random.randrange(20, 30)),
+                             (random.randrange(0, 10), random.randrange(20, 30)),
+                             ], 0)
+        self.ship = pygame.Surface([48, 48], SRCALPHA)
+        # self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
+        ship = pygame.transform.rotate(ship, 90)
+        position[0] = self.ship.get_rect().center[0] - ship.get_rect().center[0]
+        position[1] = self.ship.get_rect().center[1] - ship.get_rect().center[1]
+        self.ship.blit(ship, position)
+
+    def update(self):
+        # Angle
+        acc = []
+        self.angle += self.angle_vel
+        # Position
+        self.position[0] = ((self.position[0] + self.speed[0]) %
+                            self.screen_size[0])
+        self.position[1] = ((self.position[1] + self.speed[1]) %
+                            self.screen_size[1])
+        # Draw
+        ship = pygame.transform.rotate(self.ship, math.degrees(self.angle))
+        self.screen.blit(ship, [self.position[0]-24, self.position[1]-24])
+
+    def angle_vel(self, factor):
+        self.angle_vel -= math.radians(math.pi / 50)
+
+    def get_position(self):
+        return self.position
+
+    def get_radius(self):
+        return self.radius
