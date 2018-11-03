@@ -33,7 +33,6 @@ class Asteroids:
         self.size_set()
         self.pad_acceleration = 1
         self.court_side = 1
-        self.reset()
         self.set()
         self.ship.start()
 
@@ -44,6 +43,10 @@ class Asteroids:
                                     HWSURFACE | SRCALPHA, 32)
         self.space.convert_alpha()
 
+    def set(self):
+        self.ship = Ship(self.space)
+        self.reset()
+
     def size_reset(self):
         # Discover new size factor
         x_factor = self.screen.get_size()[0] / self.screen_size[0]
@@ -51,12 +54,10 @@ class Asteroids:
         self.size_set()
         self.ship.screen_reset()
 
-    def set(self):
-        self.ship = Ship(self.space)
-
     def reset(self):
         self.lives = 3
         self.rock_group = set()
+        self.ship.reset()
 
     def run(self):
         # Draw Space
@@ -65,20 +66,24 @@ class Asteroids:
         self.ship.update()
         self.rock_update()
         self.check_collision()
+        if not self.lives:
+            self.reset()
         # Join everything
         self.screen.blit(self.space, [0, 0])
         return False
 
     def check_collision(self):
         for i in self.rock_group:
-            print str(i.get_rect())
-            print str(self.ship.get_rect())
+            # print str(i.get_rect())
+            # print str(self.ship.get_rect())
             if i.get_rect().colliderect(self.ship.get_rect()):
-                print("Merda")
+                self.rock_group.remove(i)
+                self.lives -= 1
+                break
 
     def rock_update(self):
         # Need more rocks?
-        while len(self.rock_group) < 10:
+        while len(self.rock_group) < 8:
             rock = Sprite(self.space)
             self.rock_group.add(rock)
         # Update rocks position
@@ -131,16 +136,16 @@ class Ship:
         ship_size = [31, 31]
         position = [0, 0]
         ship = pygame.Surface(ship_size, SRCALPHA)
-        ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
         pygame.draw.polygon(ship, (200, 200, 200),
                             [(0, 30), (15, 0), (30, 30), (15, 23)], 0)
         self.ship = pygame.Surface([48, 48], SRCALPHA)
-        self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
+        # self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
         ship = pygame.transform.rotate(ship, 90)
         position[0] = self.ship.get_rect().center[0] - ship.get_rect().center[0]
         position[1] = self.ship.get_rect().center[1] - ship.get_rect().center[1]
         self.ship.blit(ship, position)
-        self.rect = self.ship.get_rect()
+        self.__rect = ship.get_rect()
 
     def update(self):
         # Angle
@@ -167,6 +172,7 @@ class Ship:
         ship = rot_image.subsurface(rot_rect).copy()
         # ship = pygame.transform.rotate(self.ship, math.degrees(self.angle))
         self.screen.blit(ship, [self.position[0]-24, self.position[1]-24])
+        self.rect = self.__rect.move(self.position[0], self.position[1])
 
     def thrust_on(self):
         # TODO: Play sound using code here
@@ -223,7 +229,7 @@ class Sprite:
         ship_size = [31, 31]
         position = [0, 0]
         ship = pygame.Surface(ship_size, SRCALPHA)
-        ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
         color_tone = random.randrange(50, 100)
         pygame.draw.polygon(ship,
                             [color_tone, color_tone, color_tone],
@@ -235,11 +241,11 @@ class Sprite:
                              (random.uniform(0, 10), random.uniform(20, 30)),
                              ], 0)
         self.ship = pygame.Surface([48, 48], SRCALPHA)
-        self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
+        # self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
         position[0] = self.ship.get_rect().center[0] - ship.get_rect().center[0]
         position[1] = self.ship.get_rect().center[1] - ship.get_rect().center[1]
         self.ship.blit(ship, position)
-        self.rect = self.ship.get_rect()
+        self.__rect = ship.get_rect()
 
     def update(self):
         # Angle
@@ -257,6 +263,8 @@ class Sprite:
         rot_rect.center = rot_image.get_rect().center
         ship = rot_image.subsurface(rot_rect).copy()
         self.screen.blit(ship, [self.position[0]-24, self.position[1]-24])
+        self.rect = self.__rect.move(self.position[0], self.position[1])
 
     def get_rect(self):
         return self.rect
+
