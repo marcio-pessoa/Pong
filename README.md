@@ -10,11 +10,8 @@ Márcio's Arcade games
 
 ## Games
 
-### Pong
-![Pong](Screenshots/pong.png)
-
-<!---
 ### Asteroids
 ![Asteroids](Screenshots/asteroids.png)
---->
 
+### Pong
+![Pong](Screenshots/pong.png)

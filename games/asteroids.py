@@ -36,7 +36,6 @@ class Asteroids:
         self.reset()
         self.set()
         self.ship.start()
-        self.rock.start()
 
     def size_set(self):
         self.screen_size = [self.screen.get_size()[0],
@@ -54,20 +53,37 @@ class Asteroids:
 
     def set(self):
         self.ship = Ship(self.space)
-        self.rock = Sprite(self.space)
 
     def reset(self):
         self.lives = 3
+        self.rock_group = set()
 
     def run(self):
         # Draw Space
         self.space.fill([0, 0, 0])  # Black
         # Draw objects (ship, rocks, etc...)
         self.ship.update()
-        self.rock.update()
+        self.rock_update()
+        self.check_collision()
         # Join everything
         self.screen.blit(self.space, [0, 0])
         return False
+
+    def check_collision(self):
+        for i in self.rock_group:
+            print str(i.get_rect())
+            print str(self.ship.get_rect())
+            if i.get_rect().colliderect(self.ship.get_rect()):
+                print("Merda")
+
+    def rock_update(self):
+        # Need more rocks?
+        while len(self.rock_group) < 10:
+            rock = Sprite(self.space)
+            self.rock_group.add(rock)
+        # Update rocks position
+        for i in self.rock_group:
+            i.update()
 
     def stop(self):
         pygame.event.clear()
@@ -115,18 +131,16 @@ class Ship:
         ship_size = [31, 31]
         position = [0, 0]
         ship = pygame.Surface(ship_size, SRCALPHA)
-        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        ship.fill([50, 50, 50])  # FIXME: Remove after tests
         pygame.draw.polygon(ship, (200, 200, 200),
-                            [(0, 30), (15, 0), (30, 30), (15, 23)], 1)
+                            [(0, 30), (15, 0), (30, 30), (15, 23)], 0)
         self.ship = pygame.Surface([48, 48], SRCALPHA)
-        # self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
+        self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
         ship = pygame.transform.rotate(ship, 90)
         position[0] = self.ship.get_rect().center[0] - ship.get_rect().center[0]
         position[1] = self.ship.get_rect().center[1] - ship.get_rect().center[1]
         self.ship.blit(ship, position)
-        # TODO: Draw thrust when ship is moving
-        if self.thrust:
-            pass
+        self.rect = self.ship.get_rect()
 
     def update(self):
         # Angle
@@ -180,12 +194,8 @@ class Ship:
                            missile_image, missile_info, missile_sound)
         missile_group.add(a_missile)
 
-    def get_position(self):
-        return self.position
-
-    def get_radius(self):
-        return self.radius
-
+    def get_rect(self):
+        return self.rect
 
 class Sprite:
     def __init__(self, screen):
@@ -195,13 +205,15 @@ class Sprite:
     def set(self):
         self.screen_reset()
         self.reset()
+        self.start()
 
     def reset(self):
-        self.position = [self.screen_size[0] / 2,
-                         self.screen_size[1] / 2]
-        self.speed = [0, 0]
-        self.angle = math.pi / -2
-        self.angle_vel = 0
+        self.position = [random.uniform(0.0, 1.0) * self.screen_size[0],
+                         random.uniform(0.0, 1.0) * self.screen_size[1]]
+        self.speed = [random.uniform(-0.5, 0.5),
+                      random.uniform(-0.5, 0.5)]
+        self.angle = 0
+        self.angle_vel = math.radians(math.pi / (random.uniform(-1, 1) * 10.01))
 
     def screen_reset(self):
         self.screen_size = [self.screen.get_size()[0],
@@ -211,23 +223,23 @@ class Sprite:
         ship_size = [31, 31]
         position = [0, 0]
         ship = pygame.Surface(ship_size, SRCALPHA)
-        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
-        color_tone = random.randrange(50, 200)
-        pygame.draw.polygon(ship, 
+        ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        color_tone = random.randrange(50, 100)
+        pygame.draw.polygon(ship,
                             [color_tone, color_tone, color_tone],
-                            [(random.randrange(0, 10), random.randrange(0, 15)),
-                             (random.randrange(10, 20), random.randrange(0, 15)),
-                             (random.randrange(25, 30), random.randrange(0, 15)),
-                             (random.randrange(25, 30), random.randrange(20, 30)),
-                             (random.randrange(10, 20), random.randrange(20, 30)),
-                             (random.randrange(0, 10), random.randrange(20, 30)),
+                            [(random.uniform(0, 10), random.uniform(0, 15)),
+                             (random.uniform(10, 20), random.uniform(0, 15)),
+                             (random.uniform(25, 30), random.uniform(0, 15)),
+                             (random.uniform(25, 30), random.uniform(20, 30)),
+                             (random.uniform(10, 20), random.uniform(20, 30)),
+                             (random.uniform(0, 10), random.uniform(20, 30)),
                              ], 0)
         self.ship = pygame.Surface([48, 48], SRCALPHA)
-        # self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
-        ship = pygame.transform.rotate(ship, 90)
+        self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
         position[0] = self.ship.get_rect().center[0] - ship.get_rect().center[0]
         position[1] = self.ship.get_rect().center[1] - ship.get_rect().center[1]
         self.ship.blit(ship, position)
+        self.rect = self.ship.get_rect()
 
     def update(self):
         # Angle
@@ -239,14 +251,12 @@ class Sprite:
         self.position[1] = ((self.position[1] + self.speed[1]) %
                             self.screen_size[1])
         # Draw
-        ship = pygame.transform.rotate(self.ship, math.degrees(self.angle))
+        orig_rect = self.ship.get_rect()
+        rot_image = pygame.transform.rotate(self.ship, math.degrees(self.angle))
+        rot_rect = orig_rect.copy()
+        rot_rect.center = rot_image.get_rect().center
+        ship = rot_image.subsurface(rot_rect).copy()
         self.screen.blit(ship, [self.position[0]-24, self.position[1]-24])
 
-    def angle_vel(self, factor):
-        self.angle_vel -= math.radians(math.pi / 50)
-
-    def get_position(self):
-        return self.position
-
-    def get_radius(self):
-        return self.radius
+    def get_rect(self):
+        return self.rect
