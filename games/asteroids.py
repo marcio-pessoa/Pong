@@ -79,7 +79,17 @@ class Asteroids:
             if i.get_rect().colliderect(self.ship.get_rect()):
                 self.rock_group.remove(i)
                 self.lives -= 1
-                break
+                # print "merda"
+                return
+            for j in self.rock_group:
+                if j == i:
+                    continue
+                if j.get_rect().colliderect(i.get_rect()):
+                    size = j.get_size()
+                    self.rock_group.remove(j)
+                    i.upgrade(size)
+                    # print "Oh no!"
+                    return
 
     def rock_update(self):
         # Need more rocks?
@@ -203,42 +213,41 @@ class Ship:
     def get_rect(self):
         return self.rect
 
+
 class Sprite:
     def __init__(self, screen):
         self.screen = screen
         self.set()
 
     def set(self):
-        self.screen_reset()
-        self.reset()
-        self.start()
-
-    def reset(self):
+        self.screen_size = [self.screen.get_size()[0],
+                            self.screen.get_size()[1]]
         self.position = [random.uniform(0.0, 1.0) * self.screen_size[0],
                          random.uniform(0.0, 1.0) * self.screen_size[1]]
         self.speed = [random.uniform(-0.5, 0.5),
                       random.uniform(-0.5, 0.5)]
         self.angle = 0
-        self.angle_vel = math.radians(math.pi / (random.uniform(-1, 1) * 10.01))
-
-    def screen_reset(self):
-        self.screen_size = [self.screen.get_size()[0],
-                            self.screen.get_size()[1]]
-
-    def start(self):
-        ship_size = [31, 31]
+        self.angle_vel = math.radians(math.pi / (random.uniform(-1, 1) * 10.1))
+        self.size = [31, 31]
+        size = self.size
         position = [0, 0]
-        ship = pygame.Surface(ship_size, SRCALPHA)
+        ship = pygame.Surface(self.size, SRCALPHA)
         # ship.fill([50, 50, 50])  # FIXME: Remove after tests
         color_tone = random.randrange(50, 100)
         pygame.draw.polygon(ship,
                             [color_tone, color_tone, color_tone],
-                            [(random.uniform(0, 10), random.uniform(0, 15)),
-                             (random.uniform(10, 20), random.uniform(0, 15)),
-                             (random.uniform(25, 30), random.uniform(0, 15)),
-                             (random.uniform(25, 30), random.uniform(20, 30)),
-                             (random.uniform(10, 20), random.uniform(20, 30)),
-                             (random.uniform(0, 10), random.uniform(20, 30)),
+                            [(random.uniform(0, size[1] / 4),
+                              random.uniform(0, size[1] / 3)),
+                             (random.uniform(size[0] / 4, size[1] / 1.5),
+                              random.uniform(0, size[1] / 2)),
+                             (random.uniform(size[0] / 1.5, size[1]),
+                              random.uniform(0, size[1] / 2)),
+                             (random.uniform(size[0] / 1.1, size[1]),
+                              random.uniform(size[0] / 1.5, size[1])),
+                             (random.uniform(size[0] / 3, size[1] / 1.5),
+                              random.uniform(size[0] / 1.5, size[1])),
+                             (random.uniform(0, size[1] / 4),
+                             random.uniform(size[0] / 1.5, size[1])),
                              ], 0)
         self.ship = pygame.Surface([48, 48], SRCALPHA)
         # self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
@@ -246,6 +255,29 @@ class Sprite:
         position[1] = self.ship.get_rect().center[1] - ship.get_rect().center[1]
         self.ship.blit(ship, position)
         self.__rect = ship.get_rect()
+
+    def upgrade(self, size):
+        self.size[0] += size[0]
+        self.size[1] += size[1]
+        size = self.size
+        self.ship = pygame.Surface(self.size, SRCALPHA)
+        color_tone = random.randrange(50, 100)
+        pygame.draw.polygon(self.ship,
+                            [color_tone, color_tone, color_tone],
+                            [(random.uniform(0, size[1] / 4),
+                              random.uniform(0, size[1] / 3)),
+                             (random.uniform(size[0] / 4, size[1] / 1.5),
+                              random.uniform(0, size[1] / 2)),
+                             (random.uniform(size[0] / 1.5, size[1]),
+                              random.uniform(0, size[1] / 2)),
+                             (random.uniform(size[0] / 1.1, size[1]),
+                              random.uniform(size[0] / 1.5, size[1])),
+                             (random.uniform(size[0] / 3, size[1] / 1.5),
+                              random.uniform(size[0] / 1.5, size[1])),
+                             (random.uniform(0, size[1] / 4),
+                             random.uniform(size[0] / 1.5, size[1])),
+                             ], 0)
+        self.__rect = self.ship.get_rect()
 
     def update(self):
         # Angle
@@ -265,6 +297,8 @@ class Sprite:
         self.screen.blit(ship, [self.position[0]-24, self.position[1]-24])
         self.rect = self.__rect.move(self.position[0], self.position[1])
 
+    def get_size(self):
+        return self.size
+
     def get_rect(self):
         return self.rect
-
