@@ -146,7 +146,7 @@ class Ship:
         ship_size = [31, 31]
         position = [0, 0]
         ship = pygame.Surface(ship_size, SRCALPHA)
-        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        ship.fill([50, 50, 50])  # FIXME: Remove after tests
         pygame.draw.polygon(ship, (200, 200, 200),
                             [(0, 30), (15, 0), (30, 30), (15, 23)], 0)
         self.ship = pygame.Surface([48, 48], SRCALPHA)
@@ -232,7 +232,7 @@ class Sprite:
         size = self.size
         position = [0, 0]
         ship = pygame.Surface(self.size, SRCALPHA)
-        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        ship.fill([50, 50, 50])  # FIXME: Remove after tests
         color_tone = random.randrange(50, 100)
         pygame.draw.polygon(ship,
                             [color_tone, color_tone, color_tone],
@@ -250,7 +250,7 @@ class Sprite:
                              random.uniform(size[0] / 1.5, size[1])),
                              ], 0)
         self.ship = pygame.Surface([48, 48], SRCALPHA)
-        # self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
+        self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
         position[0] = self.ship.get_rect().center[0] - ship.get_rect().center[0]
         position[1] = self.ship.get_rect().center[1] - ship.get_rect().center[1]
         self.ship.blit(ship, position)
@@ -261,6 +261,7 @@ class Sprite:
         self.size[1] += size[1]
         size = self.size
         self.ship = pygame.Surface(self.size, SRCALPHA)
+        self.ship.fill([50, 50, 50])  # FIXME: Remove after tests
         color_tone = random.randrange(50, 100)
         pygame.draw.polygon(self.ship,
                             [color_tone, color_tone, color_tone],
@@ -294,6 +295,7 @@ class Sprite:
         rot_rect = orig_rect.copy()
         rot_rect.center = rot_image.get_rect().center
         ship = rot_image.subsurface(rot_rect).copy()
+        ship.fill([20, 20, 20])  # FIXME: Remove after tests
         self.screen.blit(ship, [self.position[0]-24, self.position[1]-24])
         self.rect = self.__rect.move(self.position[0], self.position[1])
 
