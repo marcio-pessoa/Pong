@@ -94,6 +94,7 @@ class Asteroids:
     def rock_update(self):
         # Need more rocks?
         while len(self.rock_group) < 8:
+            # FIXME: Garantir que as rochas não façam spawn sobre a ship.
             rock = Sprite(self.space)
             self.rock_group.add(rock)
         # Update rocks position
