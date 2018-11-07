@@ -1,7 +1,8 @@
 # MArcade
 Márcio's Arcade games
 
-[Change log](CHANGELOG.md)
+## Changes
+All notable changes to this project will be documented in this [Change log](CHANGELOG.md).
 
 ## Running
 ``` sh

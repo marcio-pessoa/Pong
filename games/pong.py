@@ -171,8 +171,8 @@ class Pong:
         self.ball_velocity[1] = 0
         # Make sure ball will never run without an angle
         while self.ball_velocity[1] == 0:
-            self.ball_velocity[1] = (random.randrange(-100, 100) / 60.0) * -1
-        if self.ball_velocity[1] >= -0.5 or self.ball_velocity[1] <= 0.5:
+            self.ball_velocity[1] = (random.randrange(-50, 50) / 100.0) * -1
+        if self.ball_velocity[1] >= -0.6 or self.ball_velocity[1] <= 0.6:
             self.ball_velocity[1] *= 2
 
     def draw_court(self):

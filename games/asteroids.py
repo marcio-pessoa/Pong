@@ -79,7 +79,7 @@ class Asteroids:
             if i.get_rect().colliderect(self.ship.get_rect()):
                 self.rock_group.remove(i)
                 self.lives -= 1
-                # print "merda"
+                # print self.lives
                 return
             for j in self.rock_group:
                 if j == i:
@@ -94,9 +94,9 @@ class Asteroids:
     def rock_update(self):
         # Need more rocks?
         while len(self.rock_group) < 8:
-            # FIXME: Garantir que as rochas não façam spawn sobre a ship.
             rock = Sprite(self.space)
-            self.rock_group.add(rock)
+            if not rock.get_rect().colliderect(self.ship.get_rect()):
+                self.rock_group.add(rock)
         # Update rocks position
         for i in self.rock_group:
             i.update()
@@ -256,6 +256,8 @@ class Sprite:
         position[1] = self.ship.get_rect().center[1] - ship.get_rect().center[1]
         self.ship.blit(ship, position)
         self.__rect = ship.get_rect()
+        __spawn_far = pygame.Surface([80, 80], SRCALPHA).get_rect()
+        self.rect = __spawn_far.move(self.position[0], self.position[1])
 
     def upgrade(self, size):
         self.size[0] += size[0]
@@ -296,7 +298,7 @@ class Sprite:
         rot_rect = orig_rect.copy()
         rot_rect.center = rot_image.get_rect().center
         ship = rot_image.subsurface(rot_rect).copy()
-        ship.fill([20, 20, 20])  # FIXME: Remove after tests
+        # ship.fill([20, 20, 20])  # FIXME: Remove after tests
         self.screen.blit(ship, [self.position[0]-24, self.position[1]-24])
         self.rect = self.__rect.move(self.position[0], self.position[1])
 
