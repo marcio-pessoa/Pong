@@ -177,7 +177,8 @@ class Ship:
         self.speed[1] *= .99
         # Draw
         orig_rect = self.ship.get_rect()
-        rot_image = pygame.transform.rotate(self.ship, math.degrees(self.angle))
+        rot_image = pygame.transform.rotozoom(self.ship,
+                                              math.degrees(self.angle), 1)
         rot_rect = orig_rect.copy()
         rot_rect.center = rot_image.get_rect().center
         ship = rot_image.subsurface(rot_rect).copy()
@@ -294,7 +295,8 @@ class Sprite:
                             self.screen_size[1])
         # Draw
         orig_rect = self.ship.get_rect()
-        rot_image = pygame.transform.rotate(self.ship, math.degrees(self.angle))
+        rot_image = pygame.transform.rotozoom(self.ship,
+                                              math.degrees(self.angle), 1)
         rot_rect = orig_rect.copy()
         rot_rect.center = rot_image.get_rect().center
         ship = rot_image.subsurface(rot_rect).copy()
