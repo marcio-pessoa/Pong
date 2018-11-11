@@ -135,21 +135,20 @@ class Asteroids:
                         self.ship.get_speed(), self.ship.get_angle())
         self.burst.add(shoot)
 
-    def control(self, event):
-        if event.type == KEYDOWN:
-            if event.key == K_ESCAPE:
-                self.stop()
-            if event.key == K_UP:
-                self.ship.thrust_on()
-            if event.key == K_RIGHT:
-                self.ship.decrement_angle_vel()
-            if event.key == K_LEFT:
-                self.ship.increment_angle_vel()
-            if event.key == K_SPACE:
-                self.shoot()
-        if event.type == KEYUP:
-            if event.key == K_UP:
-                self.ship.thrust_off()
+    def control(self, keys):
+        print keys
+        if K_ESCAPE in keys:
+            self.stop()
+        if K_UP in keys:
+            self.ship.thrust_on()
+        if K_UP not in keys:
+            self.ship.thrust_off()
+        if K_RIGHT in keys:
+            self.ship.decrement_angle_vel()
+        if K_LEFT in keys:
+            self.ship.increment_angle_vel()
+        if K_SPACE in keys:
+            self.shoot()
 
 
 class Ship:

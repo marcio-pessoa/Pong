@@ -114,15 +114,19 @@ class UserArgumentParser():
             elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     self.running = False
+                self.keys.add(event.key)
+            elif event.type == KEYUP:
+                self.keys.remove(event.key)
             elif event.type == VIDEORESIZE:
                 self.canvas_size = event.dict['size']
                 self.__screen_reset()
                 self.game.size_reset()
-            self.game.control(event)
+            self.game.control(self.keys)
 
     def __ctrl_set(self):
         # Set keyboard speed
         pygame.key.set_repeat(1, 0)
+        self.keys = set()
 
     def pong(self):
         parser = argparse.ArgumentParser(
