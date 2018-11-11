@@ -35,6 +35,7 @@ class Pong:
         self.running = True
         self.size_set()
         self.pad_acceleration = 1
+        self.delta_increment = 6
         self.court_side = 1
         self.reset()
         self.set()
@@ -100,6 +101,7 @@ class Pong:
                           self.pad1_position - self.pad_height_half,
                           self.pad_width,
                           self.pad_height])
+        self.pad1_vel *= 0.9
 
     def draw_pad2(self):
         self.pad2_position += self.pad2_vel
@@ -112,6 +114,7 @@ class Pong:
                           self.pad2_position - self.pad_height_half,
                           self.pad_width,
                           self.pad_height])
+        self.pad2_vel *= 0.9
 
     def run(self):
         self.draw_court()
@@ -129,35 +132,22 @@ class Pong:
         pygame.event.clear()
         self.running = False
 
-    def control(self, event):
-        if event.type == KEYDOWN:
-            if event.key == K_ESCAPE:
-                self.stop()
-            if event.key == K_w:
-                self.pad1_vel -= self.pad_acceleration
-                self.pad1_pressed += 1
-            if event.key == K_s:
-                self.pad1_vel += self.pad_acceleration
-                self.pad1_pressed += 1
-            if event.key == K_UP:
-                self.pad2_vel -= self.pad_acceleration
-                self.pad2_pressed += 1
-            if event.key == K_DOWN:
-                self.pad2_vel += self.pad_acceleration
-                self.pad2_pressed += 1
-        if event.type == KEYUP:
-            if event.key == K_w:
-                self.pad1_vel = 0
-                self.pad1_pressed -= 1
-            if event.key == K_s:
-                self.pad1_vel = 0
-                self.pad1_pressed -= 1
-            if event.key == K_UP:
-                self.pad2_vel = 0
-                self.pad2_pressed -= 1
-            if event.key == K_DOWN:
-                self.pad2_vel = 0
-                self.pad2_pressed -= 1
+    def control(self, keys):
+        print keys
+        if K_ESCAPE in keys:
+            self.stop()
+        if K_w in keys:
+            self.pad1_vel -= self.pad_acceleration
+            self.pad1_pressed += self.delta_increment
+        if K_s in keys:
+            self.pad1_vel += self.pad_acceleration
+            self.pad1_pressed += self.delta_increment
+        if K_UP in keys:
+            self.pad2_vel -= self.pad_acceleration
+            self.pad2_pressed += self.delta_increment
+        if K_DOWN in keys:
+            self.pad2_vel += self.pad_acceleration
+            self.pad2_pressed += self.delta_increment
 
     def ball_spawn(self):
         """

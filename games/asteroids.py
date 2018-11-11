@@ -147,7 +147,8 @@ class Asteroids:
             self.ship.decrement_angle_vel()
         if K_LEFT in keys:
             self.ship.increment_angle_vel()
-        if K_SPACE in keys:
+        if K_SPACE in keys or \
+           K_a in keys:
             self.shoot()
 
 

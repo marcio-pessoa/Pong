@@ -121,11 +121,11 @@ class UserArgumentParser():
                 self.canvas_size = event.dict['size']
                 self.__screen_reset()
                 self.game.size_reset()
-            self.game.control(self.keys)
+        self.game.control(self.keys)
 
     def __ctrl_set(self):
         # Set keyboard speed
-        pygame.key.set_repeat(1, 0)
+        pygame.key.set_repeat(0, 0)
         self.keys = set()
 
     def pong(self):
