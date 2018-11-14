@@ -171,7 +171,7 @@ class Ship:
         self.ship_size = [31, 31]
         position = [0, 0]
         ship = pygame.Surface(self.ship_size, SRCALPHA)
-        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        ship.fill([50, 50, 50])  # FIXME: Remove after tests
         pygame.draw.polygon(ship, (200, 200, 200),
                             [(0, 30), (15, 0), (30, 30), (15, 23)], 0)
         self.ship = pygame.Surface([48, 48], SRCALPHA)
@@ -313,7 +313,7 @@ class Sprite:
         size = self.size
         position = [0, 0]
         ship = pygame.Surface(self.size, SRCALPHA)
-        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        ship.fill([50, 50, 50])  # FIXME: Remove after tests
         color_tone = random.randrange(50, 100)
         pygame.draw.polygon(ship,
                             [color_tone, color_tone, color_tone],
