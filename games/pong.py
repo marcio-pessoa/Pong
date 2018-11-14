@@ -7,6 +7,10 @@ Author: Marcio Pessoa <marcio.pessoa@gmail.com>
 Contributors: none
 
 Change log:
+2018-11-11
+        * Version: 0.04
+        * Changed: Control method, to improve accuracy.
+
 2018-10-26
         * Version: 0.03
         * Added: Window resizing support.
@@ -27,7 +31,7 @@ import random
 
 class Pong:
     def __init__(self, screen):
-        self.version = '0.03'
+        self.version = '0.04'
         self.screen = screen
         self.running = False
 
@@ -133,7 +137,6 @@ class Pong:
         self.running = False
 
     def control(self, keys):
-        print keys
         if K_ESCAPE in keys:
             self.stop()
         if K_w in keys:

@@ -7,7 +7,7 @@ Author: Marcio Pessoa <marcio.pessoa@gmail.com>
 Contributors: none
 
 Change log:
-2018-11-dd
+2018-11-11
         * Version: 0.02
         * Added: Pygame version.
 
@@ -106,7 +106,7 @@ class Asteroids:
         # Need more?
         while len(self.rock_group) < 8:
             rock = Sprite(self.space)
-            if not rock.get_rect().colliderect(self.ship.get_rect()):
+            if not rock.get_rect().colliderect(self.ship.get_double_rect()):
                 self.rock_group.add(rock)
         # Update position
         for i in self.rock_group:
@@ -136,7 +136,6 @@ class Asteroids:
         self.burst.add(shoot)
 
     def control(self, keys):
-        print keys
         if K_ESCAPE in keys:
             self.stop()
         if K_UP in keys:
@@ -169,10 +168,10 @@ class Ship:
         self.angle_vel = 0
 
     def start(self):
-        ship_size = [31, 31]
+        self.ship_size = [31, 31]
         position = [0, 0]
-        ship = pygame.Surface(ship_size, SRCALPHA)
-        ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        ship = pygame.Surface(self.ship_size, SRCALPHA)
+        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
         pygame.draw.polygon(ship, (200, 200, 200),
                             [(0, 30), (15, 0), (30, 30), (15, 23)], 0)
         self.ship = pygame.Surface([48, 48], SRCALPHA)
@@ -214,6 +213,9 @@ class Ship:
                                 self.position[1] - 24])
         self.rect = self.__rect.move(self.position[0] - 24,
                                      self.position[1] - 24)
+        ship_double_size = [self.ship_size[0] * 4, self.ship_size[1] * 4]
+        __ship_double = pygame.Surface(ship_double_size, SRCALPHA)
+        self.double_rect = __ship_double.get_rect()
 
     def thrust_on(self):
         # TODO: Play sound using code here
@@ -233,6 +235,9 @@ class Ship:
 
     def get_rect(self):
         return self.rect
+
+    def get_double_rect(self):
+        return self.double_rect
 
     def get_radius(self):
         return self.radius
@@ -256,8 +261,8 @@ class Missile:
                             self.screen.get_size()[1]]
         self.angle = ship_angle
         forward = [-math.cos(self.angle), math.sin(self.angle)]
-        self.position = [ship_position[0] + 18 * forward[0],
-                         ship_position[1] + 18 * forward[1]]
+        self.position = [ship_position[0] + ship_radius * forward[0],
+                         ship_position[1] + ship_radius * forward[1]]
         self.speed = [ship_speed[0] + 5 * forward[0],
                       ship_speed[1] + 5 * forward[1]]
         self.radius = 3
@@ -308,7 +313,7 @@ class Sprite:
         size = self.size
         position = [0, 0]
         ship = pygame.Surface(self.size, SRCALPHA)
-        ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
         color_tone = random.randrange(50, 100)
         pygame.draw.polygon(ship,
                             [color_tone, color_tone, color_tone],
