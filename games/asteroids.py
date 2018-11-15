@@ -339,7 +339,7 @@ class Sprite:
         self.size[1] += size[1]
         size = self.size
         self.ship = pygame.Surface(self.size, SRCALPHA)
-        self.ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        # self.ship.fill([50, 50, 50])  # FIXME: Remove after tests
         color_tone = random.randrange(50, 100)
         pygame.draw.polygon(self.ship,
                             [color_tone, color_tone, color_tone],
