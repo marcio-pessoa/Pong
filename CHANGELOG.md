@@ -1,6 +1,14 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.6] - 2018-11-14
+### Added
+- Random game choose when starting marcade without any option.
+
+## [0.5] - 2018-11-12
+### Changed
+- Project renamed from Pong to MArcade.
+
 ## [0.4] - 2018-10-27
 ### Changed
 - Project renamed from Pong to MArcade.

@@ -5,11 +5,19 @@ Márcio's Arcade games
 All notable changes to this project will be documented in this [Change log](CHANGELOG.md).
 
 ## Running
+
+To start a random game:
+
 ``` sh
 ./marcade.py
 ```
+ For help:
+ 
+``` sh
+./marcade.py -h
+```
 
-## Games
+## Games available
 
 ### Asteroids
 ![Asteroids](Screenshots/asteroids.png)

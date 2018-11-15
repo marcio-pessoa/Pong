@@ -114,12 +114,12 @@ class Asteroids:
 
     def burst_update(self):
         for i in self.burst:
+        # Update position
+            i.update()
         # Check shoot age
             if i.age() >= 3000:
                 self.burst.remove(i)
-                return
-        # Update position
-            i.update()
+                break
 
     def stop(self):
         pygame.event.clear()
@@ -171,7 +171,8 @@ class Ship:
         self.ship_size = [31, 31]
         position = [0, 0]
         ship = pygame.Surface(self.ship_size, SRCALPHA)
-        ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        # Draw ship
         pygame.draw.polygon(ship, (200, 200, 200),
                             [(0, 30), (15, 0), (30, 30), (15, 23)], 0)
         self.ship = pygame.Surface([48, 48], SRCALPHA)
@@ -193,6 +194,8 @@ class Ship:
                             self.screen_size[0])
         self.position[1] = ((self.position[1] + self.speed[1]) %
                             self.screen_size[1])
+        position = (self.position[0] - self.radius,
+                    self.position[1] - self.radius)
         # Speed
         if self.thrust:
             acc = [-math.cos(self.angle), math.sin(self.angle)]
@@ -208,11 +211,8 @@ class Ship:
         rot_rect = orig_rect.copy()
         rot_rect.center = rot_image.get_rect().center
         ship = rot_image.subsurface(rot_rect).copy()
-        # ship = pygame.transform.rotate(self.ship, math.degrees(self.angle))
-        self.screen.blit(ship, [self.position[0] - 24, 
-                                self.position[1] - 24])
-        self.rect = self.__rect.move(self.position[0] - 24,
-                                     self.position[1] - 24)
+        self.rect = self.__rect.move(position)
+        self.screen.blit(ship, position)
         ship_double_size = [self.ship_size[0] * 4, self.ship_size[1] * 4]
         __ship_double = pygame.Surface(ship_double_size, SRCALPHA)
         self.double_rect = __ship_double.get_rect()
@@ -253,7 +253,6 @@ class Ship:
 
 
 class Missile:
-
     def __init__(self, screen,
                  ship_position, ship_radius, ship_speed, ship_angle,):
         self.screen = screen
@@ -268,25 +267,20 @@ class Missile:
         self.radius = 3
         size = [self.radius * 2, self.radius * 2]
         position = [self.radius, self.radius]
-        # Draw
         self.missile = pygame.Surface(size, SRCALPHA)
-        pygame.draw.circle(self.missile, (255, 255, 255),
-                           position, self.radius)
-        self.__rect = self.missile.get_rect()
+        pygame.draw.circle(self.missile, (210, 210, 210), position, self.radius)
         self.time_born = pygame.time.get_ticks()
         self.update()
 
     def update(self):
-        # Position
         self.position[0] = ((self.position[0] + self.speed[0]) %
                             self.screen_size[0])
         self.position[1] = ((self.position[1] + self.speed[1]) %
                             self.screen_size[1])
-        self.rect = self.__rect.move(self.position[0] - self.radius,
-                                     self.position[1] - self.radius)
-        # Draw
-        self.screen.blit(self.missile, [self.position[0] - self.radius,
-                                        self.position[1] - self.radius])
+        position = (self.position[0] - self.radius,
+                    self.position[1] - self.radius)
+        self.rect = self.missile.get_rect().move(position)
+        self.screen.blit(self.missile, position)
 
     def age(self):
         return pygame.time.get_ticks() - self.time_born
@@ -313,7 +307,7 @@ class Sprite:
         size = self.size
         position = [0, 0]
         ship = pygame.Surface(self.size, SRCALPHA)
-        ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
         color_tone = random.randrange(50, 100)
         pygame.draw.polygon(ship,
                             [color_tone, color_tone, color_tone],
@@ -337,6 +331,7 @@ class Sprite:
         self.ship.blit(ship, position)
         self.__rect = ship.get_rect()
         __spawn_far = pygame.Surface([80, 80], SRCALPHA).get_rect()
+        self.radius = self.ship.get_rect().center[1]
         self.update()
 
     def upgrade(self, size):
@@ -361,6 +356,7 @@ class Sprite:
                              (random.uniform(0, size[1] / 4),
                              random.uniform(size[0] / 1.5, size[1])),
                              ], 0)
+        self.radius = self.ship.get_rect().center[1]
         self.__rect = self.ship.get_rect()
         self.update()
 
@@ -373,6 +369,8 @@ class Sprite:
                             self.screen_size[0])
         self.position[1] = ((self.position[1] + self.speed[1]) %
                             self.screen_size[1])
+        position = (self.position[0] - self.radius,
+                    self.position[1] - self.radius)
         # Draw
         orig_rect = self.ship.get_rect()
         rot_image = pygame.transform.rotozoom(self.ship,
@@ -382,9 +380,8 @@ class Sprite:
         ship = rot_image.subsurface(rot_rect).copy()
         # ship.fill([20, 20, 20])  # FIXME: Remove after tests
         self.radius = ship.get_rect().center[0]
-        self.screen.blit(ship, [self.position[0] - self.radius,
-                                self.position[1] - self.radius])
-        self.rect = self.__rect.move(self.position[0], self.position[1])
+        self.rect = self.__rect.move(position)
+        self.screen.blit(ship, position)
 
     def get_size(self):
         return self.size

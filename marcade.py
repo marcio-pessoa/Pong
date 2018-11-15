@@ -19,6 +19,7 @@ try:
     import os
     import pygame
     from pygame.locals import *
+    import random
     # Myself modules
     from games.asteroids import Asteroids
     from games.pong import Pong
@@ -34,14 +35,15 @@ class UserArgumentParser():
     """
     def __init__(self):
         self.program_name = "marcade"
-        self.program_version = "0.4"
-        self.program_date = "2018-10-27"
+        self.program_version = "0.6"
+        self.program_date = "2018-11-14"
         self.program_description = "MArcade"
         self.program_copyright = "Copyright (c) 2014-2018 Marcio Pessoa"
         self.program_license = "GPLv2"
         self.program_website = "http://pessoa.eti.br/"
         self.program_contact = "Marcio Pessoa <marcio.pessoa@gmail.com>"
         self.window_title = self.program_description
+        self.available_games = ["pong", "asteroids"]
         header = ('marcade <game> [<args>]\n\n' +
                   'Games:\n' +
                   '  asteroids      amazing Asteroids space game\n' +
@@ -67,8 +69,8 @@ class UserArgumentParser():
                             version=self.version,
                             help='show version information and exit')
         if len(sys.argv) < 2:
-            self.pong()
-            sys.exit(False)
+            # Choose a random game
+            eval("self." + str(random.choice(self.available_games)) + "()")
         args = parser.parse_args(sys.argv[1:2])
         if not hasattr(self, args.command):
             print('Unrecognized command')
