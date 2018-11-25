@@ -7,6 +7,10 @@ Author: Marcio Pessoa <marcio.pessoa@gmail.com>
 Contributors: none
 
 Change log:
+2018-11-25
+        * Version: 0.03
+        * Fixed: Burst update.
+
 2018-11-11
         * Version: 0.02
         * Added: Pygame version.
@@ -25,7 +29,7 @@ import random
 class Asteroids:
 
     def __init__(self, screen):
-        self.version = '0.02'
+        self.version = '0.03'
         self.screen = screen
         self.running = False
 

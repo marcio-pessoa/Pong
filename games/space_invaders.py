@@ -8,8 +8,8 @@ Contributors: none
 
 Change log:
 2018-11-25
-        * Version: 0.01
-        * Added: First version.
+        * Version: 0.00
+        * Added: Starting a new game.
 """
 
 import math
@@ -21,7 +21,7 @@ import random
 class SpaceInvaders:
 
     def __init__(self, screen):
-        self.version = '0.01'
+        self.version = '0.00'
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]

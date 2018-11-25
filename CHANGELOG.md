@@ -1,6 +1,10 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.7] - 2018-11-25
+### Added
+- Space Invaders.
+
 ## [0.6] - 2018-11-14
 ### Added
 - Random game choose when starting marcade without any option.
