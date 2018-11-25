@@ -21,5 +21,8 @@ To start a random game:
 ### Asteroids
 ![Asteroids](Screenshots/asteroids.png)
 
+### Space Invaders
+![Space Invaders](Screenshots/space_invaders.png)
+
 ### Pong
 ![Pong](Screenshots/pong.png)

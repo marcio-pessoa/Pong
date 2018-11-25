@@ -13,16 +13,12 @@ Change log: Check CHANGELOG.md file.
 """
 
 try:
-    # Required modules
     import sys
     import argparse
     import os
     import pygame
     from pygame.locals import *
     import random
-    # Myself modules
-    from games.asteroids import Asteroids
-    from games.pong import Pong
 except ImportError as err:
     print("Could not load module. " + str(err))
     sys.exit(True)
@@ -40,14 +36,15 @@ class UserArgumentParser():
         self.program_description = "MArcade"
         self.program_copyright = "Copyright (c) 2014-2018 Marcio Pessoa"
         self.program_license = "GPLv2"
-        self.program_website = "http://pessoa.eti.br/"
+        self.program_website = "https://github.com/marcio-pessoa/marcade"
         self.program_contact = "Marcio Pessoa <marcio.pessoa@gmail.com>"
         self.window_title = self.program_description
-        self.available_games = ["pong", "asteroids"]
+        self.available_games = ["asteroids", "sinvaders", "pong"]
         header = ('marcade <game> [<args>]\n\n' +
                   'Games:\n' +
-                  '  asteroids      amazing Asteroids space game\n' +
-                  '  pong           classical Pong game\n\n')
+                  '  asteroids      amazing Asteroids space\n' +
+                  '  sinvaders      momorable Space Invaders\n' +
+                  '  pong           classical Pong\n\n')
         footer = (self.program_copyright + '\n' +
                   'License: ' + self.program_license + '\n' +
                   'Website: ' + self.program_website + '\n' +
@@ -69,7 +66,7 @@ class UserArgumentParser():
                             version=self.version,
                             help='show version information and exit')
         if len(sys.argv) < 2:
-            # Choose a random game
+            # Select a random game
             eval("self." + str(random.choice(self.available_games)) + "()")
         args = parser.parse_args(sys.argv[1:2])
         if not hasattr(self, args.command):
@@ -131,9 +128,10 @@ class UserArgumentParser():
         self.keys = set()
 
     def pong(self):
+        from games.pong import Pong
         parser = argparse.ArgumentParser(
             prog=self.program_name + ' pong',
-            description='classical Pong game')
+            description='classical Pong')
         args = parser.parse_args(sys.argv[2:])
         self.window_title = 'Pong'
         self.__screen_start()
@@ -143,14 +141,27 @@ class UserArgumentParser():
         sys.exit(False)
 
     def asteroids(self):
+        from games.asteroids import Asteroids
         parser = argparse.ArgumentParser(
             prog=self.program_name + ' asteroids',
-            description='amazing Asteroids space game')
+            description='amazing Asteroids space')
         args = parser.parse_args(sys.argv[2:])
         self.window_title = 'Asteroids'
         self.__screen_start()
         self.game = Asteroids(self.screen)
         self.game.start()
+        self.__run()
+        sys.exit(False)
+
+    def sinvaders(self):
+        from games.space_invaders import SpaceInvaders
+        parser = argparse.ArgumentParser(
+            prog=self.program_name + ' sinvaders',
+            description='momorable Space Invaders')
+        args = parser.parse_args(sys.argv[2:])
+        self.window_title = 'Space Invaders'
+        self.__screen_start()
+        self.game = SpaceInvaders(self.screen)
         self.__run()
         sys.exit(False)
 

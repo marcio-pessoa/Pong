@@ -1,17 +1,13 @@
 """
-asteroids.py
+space_invaders.py
 
-Description: Asteroids package file
+Description: Space Invaders package file
 
 Author: Marcio Pessoa <marcio.pessoa@gmail.com>
 Contributors: none
 
 Change log:
-2018-11-11
-        * Version: 0.02
-        * Added: Pygame version.
-
-2014-09-06
+2018-11-25
         * Version: 0.01
         * Added: First version.
 """
@@ -22,29 +18,19 @@ from pygame.locals import *
 import random
 
 
-class Asteroids:
+class SpaceInvaders:
 
     def __init__(self, screen):
-        self.version = '0.02'
+        self.version = '0.01'
         self.screen = screen
-        self.running = False
-
-    def start(self):
-        self.running = True
-        self.size_set()
-        self.pad_acceleration = 1
-        self.court_side = 1
-        self.set()
-        self.ship.start()
-
-    def size_set(self):
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
         self.space = pygame.Surface(self.screen_size,
                                     HWSURFACE | SRCALPHA, 32)
         self.space.convert_alpha()
-
-    def set(self):
+        self.running = True
+        self.pad_acceleration = 1
+        self.court_side = 1
         self.ship = Ship(self.space)
         self.reset()
 
@@ -57,7 +43,7 @@ class Asteroids:
 
     def reset(self):
         self.lives = 3
-        self.rock_group = set()
+        # self.rock_group = set()
         self.burst = set()
         self.ship.reset()
 
@@ -67,8 +53,8 @@ class Asteroids:
         # Draw objects (ship, rocks, missiles, etc...)
         self.ship.update()
         self.burst_update()
-        self.rock_update()
-        self.check_collision()
+        # self.rock_update()
+        # self.check_collision()
         if not self.lives:
             self.reset()
         # Join everything
@@ -96,11 +82,6 @@ class Asteroids:
                     i.upgrade(j.get_size())
                     self.rock_group.remove(j)
                     return
-        # Missile against ship
-        for i in self.burst:
-            if i.get_rect().colliderect(self.ship.get_rect()):
-                self.burst.remove(i)
-                return
 
     def rock_update(self):
         # Need more?
@@ -118,7 +99,7 @@ class Asteroids:
             i.update()
         # Check shoot age
         for i in self.burst:
-            if i.age() >= 3000:
+            if i.is_out():
                 self.burst.remove(i)
                 break
 
@@ -128,25 +109,20 @@ class Asteroids:
 
     def shoot(self):
         # Limit burst size
-        if len(self.burst) >= 10:
+        if len(self.burst) >= 2:
             return
         # Shoot!
         shoot = Missile(self.space,
-                        self.ship.get_position(), self.ship.get_radius(),
-                        self.ship.get_speed(), self.ship.get_angle())
+                        self.ship.get_position(), self.ship.get_radius())
         self.burst.add(shoot)
 
     def control(self, keys):
         if K_ESCAPE in keys:
             self.stop()
-        if K_UP in keys:
-            self.ship.thrust_on()
-        if K_UP not in keys:
-            self.ship.thrust_off()
         if K_RIGHT in keys:
-            self.ship.decrement_angle_vel()
+            self.ship.move_right()
         if K_LEFT in keys:
-            self.ship.increment_angle_vel()
+            self.ship.move_left()
         if K_SPACE in keys or \
            K_a in keys:
             self.shoot()
@@ -158,87 +134,36 @@ class Ship:
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
+        self.ship_size = [31, 31]
+        self.move_increment = 5
         self.reset()
+        self.ship = pygame.Surface(self.ship_size, SRCALPHA)
+        self.ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        pygame.draw.polygon(self.ship, (200, 200, 200),
+                            [(0, 30), (15, 0), (30, 30), (15, 23)], 0)
+        self.radius = self.ship.get_rect().center[0]
+        self.update()
 
     def reset(self):
         self.position = [self.screen_size[0] / 2,
-                         self.screen_size[1] / 2]
-        self.speed = [0, 0]
-        self.angle = math.pi / -2
-        self.thrust = False
-        self.angle_vel = 0
-
-    def start(self):
-        self.ship_size = [31, 31]
-        position = [0, 0]
-        ship = pygame.Surface(self.ship_size, SRCALPHA)
-        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
-        # Draw ship
-        pygame.draw.polygon(ship, (200, 200, 200),
-                            [(0, 30), (15, 0), (30, 30), (15, 23)], 0)
-        self.ship = pygame.Surface([48, 48], SRCALPHA)
-        # self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
-        ship = pygame.transform.rotate(ship, 90)
-        position[0] = self.ship.get_rect().center[0] - ship.get_rect().center[0]
-        position[1] = self.ship.get_rect().center[1] - ship.get_rect().center[1]
-        self.ship.blit(ship, position)
-        self.__rect = ship.get_rect()
-        self.radius = self.ship.get_rect().center[1]
-        self.update()
+                         self.screen_size[1] - self.ship_size[1]]
 
     def update(self):
-        # Angle
-        acc = []
-        self.angle += self.angle_vel
-        # Position
-        self.position[0] = ((self.position[0] + self.speed[0]) %
-                            self.screen_size[0])
-        self.position[1] = ((self.position[1] + self.speed[1]) %
-                            self.screen_size[1])
-        position = (self.position[0] - self.radius,
-                    self.position[1] - self.radius)
-        # Speed
-        if self.thrust:
-            acc = [-math.cos(self.angle), math.sin(self.angle)]
-            self.speed[0] += acc[0] * .2
-            self.speed[1] += acc[1] * .2
-        # Slow down
-        self.speed[0] *= .99
-        self.speed[1] *= .99
-        # Draw
-        orig_rect = self.ship.get_rect()
-        rot_image = pygame.transform.rotozoom(self.ship,
-                                              math.degrees(self.angle), 1)
-        rot_rect = orig_rect.copy()
-        rot_rect.center = rot_image.get_rect().center
-        ship = rot_image.subsurface(rot_rect).copy()
-        self.rect = self.__rect.move(position)
-        self.screen.blit(ship, position)
-        ship_double_size = [self.ship_size[0] * 4, self.ship_size[1] * 4]
-        __ship_double = pygame.Surface(ship_double_size, SRCALPHA)
-        self.double_rect = __ship_double.get_rect()
+        if self.position[0] < 0:
+            self.position[0] = 0
+        if self.position[0] + self.ship_size[0] > self.screen.get_size()[0]:
+            self.position[0] = self.screen.get_size()[0] - self.ship_size[0]
+        self.rect = self.ship.get_rect().move(self.position)
+        self.screen.blit(self.ship, self.position)
 
-    def thrust_on(self):
-        # TODO: Play sound using code here
-        # ship_thrust_sound.rewind()
-        # ship_thrust_sound.play()
-        self.thrust = True
+    def move_right(self):
+        self.position[0] += self.move_increment
 
-    def thrust_off(self):
-        # ship_thrust_sound.pause()
-        self.thrust = False
-
-    def increment_angle_vel(self):
-        self.angle_vel += math.radians(math.pi / 50)
-
-    def decrement_angle_vel(self):
-        self.angle_vel -= math.radians(math.pi / 50)
+    def move_left(self):
+        self.position[0] -= self.move_increment
 
     def get_rect(self):
         return self.rect
-
-    def get_double_rect(self):
-        return self.double_rect
 
     def get_radius(self):
         return self.radius
@@ -246,45 +171,32 @@ class Ship:
     def get_position(self):
         return self.position
 
-    def get_speed(self):
-        return self.speed
-
-    def get_angle(self):
-        return self.angle
-
 
 class Missile:
-    def __init__(self, screen,
-                 ship_position, ship_radius, ship_speed, ship_angle,):
+    def __init__(self, screen, ship_position, ship_radius):
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
-        self.angle = ship_angle
-        forward = [-math.cos(self.angle), math.sin(self.angle)]
-        self.position = [ship_position[0] + ship_radius * forward[0],
-                         ship_position[1] + ship_radius * forward[1]]
-        self.speed = [ship_speed[0] + 5 * forward[0],
-                      ship_speed[1] + 5 * forward[1]]
+        self.out = False
+        self.speed = 5
         self.radius = 3
         size = [self.radius * 2, self.radius * 2]
         position = [self.radius, self.radius]
         self.missile = pygame.Surface(size, SRCALPHA)
         pygame.draw.circle(self.missile, (210, 210, 210), position, self.radius)
-        self.time_born = pygame.time.get_ticks()
+        self.position = [ship_position[0] + ship_radius - self.radius,
+                         ship_position[1] + self.radius]
         self.update()
 
     def update(self):
-        self.position[0] = ((self.position[0] + self.speed[0]) %
-                            self.screen_size[0])
-        self.position[1] = ((self.position[1] + self.speed[1]) %
-                            self.screen_size[1])
-        position = (self.position[0] - self.radius,
-                    self.position[1] - self.radius)
-        self.rect = self.missile.get_rect().move(position)
-        self.screen.blit(self.missile, position)
+        self.position[1] = self.position[1] - self.speed
+        if self.position[1] < 0:
+            self.out = True
+        self.rect = self.missile.get_rect().move(self.position)
+        self.screen.blit(self.missile, self.position)
 
-    def age(self):
-        return pygame.time.get_ticks() - self.time_born
+    def is_out(self):
+        return self.out
 
     def get_radius(self):
         return self.radius
