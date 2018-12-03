@@ -301,3 +301,7 @@ class Sprite:
 
     def get_rect(self):
         return self.rect
+
+
+class Barrier:
+    def __init__(self, screen):
