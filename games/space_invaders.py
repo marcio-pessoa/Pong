@@ -16,6 +16,7 @@ import math
 import pygame
 from pygame.locals import *
 import random
+from tools.timer import Timer
 
 
 class SpaceInvaders:
@@ -32,6 +33,8 @@ class SpaceInvaders:
         self.pad_acceleration = 1
         self.court_side = 1
         self.ship = Ship(self.space)
+        self.shoot_timer = Timer(200)
+        self.aliens = set()
         self.reset()
 
     def size_reset(self):
@@ -43,9 +46,12 @@ class SpaceInvaders:
 
     def reset(self):
         self.lives = 3
-        # self.rock_group = set()
         self.burst = set()
         self.ship.reset()
+        # Spawn monsters
+        for i in range(8):
+            monster = Monster(self.screen, (10 * i, i))
+            self.aliens.add(monster)
 
     def run(self):
         # Draw Space
@@ -53,7 +59,7 @@ class SpaceInvaders:
         # Draw objects (ship, rocks, missiles, etc...)
         self.ship.update()
         self.burst_update()
-        # self.rock_update()
+        self.aliens_update()
         # self.check_collision()
         if not self.lives:
             self.reset()
@@ -103,11 +109,19 @@ class SpaceInvaders:
                 self.burst.remove(i)
                 break
 
+    def aliens_update(self):
+        # Update position
+        for i in self.aliens:
+            i.update()
+
     def stop(self):
         pygame.event.clear()
         self.running = False
 
     def shoot(self):
+        # Timer
+        if not self.shoot_timer.check():
+            return
         # Limit burst size
         if len(self.burst) >= 2:
             return
@@ -205,103 +219,43 @@ class Missile:
         return self.rect
 
 
-class Sprite:
-    def __init__(self, screen):
+class Monster:
+    def __init__(self, screen, position):
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
-        self.position = [random.uniform(0.0, 1.0) * self.screen_size[0],
-                         random.uniform(0.0, 1.0) * self.screen_size[1]]
-        self.speed = [random.uniform(-0.5, 0.5),
-                      random.uniform(-0.5, 0.5)]
-        self.angle = 0
-        self.angle_vel = math.radians(math.pi / (random.uniform(-1, 1) * 10.1))
         self.size = [31, 31]
-        size = self.size
-        position = [0, 0]
-        ship = pygame.Surface(self.size, SRCALPHA)
-        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
-        color_tone = random.randrange(50, 100)
-        pygame.draw.polygon(ship,
-                            [color_tone, color_tone, color_tone],
-                            [(random.uniform(0, size[1] / 4),
-                              random.uniform(0, size[1] / 3)),
-                             (random.uniform(size[0] / 4, size[1] / 1.5),
-                              random.uniform(0, size[1] / 2)),
-                             (random.uniform(size[0] / 1.5, size[1]),
-                              random.uniform(0, size[1] / 2)),
-                             (random.uniform(size[0] / 1.1, size[1]),
-                              random.uniform(size[0] / 1.5, size[1])),
-                             (random.uniform(size[0] / 3, size[1] / 1.5),
-                              random.uniform(size[0] / 1.5, size[1])),
-                             (random.uniform(0, size[1] / 4),
-                             random.uniform(size[0] / 1.5, size[1])),
-                             ], 0)
-        self.ship = pygame.Surface([48, 48], SRCALPHA)
-        # self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
-        position[0] = self.ship.get_rect().center[0] - ship.get_rect().center[0]
-        position[1] = self.ship.get_rect().center[1] - ship.get_rect().center[1]
-        self.ship.blit(ship, position)
-        self.__rect = ship.get_rect()
-        __spawn_far = pygame.Surface([80, 80], SRCALPHA).get_rect()
-        self.radius = self.ship.get_rect().center[1]
+        self.shape = pygame.Surface(self.size, SRCALPHA)
+        self.shape.fill([50, 50, 50])  # FIXME: Remove after tests
+        pygame.draw.rect(self.shape, (200, 200, 200),
+                         (0, 0, self.size[0], self.size[1]), 20)
+        self.position = position
         self.update()
 
-    def upgrade(self, size):
-        self.size[0] += size[0]
-        self.size[1] += size[1]
-        size = self.size
-        self.ship = pygame.Surface(self.size, SRCALPHA)
-        # self.ship.fill([50, 50, 50])  # FIXME: Remove after tests
-        color_tone = random.randrange(50, 100)
-        pygame.draw.polygon(self.ship,
-                            [color_tone, color_tone, color_tone],
-                            [(random.uniform(0, size[1] / 4),
-                              random.uniform(0, size[1] / 3)),
-                             (random.uniform(size[0] / 4, size[1] / 1.5),
-                              random.uniform(0, size[1] / 2)),
-                             (random.uniform(size[0] / 1.5, size[1]),
-                              random.uniform(0, size[1] / 2)),
-                             (random.uniform(size[0] / 1.1, size[1]),
-                              random.uniform(size[0] / 1.5, size[1])),
-                             (random.uniform(size[0] / 3, size[1] / 1.5),
-                              random.uniform(size[0] / 1.5, size[1])),
-                             (random.uniform(0, size[1] / 4),
-                             random.uniform(size[0] / 1.5, size[1])),
-                             ], 0)
-        self.radius = self.ship.get_rect().center[1]
-        self.__rect = self.ship.get_rect()
-        self.update()
+    def type(self, type):
+        self.type = type
 
     def update(self):
-        # Angle
-        acc = []
-        self.angle += self.angle_vel
-        # Position
-        self.position[0] = ((self.position[0] + self.speed[0]) %
-                            self.screen_size[0])
-        self.position[1] = ((self.position[1] + self.speed[1]) %
-                            self.screen_size[1])
-        position = (self.position[0] - self.radius,
-                    self.position[1] - self.radius)
-        # Draw
-        orig_rect = self.ship.get_rect()
-        rot_image = pygame.transform.rotozoom(self.ship,
-                                              math.degrees(self.angle), 1)
-        rot_rect = orig_rect.copy()
-        rot_rect.center = rot_image.get_rect().center
-        ship = rot_image.subsurface(rot_rect).copy()
-        # ship.fill([20, 20, 20])  # FIXME: Remove after tests
-        self.radius = ship.get_rect().center[0]
-        self.rect = self.__rect.move(position)
-        self.screen.blit(ship, position)
-
-    def get_size(self):
-        return self.size
+        self.rect = self.shape.get_rect().move(self.position)
+        self.screen.blit(self.shape, self.position)
 
     def get_rect(self):
         return self.rect
 
 
 class Barrier:
+
     def __init__(self, screen):
+        self.screen = screen
+        self.screen_size = [self.screen.get_size()[0],
+                            self.screen.get_size()[1]]
+        position = []
+        self.barrier = pygame.Surface(size, SRCALPHA)
+        self.update()
+
+    def update(self):
+        self.rect = self.barrier.get_rect()
+        self.screen.blit(self.barrier, self.position)
+
+    def get_rect(self):
+        return self.rect
