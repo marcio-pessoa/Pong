@@ -48,10 +48,7 @@ class SpaceInvaders:
         self.lives = 3
         self.burst = set()
         self.ship.reset()
-        # Spawn monsters
-        for i in range(8):
-            monster = Monster(self.screen, (10 * i, i))
-            self.aliens.add(monster)
+        self.aliens_deploy()
 
     def run(self):
         # Draw Space
@@ -60,7 +57,8 @@ class SpaceInvaders:
         self.ship.update()
         self.burst_update()
         self.aliens_update()
-        # self.check_collision()
+        self.check_collision()
+        self.aliens_check()
         if not self.lives:
             self.reset()
         # Join everything
@@ -68,36 +66,13 @@ class SpaceInvaders:
         return False
 
     def check_collision(self):
-        for i in self.rock_group:
-            # Ship against rocks
-            if i.get_rect().colliderect(self.ship.get_rect()):
-                self.rock_group.remove(i)
-                self.lives -= 1
-                return
-            # Missile against rocks
+        # Missle againt alien
+        for i in self.aliens:
             for j in self.burst:
-                if j.get_rect().colliderect(i.get_rect()):
-                    self.rock_group.remove(i)
+                if i.get_rect().colliderect(j.get_rect()):
+                    self.aliens.remove(i)
                     self.burst.remove(j)
                     return
-            # Rock against rocks
-            for j in self.rock_group:
-                if j == i:
-                    continue
-                if j.get_rect().colliderect(i.get_rect()):
-                    i.upgrade(j.get_size())
-                    self.rock_group.remove(j)
-                    return
-
-    def rock_update(self):
-        # Need more?
-        while len(self.rock_group) < 8:
-            rock = Sprite(self.space)
-            if not rock.get_rect().colliderect(self.ship.get_double_rect()):
-                self.rock_group.add(rock)
-        # Update position
-        for i in self.rock_group:
-            i.update()
 
     def burst_update(self):
         # Update position
@@ -109,10 +84,27 @@ class SpaceInvaders:
                 self.burst.remove(i)
                 break
 
+    def aliens_deploy(self):
+        formation = (8, 5)
+        for y in range(formation[1]):
+            for x in range(formation[0]):
+                monster = Monster(self.space, y,
+                                  ((self.space.get_size()[0] /
+                                    formation[0]) * x +
+                                   (self.space.get_size()[0] /
+                                    formation[0]) / 3,
+                                   ((self.space.get_size()[1] - 100) /
+                                    formation[1]) * y + 30))
+                self.aliens.add(monster)
+
     def aliens_update(self):
         # Update position
         for i in self.aliens:
             i.update()
+
+    def aliens_check(self):
+        if len(self.aliens) == 0:
+            self.reset()
 
     def stop(self):
         pygame.event.clear()
@@ -152,7 +144,7 @@ class Ship:
         self.move_increment = 5
         self.reset()
         self.ship = pygame.Surface(self.ship_size, SRCALPHA)
-        self.ship.fill([50, 50, 50])  # FIXME: Remove after tests
+        # self.ship.fill([50, 50, 50])  # FIXME: Remove after tests
         pygame.draw.polygon(self.ship, (200, 200, 200),
                             [(0, 30), (15, 0), (30, 30), (15, 23)], 0)
         self.radius = self.ship.get_rect().center[0]
@@ -220,20 +212,18 @@ class Missile:
 
 
 class Monster:
-    def __init__(self, screen, position):
+    def __init__(self, screen, type, position):
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
+        self.type = type
+        self.position = position
         self.size = [31, 31]
         self.shape = pygame.Surface(self.size, SRCALPHA)
-        self.shape.fill([50, 50, 50])  # FIXME: Remove after tests
+        self.shape.fill([30 * self.type, 50, 50])  # FIXME: Remove after tests
         pygame.draw.rect(self.shape, (200, 200, 200),
-                         (0, 0, self.size[0], self.size[1]), 20)
-        self.position = position
+                         (0, 0, self.size[0], self.size[1]), 1)
         self.update()
-
-    def type(self, type):
-        self.type = type
 
     def update(self):
         self.rect = self.shape.get_rect().move(self.position)
