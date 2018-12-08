@@ -85,7 +85,7 @@ class SpaceInvaders:
                 break
 
     def aliens_deploy(self):
-        formation = (8, 5)
+        formation = (18, 9)
         for y in range(formation[1]):
             for x in range(formation[0]):
                 monster = Monster(self.space, y,
@@ -112,11 +112,11 @@ class SpaceInvaders:
 
     def shoot(self):
         # Timer
-        if not self.shoot_timer.check():
-            return
+        #  if not self.shoot_timer.check():
+            #  return
         # Limit burst size
-        if len(self.burst) >= 2:
-            return
+        #  if len(self.burst) >= 2:
+            #  return
         # Shoot!
         shoot = Missile(self.space,
                         self.ship.get_position(), self.ship.get_radius())
