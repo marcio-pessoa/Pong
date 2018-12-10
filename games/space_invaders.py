@@ -85,7 +85,7 @@ class SpaceInvaders:
                 break
 
     def aliens_deploy(self):
-        formation = (18, 9)
+        formation = (6, 5)
         for y in range(formation[1]):
             for x in range(formation[0]):
                 monster = Monster(self.space, y,
@@ -112,11 +112,11 @@ class SpaceInvaders:
 
     def shoot(self):
         # Timer
-        #  if not self.shoot_timer.check():
-            #  return
+        if not self.shoot_timer.check():
+            return
         # Limit burst size
-        #  if len(self.burst) >= 2:
-            #  return
+        if len(self.burst) >= 2:
+            return
         # Shoot!
         shoot = Missile(self.space,
                         self.ship.get_position(), self.ship.get_radius())
@@ -143,6 +143,16 @@ class Ship:
         self.ship_size = [31, 31]
         self.move_increment = 5
         self.reset()
+        #  alien.add((
+            #  "     ##     ",
+            #  "    ####    ",
+            #  "    ####    ",
+            #  "    ####    ",
+            #  " ########## ",
+            #  "############",
+            #  "############",
+            #  "############",
+            #  ))
         self.ship = pygame.Surface(self.ship_size, SRCALPHA)
         # self.ship.fill([50, 50, 50])  # FIXME: Remove after tests
         pygame.draw.polygon(self.ship, (200, 200, 200),
@@ -212,22 +222,142 @@ class Missile:
 
 
 class Monster:
-    def __init__(self, screen, type, position):
+    def __init__(self, screen, aspect, position):
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
-        self.type = type
         self.position = position
-        self.size = [31, 31]
+        aliens = []
+        # Octopus (Large Invader)
+        aliens.append(((
+            "    ####    ",
+            " ########## ",
+            "############",
+            "###  ##  ###",
+            "############",
+            "   ##  ##   ",
+            "  ## ## ##  ",
+            "##        ##",
+            ),(
+            "    ####    ",
+            " ########## ",
+            "############",
+            "###  ##  ###",
+            "############",
+            "  ###  ###  ",
+            " ##  ##  ## ",
+            "  ##    ##  ",
+            )))
+        # Crab (Medium Invader)
+        aliens.append(((
+            "  #      #  ",
+            "   #    #   ",
+            "  ########  ",
+            " ## #### ## ",
+            "############",
+            "# ######## #",
+            "# #      # #",
+            "   ##  ##   ",
+            ),(
+            "  #      #  ",
+            "#  #    #  #",
+            "# ######## #",
+            "### #### ###",
+            "############",
+            " ########## ",
+            "  #      #  ",
+            " #        # ",
+            )))
+        # Cuttlefish
+        aliens.append(((
+            "    ####    ",
+            "   ######   ",
+            "  ## ## ##  ",
+            "  ########  ",
+            "   ##  ##   ",
+            "    ####    ",
+            "   #    #   ",
+            "    #  #    ",
+            ), (
+            "    ####    ",
+            "   ######   ",
+            "  ## ## ##  ",
+            "  ########  ",
+            "   ##  ##   ",
+            "    ####    ",
+            "   #    #   ",
+            "    #  #    ",
+            )))
+        # Cuttlefish
+        aliens.append(((
+            "    ####    ",
+            "   ######   ",
+            "  ## ## ##  ",
+            "  ########  ",
+            "   ##  ##   ",
+            "    ####    ",
+            "   #    #   ",
+            "    #  #    ",
+            ), (
+            "    ####    ",
+            "   ######   ",
+            "  ## ## ##  ",
+            "  ########  ",
+            "   ##  ##   ",
+            "    ####    ",
+            "   #    #   ",
+            "    #  #    ",
+            )))
+        # Cuttlefish
+        aliens.append(((
+            "    ####    ",
+            "   ######   ",
+            "  ## ## ##  ",
+            "  ########  ",
+            "   ##  ##   ",
+            "    ####    ",
+            "   #    #   ",
+            "    #  #    ",
+            ), (
+            "    ####    ",
+            "   ######   ",
+            "  ## ## ##  ",
+            "  ########  ",
+            "   ##  ##   ",
+            "    ####    ",
+            "   #    #   ",
+            "    #  #    ",
+            )))
+        self.alien = aliens[aspect]
+        self.size = [48, 32]
         self.shape = pygame.Surface(self.size, SRCALPHA)
-        self.shape.fill([30 * self.type, 50, 50])  # FIXME: Remove after tests
-        pygame.draw.rect(self.shape, (200, 200, 200),
-                         (0, 0, self.size[0], self.size[1]), 1)
+        self.caray = 0
+        self.timer = Timer(500)
+        self.__draw()
         self.update()
 
+    def __draw(self):
+        x = y = 0
+        p = 4
+        self.color = (200, 200, 200)
+        self.shape.fill([0, 0, 0])
+        for row in self.alien[self.caray]:
+            for col in row:
+                if col == "#":
+                    pygame.draw.rect(self.shape, self.color, (x, y, p, p))
+                x += p
+            y += p
+            x = 0
+        self.caray = (self.caray + 1) % 2
+
     def update(self):
+        if self.timer.check():
+            self.__draw()
         self.rect = self.shape.get_rect().move(self.position)
         self.screen.blit(self.shape, self.position)
+
+    def aspect(self, alien):
+        self.alien = self.aliens[alien]
 
     def get_rect(self):
         return self.rect
