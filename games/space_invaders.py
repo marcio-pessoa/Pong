@@ -33,7 +33,7 @@ class SpaceInvaders:
         self.pad_acceleration = 1
         self.court_side = 1
         self.ship = Ship(self.space)
-        self.shoot_timer = Timer(200)
+        self.shoot_timer = Timer(50)
         self.aliens = set()
         self.reset()
 
@@ -130,7 +130,7 @@ class SpaceInvaders:
         if not self.shoot_timer.check():
             return
         # Limit burst size
-        if len(self.burst) >= 2:
+        if len(self.burst) >= 1:
             return
         # Shoot!
         shoot = Missile(self.space,
@@ -262,7 +262,6 @@ class Monster:
 
     def sprite(self, monster):
         aliens = []
-        # Octopus (Large Invader)
         aliens.append(((
             "    ####    ",
             " ########## ",
@@ -282,7 +281,6 @@ class Monster:
             " ##  ##  ## ",
             "  ##    ##  ",
             )))
-        # Crab (Medium Invader)
         aliens.append(((
             "  #      #  ",
             "   #    #   ",
@@ -302,7 +300,6 @@ class Monster:
             "  #      #  ",
             " #        # ",
             )))
-        # Crab (Medium Invader)
         aliens.append(((
             "    ####    ",
             " ########## ",
@@ -322,7 +319,6 @@ class Monster:
             "  #      #  ",
             "   #    #   ",
             )))
-        # Cuttlefish
         aliens.append(((
             "  #      #  ",
             "   #    #   ",
@@ -342,7 +338,6 @@ class Monster:
             " # #    # # ",
             "##        ##",
             )))
-        # Cuttlefish
         aliens.append(((
             "    #  #    ",
             "   ######  #",
