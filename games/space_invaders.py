@@ -47,7 +47,9 @@ class SpaceInvaders:
     def reset(self):
         self.lives = 3
         self.burst = set()
+        self.walls = set()
         self.ship.reset()
+        self.walls_deploy()
         self.aliens_deploy()
 
     def run(self):
@@ -56,6 +58,7 @@ class SpaceInvaders:
         # Draw objects (ship, rocks, missiles, etc...)
         self.ship.update()
         self.burst_update()
+        self.walls_update()
         self.aliens_update()
         self.check_collision()
         self.aliens_check()
@@ -85,7 +88,7 @@ class SpaceInvaders:
                 break
 
     def aliens_deploy(self):
-        formation = (6, 5)
+        formation = (8, 7)
         for y in range(formation[1]):
             for x in range(formation[0]):
                 monster = Monster(self.space, y,
@@ -94,7 +97,8 @@ class SpaceInvaders:
                                    (self.space.get_size()[0] /
                                     formation[0]) / 3,
                                    ((self.space.get_size()[1] - 100) /
-                                    formation[1]) * y + 30))
+                                    formation[1]) * y + 30),
+                                  [200, 200, 200])
                 self.aliens.add(monster)
 
     def aliens_update(self):
@@ -105,6 +109,17 @@ class SpaceInvaders:
     def aliens_check(self):
         if len(self.aliens) == 0:
             self.reset()
+
+    def walls_deploy(self):
+        quantity = 4
+        for i in range(quantity):
+            position = (self.screen.get_size()[0] / quantity * i + (self.screen.get_size()[0] / quantity / 2 - 24), 400)
+            barrier = Barrier(self.space, position)
+            self.walls.add(barrier)
+
+    def walls_update(self):
+        for i in self.walls:
+            i.update()
 
     def stop(self):
         pygame.event.clear()
@@ -140,37 +155,36 @@ class Ship:
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
-        self.ship_size = [31, 31]
+        self.size = [48, 32]
+        self.color = (210, 210, 210)
+        sprite = (
+            "            ",
+            "     ##     ",
+            "    ####    ",
+            "   ######   ",
+            " ########## ",
+            "  ########  ",
+            " ########## ",
+            "############",
+            )
         self.move_increment = 5
         self.reset()
-        #  alien.add((
-            #  "     ##     ",
-            #  "    ####    ",
-            #  "    ####    ",
-            #  "    ####    ",
-            #  " ########## ",
-            #  "############",
-            #  "############",
-            #  "############",
-            #  ))
-        self.ship = pygame.Surface(self.ship_size, SRCALPHA)
-        # self.ship.fill([50, 50, 50])  # FIXME: Remove after tests
-        pygame.draw.polygon(self.ship, (200, 200, 200),
-                            [(0, 30), (15, 0), (30, 30), (15, 23)], 0)
-        self.radius = self.ship.get_rect().center[0]
+        self.shape = pygame.Surface( self.size, SRCALPHA)
+        draw(self.shape, sprite, self.color, 4)
+        self.radius = self.shape.get_rect().center[0]
         self.update()
 
     def reset(self):
         self.position = [self.screen_size[0] / 2,
-                         self.screen_size[1] - self.ship_size[1]]
+                         self.screen_size[1] -  self.size[1]]
 
     def update(self):
         if self.position[0] < 0:
             self.position[0] = 0
-        if self.position[0] + self.ship_size[0] > self.screen.get_size()[0]:
-            self.position[0] = self.screen.get_size()[0] - self.ship_size[0]
-        self.rect = self.ship.get_rect().move(self.position)
-        self.screen.blit(self.ship, self.position)
+        if self.position[0] +  self.size[0] > self.screen.get_size()[0]:
+            self.position[0] = self.screen.get_size()[0] -  self.size[0]
+        self.rect = self.shape.get_rect().move(self.position)
+        self.screen.blit(self.shape, self.position)
 
     def move_right(self):
         self.position[0] += self.move_increment
@@ -195,38 +209,58 @@ class Missile:
                             self.screen.get_size()[1]]
         self.out = False
         self.speed = 5
-        self.radius = 3
-        size = [self.radius * 2, self.radius * 2]
-        position = [self.radius, self.radius]
-        self.missile = pygame.Surface(size, SRCALPHA)
-        pygame.draw.circle(self.missile, (210, 210, 210), position, self.radius)
-        self.position = [ship_position[0] + ship_radius - self.radius,
-                         ship_position[1] + self.radius]
+        # self.radius = 3
+        self.size = [8, 16]
+        self.color = (250, 250, 250)
+        sprite = (
+            "##",
+            "##",
+            "##",
+            "##",
+            )
+        # size = [self.radius * 2, self.radius * 2]
+        position = ship_position
+        self.shape = pygame.Surface(self.size, SRCALPHA)
+        draw(self.shape, sprite, self.color, 4)
+        # pygame.draw.circle(self.shape, (210, 210, 210), position, self.radius)
+        self.position = [ship_position[0] + ship_radius - self.size[0] / 2,
+                         ship_position[1] + self.size[1] / 2]
         self.update()
 
     def update(self):
         self.position[1] = self.position[1] - self.speed
         if self.position[1] < 0:
             self.out = True
-        self.rect = self.missile.get_rect().move(self.position)
-        self.screen.blit(self.missile, self.position)
+        self.rect = self.shape.get_rect().move(self.position)
+        self.screen.blit(self.shape, self.position)
 
     def is_out(self):
         return self.out
 
-    def get_radius(self):
-        return self.radius
+    # def get_radius(self):
+        # return self.radius
 
     def get_rect(self):
         return self.rect
 
 
 class Monster:
-    def __init__(self, screen, aspect, position):
+    def __init__(self, screen, aspect, position, color):
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
+        self.aspect = aspect % 5
         self.position = position
+        self.alien = self.sprite(self.aspect)
+        self.size = [48, 32]
+        self.color = color
+        self.shape = pygame.Surface(self.size, SRCALPHA)
+        self.caray = 0
+        self.timer = Timer(500)
+        draw(self.shape, self.alien[0], self.color, 4)
+        self.update()
+
+    def sprite(self, monster):
         aliens = []
         # Octopus (Large Invader)
         aliens.append(((
@@ -238,7 +272,7 @@ class Monster:
             "   ##  ##   ",
             "  ## ## ##  ",
             "##        ##",
-            ),(
+            ), (
             "    ####    ",
             " ########## ",
             "############",
@@ -258,7 +292,7 @@ class Monster:
             "# ######## #",
             "# #      # #",
             "   ##  ##   ",
-            ),(
+            ), (
             "  #      #  ",
             "#  #    #  #",
             "# ######## #",
@@ -270,89 +304,70 @@ class Monster:
             )))
         # Crab (Medium Invader)
         aliens.append(((
+            "    ####    ",
+            " ########## ",
+            "############",
+            "#   ####   #",
+            "############",
+            "   #    #   ",
+            "  # #### #  ",
+            " #        # ",
+            ), (
+            "    ####    ",
+            " ########## ",
+            "############",
+            "#   ####   #",
+            "############",
+            "   # ## #   ",
+            "  #      #  ",
+            "   #    #   ",
+            )))
+        # Cuttlefish
+        aliens.append(((
             "  #      #  ",
             "   #    #   ",
             "  ########  ",
             " ## #### ## ",
-            "############",
+            "### #### ###",
             "# ######## #",
             "# #      # #",
-            "   ##  ##   ",
-            ),(
+            "  ##    ##  ",
+            ), (
             "  #      #  ",
             "#  #    #  #",
             "# ######## #",
             "### #### ###",
-            "############",
+            "### #### ###",
             " ########## ",
-            "  #      #  ",
-            " #        # ",
+            " # #    # # ",
+            "##        ##",
             )))
         # Cuttlefish
         aliens.append(((
-            "    ####    ",
-            "   ######   ",
-            "  ## ## ##  ",
-            "  ########  ",
-            "   ##  ##   ",
-            "    ####    ",
-            "   #    #   ",
             "    #  #    ",
+            "   ######  #",
+            "  ## ## ## #",
+            "#### ## ####",
+            "# ########  ",
+            "# ########  ",
+            "   #    #   ",
+            "  ##    #   ",
             ), (
-            "    ####    ",
-            "   ######   ",
-            "  ## ## ##  ",
-            "  ########  ",
-            "   ##  ##   ",
-            "    ####    ",
-            "   #    #   ",
             "    #  #    ",
-            )))
-        # Cuttlefish
-        aliens.append(((
-            "            ",
-            "            ",
-            " # ### #    ",
-            " #######    ",
-            "# #   # #   ",
-            "#  ###  #   ",
-            " # ### #    ",
-            " #     #    ",
-            ), (
-            "    ####    ",
-            "   ######   ",
-            "  ## ## ##  ",
-            "  ########  ",
-            "   ##  ##   ",
-            "    ####    ",
+            "#  ######   ",
+            "# ## ## ##  ",
+            "#### ## ####",
+            "  ######## #",
+            "  ######## #",
             "   #    #   ",
-            "    #  #    ",
+            "   #    ##  ",
             )))
-        self.alien = aliens[aspect]
-        self.size = [48, 32]
-        self.shape = pygame.Surface(self.size, SRCALPHA)
-        self.caray = 0
-        self.timer = Timer(500)
-        self.__draw()
-        self.update()
-
-    def __draw(self):
-        x = y = 0
-        p = 4
-        self.color = (200, 200, 200)
-        self.shape.fill([0, 0, 0])
-        for row in self.alien[self.caray]:
-            for col in row:
-                if col == "#":
-                    pygame.draw.rect(self.shape, self.color, (x, y, p, p))
-                x += p
-            y += p
-            x = 0
-        self.caray = (self.caray + 1) % 2
+        return aliens[monster]
 
     def update(self):
         if self.timer.check():
-            self.__draw()
+            draw(self.shape, self.alien[self.caray], self.color, 4)
+            self.caray = (self.caray + 1) % 2
         self.rect = self.shape.get_rect().move(self.position)
         self.screen.blit(self.shape, self.position)
 
@@ -365,17 +380,43 @@ class Monster:
 
 class Barrier:
 
-    def __init__(self, screen):
+    def __init__(self, screen, position):
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
-        position = []
-        self.barrier = pygame.Surface(size, SRCALPHA)
+        self.position = position
+        self.size = [48, 32]
+        self.color = (210, 210, 210)
+        sprite = (
+            "   ######   ",
+            " ########## ",
+            "############",
+            "############",
+            "############",
+            "############",
+            "############",
+            "############",
+            )
+        self.shape = pygame.Surface(self.size, SRCALPHA)
+        draw(self.shape, sprite, self.color, 4)
         self.update()
 
     def update(self):
-        self.rect = self.barrier.get_rect()
-        self.screen.blit(self.barrier, self.position)
+        self.rect = self.shape.get_rect()
+        self.screen.blit(self.shape, self.position)
 
     def get_rect(self):
         return self.rect
+
+
+def draw(shape, sprite, color, zoom):
+    x = y = 0
+    z = zoom
+    shape.fill((0, 0, 0))
+    for row in sprite:
+        for col in row:
+            if col == "#":
+                pygame.draw.rect(shape, color, (x, y, z, z))
+            x += z
+        y += z
+        x = 0
