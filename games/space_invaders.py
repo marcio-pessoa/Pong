@@ -34,6 +34,7 @@ class SpaceInvaders:
         self.court_side = 1
         self.ship = Ship(self.space)
         self.shoot_timer = Timer(50)
+        self.march_timer = Timer(500)
         self.aliens = set()
         self.reset()
 
@@ -88,22 +89,25 @@ class SpaceInvaders:
                 break
 
     def aliens_deploy(self):
-        formation = (8, 7)
+        formation = (8, 6)
         for y in range(formation[1]):
             for x in range(formation[0]):
                 monster = Monster(self.space, y,
-                                  ((self.space.get_size()[0] /
+                                  [(self.space.get_size()[0] /
                                     formation[0]) * x +
                                    (self.space.get_size()[0] /
                                     formation[0]) / 3,
-                                   ((self.space.get_size()[1] - 100) /
-                                    formation[1]) * y + 30),
+                                   ((self.space.get_size()[1] /
+                                    (formation[1] + 3) * y)) + 30],
                                   [200, 200, 200])
                 self.aliens.add(monster)
 
     def aliens_update(self):
         # Update position
         for i in self.aliens:
+            if self.march_timer.check():
+                way = True
+                i.march(way)
             i.update()
 
     def aliens_check(self):
@@ -113,7 +117,8 @@ class SpaceInvaders:
     def walls_deploy(self):
         quantity = 4
         for i in range(quantity):
-            position = (self.screen.get_size()[0] / quantity * i + (self.screen.get_size()[0] / quantity / 2 - 24), 400)
+            position = (self.screen.get_size()[0] / quantity * i +
+                        (self.screen.get_size()[0] / quantity / 2 - 24), 400)
             barrier = Barrier(self.space, position)
             self.walls.add(barrier)
 
@@ -156,7 +161,7 @@ class Ship:
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
         self.size = [48, 32]
-        self.color = (210, 210, 210)
+        self.color = (180, 180, 240)
         sprite = (
             "            ",
             "     ##     ",
@@ -169,20 +174,20 @@ class Ship:
             )
         self.move_increment = 5
         self.reset()
-        self.shape = pygame.Surface( self.size, SRCALPHA)
+        self.shape = pygame.Surface(self.size, SRCALPHA)
         draw(self.shape, sprite, self.color, 4)
         self.radius = self.shape.get_rect().center[0]
         self.update()
 
     def reset(self):
         self.position = [self.screen_size[0] / 2,
-                         self.screen_size[1] -  self.size[1]]
+                         self.screen_size[1] - self.size[1]]
 
     def update(self):
         if self.position[0] < 0:
             self.position[0] = 0
-        if self.position[0] +  self.size[0] > self.screen.get_size()[0]:
-            self.position[0] = self.screen.get_size()[0] -  self.size[0]
+        if self.position[0] + self.size[0] > self.screen.get_size()[0]:
+            self.position[0] = self.screen.get_size()[0] - self.size[0]
         self.rect = self.shape.get_rect().move(self.position)
         self.screen.blit(self.shape, self.position)
 
@@ -256,7 +261,6 @@ class Monster:
         self.color = color
         self.shape = pygame.Surface(self.size, SRCALPHA)
         self.caray = 0
-        self.timer = Timer(500)
         draw(self.shape, self.alien[0], self.color, 4)
         self.update()
 
@@ -360,14 +364,11 @@ class Monster:
         return aliens[monster]
 
     def update(self):
-        if self.timer.check():
+        if True:
             draw(self.shape, self.alien[self.caray], self.color, 4)
             self.caray = (self.caray + 1) % 2
         self.rect = self.shape.get_rect().move(self.position)
         self.screen.blit(self.shape, self.position)
-
-    def aspect(self, alien):
-        self.alien = self.aliens[alien]
 
     def get_rect(self):
         return self.rect
