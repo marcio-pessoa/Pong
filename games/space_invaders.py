@@ -34,8 +34,8 @@ class SpaceInvaders:
         self.court_side = 1
         self.ship = Ship(self.space)
         self.shoot_timer = Timer(50)
-        self.march_timer = Timer(500)
-        self.aliens = set()
+        self.march_period = 500
+        self.march_timer = Timer(self.march_period)
         self.reset()
 
     def size_reset(self):
@@ -49,9 +49,15 @@ class SpaceInvaders:
         self.lives = 3
         self.burst = set()
         self.walls = set()
+        self.aliens = set()
+        self.explosions = set()
+        self.way = True
+        self.drop = False
         self.ship.reset()
         self.walls_deploy()
         self.aliens_deploy()
+        self.march_period = 500
+        self.march_timer.set(self.march_period)
 
     def run(self):
         # Draw Space
@@ -61,6 +67,7 @@ class SpaceInvaders:
         self.burst_update()
         self.walls_update()
         self.aliens_update()
+        self.explosions_update()
         self.check_collision()
         self.aliens_check()
         if not self.lives:
@@ -70,13 +77,40 @@ class SpaceInvaders:
         return False
 
     def check_collision(self):
-        # Missle againt alien
+        # Missle againt Alien
         for i in self.aliens:
             for j in self.burst:
                 if i.get_rect().colliderect(j.get_rect()):
+                    position = i.get_position()
+                    explosion = Explosion(self.space, position)
+                    self.explosions.add(explosion)
                     self.aliens.remove(i)
                     self.burst.remove(j)
                     return
+        # Alien againt Wall
+        for i in self.aliens:
+            for j in self.walls:
+                if i.get_rect().colliderect(j.get_rect()):
+                    position = i.get_position()
+                    explosion = Explosion(self.space, position)
+                    self.explosions.add(explosion)
+                    position = j.get_position()
+                    explosion = Explosion(self.space, position)
+                    self.explosions.add(explosion)
+                    self.aliens.remove(i)
+                    self.walls.remove(j)
+                    return
+        # Ship againt Alien
+        for i in self.aliens:
+            if i.get_rect().colliderect(self.ship.get_rect()):
+                position = i.get_position()
+                explosion = Explosion(self.space, position)
+                self.explosions.add(explosion)
+                position = self.ship.get_position()
+                explosion = Explosion(self.space, position)
+                self.explosions.add(explosion)
+                self.aliens.remove(i)
+                return
 
     def burst_update(self):
         # Update position
@@ -103,11 +137,23 @@ class SpaceInvaders:
                 self.aliens.add(monster)
 
     def aliens_update(self):
-        # Update position
+        if self.march_timer.check():
+            for i in self.aliens:
+                if not self.space.get_rect().contains(i.get_rect()):
+                    self.way = not self.way
+                    if self.way:
+                        self.drop = True
+                        self.march_period /= 1.5
+                        self.march_timer.set(self.march_period)
+                    break
+            for i in self.aliens:
+                i.march(self.way, self.drop)
+            self.drop = False
+        # for i in self.aliens:
+            # if not self.space.get_rect().contains(i.get_rect()):
+                # self.aliens.remove(i)
+                # break
         for i in self.aliens:
-            if self.march_timer.check():
-                way = True
-                i.march(way)
             i.update()
 
     def aliens_check(self):
@@ -125,6 +171,13 @@ class SpaceInvaders:
     def walls_update(self):
         for i in self.walls:
             i.update()
+
+    def explosions_update(self):
+        for i in self.explosions:
+            i.update()
+            if i.is_done():
+                self.explosions.remove(i)
+                return
 
     def stop(self):
         pygame.event.clear()
@@ -258,11 +311,21 @@ class Monster:
         self.position = position
         self.alien = self.sprite(self.aspect)
         self.size = [48, 32]
-        self.color = color
+        self.color = self.color(aspect % 5)
         self.shape = pygame.Surface(self.size, SRCALPHA)
         self.caray = 0
         draw(self.shape, self.alien[0], self.color, 4)
         self.update()
+
+    def color(self, monster):
+        aliens = []
+        aliens.append((150, 200, 100))
+        aliens.append((200, 200, 100))
+        aliens.append((100, 200, 200))
+        aliens.append((100, 100, 200))
+        aliens.append((100, 100, 200))
+        return aliens[monster]
+
 
     def sprite(self, monster):
         aliens = []
@@ -364,11 +427,24 @@ class Monster:
         return aliens[monster]
 
     def update(self):
-        if True:
-            draw(self.shape, self.alien[self.caray], self.color, 4)
-            self.caray = (self.caray + 1) % 2
         self.rect = self.shape.get_rect().move(self.position)
         self.screen.blit(self.shape, self.position)
+
+    def march(self, way, drop):
+        # Position
+        if way:
+            increment = 1
+        else:
+            increment = -1
+        self.position[0] += increment * 4
+        if drop:
+            self.position[1] += increment * 16
+        # Look
+        draw(self.shape, self.alien[self.caray], self.color, 4)
+        self.caray = (self.caray + 1) % 2
+
+    def get_position(self):
+        return self.position
 
     def get_rect(self):
         return self.rect
@@ -398,11 +474,133 @@ class Barrier:
         self.update()
 
     def update(self):
-        self.rect = self.shape.get_rect()
+        self.rect = self.shape.get_rect().move(self.position)
         self.screen.blit(self.shape, self.position)
+
+    def get_position(self):
+        return self.position
 
     def get_rect(self):
         return self.rect
+
+
+class Explosion:
+
+    def __init__(self, screen, position):
+        self.screen = screen
+        self.position = position
+        self.update_timer = Timer(50)
+        self.done = False
+        self.sprites = ((
+            "     ##     ",
+            "   ######   ",
+            " ########## ",
+            "############",
+            "############",
+            " ########## ",
+            "   ######   ",
+            "     ##     ",
+            ), (
+            "            ",
+            "     ##     ",
+            "   ######   ",
+            " ########## ",
+            " ########## ",
+            "   ######   ",
+            "     ##     ",
+            "            ",
+            ), (
+            "            ",
+            "            ",
+            "     ##     ",
+            "   ######   ",
+            "   ######   ",
+            "     ##     ",
+            "            ",
+            "            ",
+            ), (
+            "            ",
+            "            ",
+            "            ",
+            "     ##     ",
+            "     ##     ",
+            "            ",
+            "            ",
+            "            ",
+            ), (
+            "            ",
+            "            ",
+            "    #  #    ",
+            "     ##     ",
+            "     ##     ",
+            "    #  #    ",
+            "            ",
+            "            ",
+            ), (
+            "            ",
+            "   #    #   ",
+            "    #  #    ",
+            "     ##     ",
+            "     ##     ",
+            "    #  #    ",
+            "   #    #   ",
+            "            ",
+            ), (
+            "  #      #  ",
+            "   #    #   ",
+            "    #  #    ",
+            "     ##     ",
+            "     ##     ",
+            "    #  #    ",
+            "   #    #   ",
+            "  #      #  ",
+            ), (
+            "  #      #  ",
+            "   #    #   ",
+            "    #  #  # ",
+            "            ",
+            " #          ",
+            "    #  #    ",
+            "   #    #   ",
+            "  #      #  ",
+            ), (
+            "  #      #  ",
+            "   #    #   ",
+            "            ",
+            "            ",
+            "            ",
+            "            ",
+            "   #    #   ",
+            "  #      #  ",
+            ), (
+            "  #      #  ",
+            "            ",
+            "            ",
+            "            ",
+            "            ",
+            "            ",
+            "            ",
+            "  #      #  ",
+            ))
+        self.frame = 0
+        self.size = [48, 32]
+        self.color = (255, 150, 150)
+        self.shape = pygame.Surface(self.size, SRCALPHA)
+        self.sprite = self.sprites[self.frame]
+        self.update()
+
+    def update(self):
+        if self.update_timer.check():
+            self.frame += 1
+            if self.frame >= len(self.sprites):
+                self.done = True
+                return
+            self.sprite = self.sprites[self.frame]
+        draw(self.shape, self.sprite, self.color, 4)
+        self.screen.blit(self.shape, self.position)
+
+    def is_done(self):
+        return self.done
 
 
 def draw(shape, sprite, color, zoom):
