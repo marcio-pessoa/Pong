@@ -149,10 +149,10 @@ class SpaceInvaders:
             for i in self.aliens:
                 i.march(self.way, self.drop)
             self.drop = False
-        # for i in self.aliens:
-            # if not self.space.get_rect().contains(i.get_rect()):
-                # self.aliens.remove(i)
-                # break
+            # for i in self.aliens:
+                # if not self.space.get_rect().contains(i.get_rect()):
+                    # self.aliens.remove(i)
+                    # break
         for i in self.aliens:
             i.update()
 
@@ -322,10 +322,9 @@ class Monster:
         aliens.append((150, 200, 100))
         aliens.append((200, 200, 100))
         aliens.append((100, 200, 200))
-        aliens.append((100, 100, 200))
+        aliens.append((200, 100, 200))
         aliens.append((100, 100, 200))
         return aliens[monster]
-
 
     def sprite(self, monster):
         aliens = []
@@ -458,7 +457,7 @@ class Barrier:
                             self.screen.get_size()[1]]
         self.position = position
         self.size = [48, 32]
-        self.color = (210, 210, 210)
+        self.color = (139, 105, 20)
         sprite = (
             "   ######   ",
             " ########## ",
