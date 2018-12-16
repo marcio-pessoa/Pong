@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-run.py
-
-Copyright (c) 2014-2018 Márcio Pessoa
-
-Author: Marcio Pessoa <marcio.pessoa@gmail.com>
-Contributors: none
-
-Change log: Check CHANGELOG.md file.
-
+---
+name: marcade.py
+description: Invasion package file
+copyright: 2014-2018 Márcio Pessoa
+people:
+  developers:
+  - name: Marcio Pessoa
+    email: marcio.pessoa@gmail.com
+change-log: Check CHANGELOG.md file.
 """
 
 try:
@@ -39,11 +39,11 @@ class UserArgumentParser():
         self.program_website = "https://github.com/marcio-pessoa/marcade"
         self.program_contact = "Marcio Pessoa <marcio.pessoa@gmail.com>"
         self.window_title = self.program_description
-        self.available_games = ["asteroids", "sinvaders", "pong"]
+        self.available_games = ["asteroids", "invasion", "pong"]
         header = ('marcade <game> [<args>]\n\n' +
                   'Games:\n' +
                   '  asteroids      amazing Asteroids space\n' +
-                  '  sinvaders      momorable Space Invaders\n' +
+                  '  invasion       based on memorable Space Invaders\n' +
                   '  pong           classical Pong\n\n')
         footer = (self.program_copyright + '\n' +
                   'License: ' + self.program_license + '\n' +
@@ -61,7 +61,7 @@ class UserArgumentParser():
             epilog=epilog,
             add_help=True,
             usage=header)
-        parser.add_argument('command', help='command to run')
+        parser.add_argument('game', help='game to run')
         parser.add_argument('-V', '--version', action='version',
                             version=self.version,
                             help='show version information and exit')
@@ -69,11 +69,11 @@ class UserArgumentParser():
             # Select a random game
             eval("self." + str(random.choice(self.available_games)) + "()")
         args = parser.parse_args(sys.argv[1:2])
-        if not hasattr(self, args.command):
+        if not hasattr(self, args.game):
             print('Unrecognized command')
             parser.print_help()
             sys.exit(True)
-        getattr(self, args.command)()
+        getattr(self, args.game)()
 
     def __screen_start(self):
         self.running = True
@@ -153,15 +153,15 @@ class UserArgumentParser():
         self.__run()
         sys.exit(False)
 
-    def sinvaders(self):
-        from games.space_invaders import SpaceInvaders
+    def invasion(self):
+        from games.invasion import Invasion
         parser = argparse.ArgumentParser(
-            prog=self.program_name + ' sinvaders',
-            description='momorable Space Invaders')
+            prog=self.program_name + ' invasion',
+            description='based on Space Invaders')
         args = parser.parse_args(sys.argv[2:])
-        self.window_title = 'Space Invaders'
+        self.window_title = 'Invasion'
         self.__screen_start()
-        self.game = SpaceInvaders(self.screen)
+        self.game = Invasion(self.screen)
         self.__run()
         sys.exit(False)
 

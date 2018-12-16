@@ -1,15 +1,25 @@
 """
-space_invaders.py
-
-Description: Space Invaders package file
-
-Author: Marcio Pessoa <marcio.pessoa@gmail.com>
-Contributors: none
-
-Change log:
-2018-11-25
-        * Version: 0.00
-        * Added: Starting a new game.
+---
+name: invasion.py
+description: Invasion package file
+contributors:
+  developers:
+  - name: Marcio Pessoa
+    email: marcio.pessoa@gmail.com
+  designers:
+  - name: Nicolas Masaishi Oi Pessoa
+    email: masaishi.pessoa@gmail.com
+  - name: Gustavo Nuzzo Gass
+    email: gustavonuzzogass@gmail.com
+  beta-testers:
+  - name: Gustavo Nuzzo Gass
+    email: gustavonuzzogass@gmail.com
+  - name: Nicolas Masaishi Oi Pessoa
+    email: masaishi.pessoa@gmail.com
+change-log:
+  2018-12-dd:
+  - version: 0.00
+    Added: Starting a new game.
 """
 
 import math
@@ -19,7 +29,7 @@ import random
 from tools.timer import Timer
 
 
-class SpaceInvaders:
+class Invasion:
 
     def __init__(self, screen):
         self.version = '0.00'
@@ -34,8 +44,7 @@ class SpaceInvaders:
         self.court_side = 1
         self.ship = Ship(self.space)
         self.shoot_timer = Timer(50)
-        self.march_period = 500
-        self.march_timer = Timer(self.march_period)
+        self.march_timer = Timer(1)
         self.reset()
 
     def size_reset(self):
@@ -45,36 +54,45 @@ class SpaceInvaders:
         self.size_set()
         self.ship.screen_reset()
 
-    def reset(self):
-        self.lives = 3
+    def set(self):
         self.burst = set()
         self.walls = set()
         self.aliens = set()
         self.explosions = set()
+        self.march_period = self.start_march_period
+        self.march_timer.set(self.march_period)
         self.way = True
         self.drop = False
         self.ship.reset()
         self.walls_deploy()
         self.aliens_deploy()
-        self.march_period = 500
-        self.march_timer.set(self.march_period)
+        print "Level: " + str(self.level) + ", Start March Period: " + str(self.start_march_period)
+
+    def reset(self):
+        self.level = 1
+        self.lives = 3
+        self.start_march_period = 600
+        self.set()
 
     def run(self):
         # Draw Space
         self.space.fill([0, 0, 0])  # Black
         # Draw objects (ship, rocks, missiles, etc...)
-        self.ship.update()
         self.burst_update()
         self.walls_update()
         self.aliens_update()
+        self.ship.update()
         self.explosions_update()
         self.check_collision()
         self.aliens_check()
-        if not self.lives:
-            self.reset()
+        self.lives_check()
         # Join everything
         self.screen.blit(self.space, [0, 0])
         return False
+
+    def lives_check(self):
+        if self.lives == 0:
+            self.game_over()
 
     def check_collision(self):
         # Missle againt Alien
@@ -110,6 +128,15 @@ class SpaceInvaders:
                 explosion = Explosion(self.space, position)
                 self.explosions.add(explosion)
                 self.aliens.remove(i)
+                self.lives -= 1
+                return
+        # Ship againt Missle
+        for i in self.burst:
+            if i.get_rect().colliderect(self.ship.get_rect()):
+                position = self.ship.get_position()
+                explosion = Explosion(self.space, position)
+                self.explosions.add(explosion)
+                self.lives -= 1
                 return
 
     def burst_update(self):
@@ -138,6 +165,7 @@ class SpaceInvaders:
 
     def aliens_update(self):
         if self.march_timer.check():
+            # Aliens lateral boundaries
             for i in self.aliens:
                 if not self.space.get_rect().contains(i.get_rect()):
                     self.way = not self.way
@@ -146,19 +174,36 @@ class SpaceInvaders:
                         self.march_period /= 1.5
                         self.march_timer.set(self.march_period)
                     break
+            # Aliens fall down
             for i in self.aliens:
                 i.march(self.way, self.drop)
             self.drop = False
-            # for i in self.aliens:
-                # if not self.space.get_rect().contains(i.get_rect()):
-                    # self.aliens.remove(i)
-                    # break
+        # Aliens landing
+        for i in self.aliens:
+            if i.get_position()[1] + i.get_size()[1] >= self.screen_size[1]:
+                self.game_over()
+                break
+        # Update
         for i in self.aliens:
             i.update()
 
+    def game_over(self):
+        self.ship.stop()
+        for i in self.aliens:
+            i.stop()
+        for i in self.burst:
+            i.stop()
+        echo(self.space, "GAME OVER")
+
     def aliens_check(self):
         if len(self.aliens) == 0:
-            self.reset()
+            self.level_up()
+
+    def level_up(self):
+        self.level += 1
+        self.start_march_period -= self.start_march_period * self.level / 20
+        echo(self.space, "LEVEL " + str(self.level))
+        self.set()
 
     def walls_deploy(self):
         quantity = 4
@@ -183,7 +228,7 @@ class SpaceInvaders:
         pygame.event.clear()
         self.running = False
 
-    def shoot(self):
+    def ship_shoot(self):
         # Timer
         if not self.shoot_timer.check():
             return
@@ -192,7 +237,7 @@ class SpaceInvaders:
             return
         # Shoot!
         shoot = Missile(self.space,
-                        self.ship.get_position(), self.ship.get_radius())
+                        self.ship.get_position(), self.ship.get_radius(), 5)
         self.burst.add(shoot)
 
     def control(self, keys):
@@ -204,7 +249,7 @@ class SpaceInvaders:
             self.ship.move_left()
         if K_SPACE in keys or \
            K_a in keys:
-            self.shoot()
+            self.ship_shoot()
 
 
 class Ship:
@@ -215,6 +260,7 @@ class Ship:
                             self.screen.get_size()[1]]
         self.size = [48, 32]
         self.color = (180, 180, 240)
+        self.enable = True
         sprite = (
             "            ",
             "     ##     ",
@@ -235,6 +281,7 @@ class Ship:
     def reset(self):
         self.position = [self.screen_size[0] / 2,
                          self.screen_size[1] - self.size[1]]
+        self.start()
 
     def update(self):
         if self.position[0] < 0:
@@ -245,9 +292,13 @@ class Ship:
         self.screen.blit(self.shape, self.position)
 
     def move_right(self):
+        if not self.enable:
+            return
         self.position[0] += self.move_increment
 
     def move_left(self):
+        if not self.enable:
+            return
         self.position[0] -= self.move_increment
 
     def get_rect(self):
@@ -259,15 +310,20 @@ class Ship:
     def get_position(self):
         return self.position
 
+    def start(self):
+        self.enable = True
+
+    def stop(self):
+        self.enable = False
+
 
 class Missile:
-    def __init__(self, screen, ship_position, ship_radius):
+    def __init__(self, screen, ship_position, offset, speed):
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
         self.out = False
-        self.speed = 5
-        # self.radius = 3
+        self.speed = speed
         self.size = [8, 16]
         self.color = (250, 250, 250)
         sprite = (
@@ -276,17 +332,17 @@ class Missile:
             "##",
             "##",
             )
-        # size = [self.radius * 2, self.radius * 2]
         position = ship_position
         self.shape = pygame.Surface(self.size, SRCALPHA)
         draw(self.shape, sprite, self.color, 4)
-        # pygame.draw.circle(self.shape, (210, 210, 210), position, self.radius)
-        self.position = [ship_position[0] + ship_radius - self.size[0] / 2,
-                         ship_position[1] + self.size[1] / 2]
+        self.position = [ship_position[0] + offset - self.size[0] / 2,
+                         ship_position[1] - self.size[1]]
+        self.enable = True
         self.update()
 
     def update(self):
-        self.position[1] = self.position[1] - self.speed
+        if self.enable:
+            self.position[1] = self.position[1] - self.speed
         if self.position[1] < 0:
             self.out = True
         self.rect = self.shape.get_rect().move(self.position)
@@ -295,11 +351,14 @@ class Missile:
     def is_out(self):
         return self.out
 
-    # def get_radius(self):
-        # return self.radius
-
     def get_rect(self):
         return self.rect
+
+    def stop(self):
+        self.enable = False
+
+    def start(self):
+        self.enable = True
 
 
 class Monster:
@@ -307,14 +366,15 @@ class Monster:
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
-        self.aspect = aspect % 5
+        self.aspect = aspect % 6
         self.position = position
         self.alien = self.sprite(self.aspect)
         self.size = [48, 32]
-        self.color = self.color(aspect % 5)
+        self.color = self.color(aspect % 6)
         self.shape = pygame.Surface(self.size, SRCALPHA)
         self.caray = 0
         draw(self.shape, self.alien[0], self.color, 4)
+        self.enable = True
         self.update()
 
     def color(self, monster):
@@ -324,6 +384,7 @@ class Monster:
         aliens.append((100, 200, 200))
         aliens.append((200, 100, 200))
         aliens.append((100, 100, 200))
+        aliens.append((200, 100, 100))
         return aliens[monster]
 
     def sprite(self, monster):
@@ -368,22 +429,79 @@ class Monster:
             )))
         aliens.append(((
             "    ####    ",
-            " ########## ",
-            "############",
-            "#   ####   #",
-            "############",
-            "   #    #   ",
-            "  # #### #  ",
-            " #        # ",
+            "#####  #####",
+            "# ######## #",
+            "#  ######  #",
+            "#  ######   ",
+            "#   ####    ",
+            "    #  #    ",
+            "    #  ##   ",
             ), (
             "    ####    ",
+            "#####  #####",
+            "# ######## #",
+            "#  ######  #",
+            "   ######  #",
+            "    ####   #",
+            "    #  #    ",
+            "   ##  #    ",
+            )))
+        aliens.append(((
+            "   ##  ##   ",
+            "     ##     ",
+            "#### ## ####",
             " ########## ",
-            "############",
-            "#   ####   #",
-            "############",
-            "   # ## #   ",
+            "  ########  ",
+            "   ######   ",
+            "    #  #    ",
+            "    #  #    ",
+            ), (
+            "   ##  ##   ",
+            "     ##     ",
+            "  ## ## ##  ",
+            "  ########  ",
+            "   ######   ",
+            "    ####    ",
+            "    #  #    ",
+            "    #  #    ",
+            )))
+        aliens.append(((
+            "    #  #    ",
+            "   ######  #",
+            "  ## ## ## #",
+            "#### ## ####",
+            "# ########  ",
+            "# ########  ",
+            "   #    #   ",
+            "  ##    #   ",
+            ), (
+            "    #  #    ",
+            "#  ######   ",
+            "# ## ## ##  ",
+            "#### ## ####",
+            "  ######## #",
+            "  ######## #",
+            "   #    #   ",
+            "   #    ##  ",
+            )))
+        aliens.append(((
             "  #      #  ",
             "   #    #   ",
+            "   ######   ",
+            " # ##  ## # ",
+            " ########## ",
+            " #   ##   # ",
+            " #       # #",
+            "# #         ",
+            ), (
+            "  #      #  ",
+            "   #    #   ",
+            "   ######   ",
+            " # ##  ## # ",
+            " ########## ",
+            " #   ##   # ",
+            "# #       # ",
+            "         # #",
             )))
         aliens.append(((
             "  #      #  ",
@@ -405,23 +523,42 @@ class Monster:
             "##        ##",
             )))
         aliens.append(((
-            "    #  #    ",
-            "   ######  #",
-            "  ## ## ## #",
-            "#### ## ####",
-            "# ########  ",
-            "# ########  ",
+            "    ####    ",
+            " ########## ",
+            "############",
+            "#   ####   #",
+            "############",
             "   #    #   ",
-            "  ##    #   ",
+            "  # #### #  ",
+            " #        # ",
             ), (
-            "    #  #    ",
-            "#  ######   ",
-            "# ## ## ##  ",
-            "#### ## ####",
-            "  ######## #",
-            "  ######## #",
+            "    ####    ",
+            " ########## ",
+            "############",
+            "#   ####   #",
+            "############",
+            "   # ## #   ",
+            "  #      #  ",
             "   #    #   ",
-            "   #    ##  ",
+            )))
+        aliens.append(((
+            "            ",
+            "     ###    ",
+            "    #   #   ",
+            "        #   ",
+            "       #    ",
+            "      #     ",
+            "            ",
+            "      #     ",
+            ), (
+            "            ",
+            "     ###    ",
+            "    #   #   ",
+            "    #       ",
+            "     #      ",
+            "      #     ",
+            "            ",
+            "      #     ",
             )))
         return aliens[monster]
 
@@ -430,6 +567,8 @@ class Monster:
         self.screen.blit(self.shape, self.position)
 
     def march(self, way, drop):
+        if not self.enable:
+            return
         # Position
         if way:
             increment = 1
@@ -445,8 +584,17 @@ class Monster:
     def get_position(self):
         return self.position
 
+    def get_size(self):
+        return self.size
+
     def get_rect(self):
         return self.rect
+
+    def stop(self):
+        self.enable = False
+
+    def start(self):
+        self.enable = True
 
 
 class Barrier:
@@ -459,14 +607,14 @@ class Barrier:
         self.size = [48, 32]
         self.color = (139, 105, 20)
         sprite = (
-            "   ######   ",
+            "    ####    ",
+            "  ########  ",
+            " ########## ",
+            " ########## ",
             " ########## ",
             "############",
             "############",
-            "############",
-            "############",
-            "############",
-            "############",
+            "###      ###",
             )
         self.shape = pygame.Surface(self.size, SRCALPHA)
         draw(self.shape, sprite, self.color, 4)
@@ -613,3 +761,275 @@ def draw(shape, sprite, color, zoom):
             x += z
         y += z
         x = 0
+
+
+def echo(shape, string):
+    alphabet = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+                "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+                " ", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+    sprites = ((
+        "   ##   ",
+        ", #  #  ",
+        ",#    # ",
+        ",###### ",
+        ",#    # ",
+        ",#    # ",
+        ), (
+        ",#####  ",
+        ",#    # ",
+        ",#####  ",
+        ",#    # ",
+        ",#    # ",
+        ",#####  ",
+        ), (
+        ", ####  ",
+        ",#    # ",
+        ",#      ",
+        ",#      ",
+        ",#    # ",
+        ", ####  ",
+        ), (
+        ",#####  ",
+        ",#    # ",
+        ",#    # ",
+        ",#    # ",
+        ",#    # ",
+        ",#####  ",
+        ), (
+        ",###### ",
+        ",#      ",
+        ",#####  ",
+        ",#      ",
+        ",#      ",
+        ",###### ",
+        ), (
+        ",###### ",
+        ",#      ",
+        ",#####  ",
+        ",#      ",
+        ",#      ",
+        ",#      ",
+        ), (
+        ", ####  ",
+        ",#    # ",
+        ",#      ",
+        ",#  ### ",
+        ",#    # ",
+        ", ####  ",
+        ), (
+        ",#    # ",
+        ",#    # ",
+        ",###### ",
+        ",#    # ",
+        ",#    # ",
+        ",#    # ",
+        ), (
+        ",###### ",
+        ",  #    ",
+        ",  #    ",
+        ",  #    ",
+        ",  #    ",
+        ",###### ",
+        ), (
+        ",     # ",
+        ",     # ",
+        ",     # ",
+        ",     # ",
+        ",#    # ",
+        ", ####  ",
+        ), (
+        ",#    # ",
+        ",#   #  ",
+        ",####   ",
+        ",#  #   ",
+        ",#   #  ",
+        ",#    # ",
+        ), (
+        ",#      ",
+        ",#      ",
+        ",#      ",
+        ",#      ",
+        ",#      ",
+        ",###### ",
+        ), (
+        ",#    # ",
+        ",##  ## ",
+        ",# ## # ",
+        ",#    # ",
+        ",#    # ",
+        ",#    # ",
+        ), (
+        ",#    # ",
+        ",##   # ",
+        ",# #  # ",
+        ",#  # # ",
+        ",#   ## ",
+        ",#    # ",
+        ), (
+        ", ####  ",
+        ",#    # ",
+        ",#    # ",
+        ",#    # ",
+        ",#    # ",
+        ", ####  ",
+        ), (
+        ",#####  ",
+        ",#    # ",
+        ",#    # ",
+        ",#####  ",
+        ",#      ",
+        ",#      ",
+        ), (
+        ", ####  ",
+        ",#    # ",
+        ",#    # ",
+        ",#  # # ",
+        ",#   #  ",
+        ", ### # ",
+        ), (
+        ",#####  ",
+        ",#    # ",
+        ",#    # ",
+        ",#####  ",
+        ",#   #  ",
+        ",#    # ",
+        ), (
+        ", ####  ",
+        ",#      ",
+        ", ####  ",
+        ",     # ",
+        ",#    # ",
+        ", ####  ",
+        ), (
+        ",#####  ",
+        ",  #    ",
+        ",  #    ",
+        ",  #    ",
+        ",  #    ",
+        ",  #    ",
+        ), (
+        ",#    # ",
+        ",#    # ",
+        ",#    # ",
+        ",#    # ",
+        ",#    # ",
+        ", ####  ",
+        ), (
+        ",#    # ",
+        ",#    # ",
+        ",#    # ",
+        ",#    # ",
+        ", #  #  ",
+        ",  ##   ",
+        ), (
+        ",#    # ",
+        ",#    # ",
+        ",#    # ",
+        ",# ## # ",
+        ",##  ## ",
+        ",#    # ",
+        ), (
+        ",#    # ",
+        ", #  #  ",
+        ",  ##   ",
+        ",  ##   ",
+        ", #  #  ",
+        ",#    # ",
+        ), (
+        ",#   #  ",
+        ", # #   ",
+        ",  #    ",
+        ",  #    ",
+        ",  #    ",
+        ",  #    ",
+        ), (
+        ",###### ",
+        ",    #  ",
+        ",   #   ",
+        ",  #    ",
+        ", #     ",
+        ",###### ",
+        ), (
+        "        ",
+        "        ",
+        "        ",
+        "        ",
+        "        ",
+        "        ",
+        ), (
+        ", ####  ",
+        ",#   ## ",
+        ",#  # # ",
+        ",# #  # ",
+        ",##   # ",
+        ", ####  ",
+        ), (
+        "   ##   ",
+        "  ###   ",
+        " ####   ",
+        "   ##   ",
+        "   ##   ",
+        "####### ",
+        ), (
+        " #####  ",
+        "##   ## ",
+        "    ##  ",
+        "  ##    ",
+        "##      ",
+        "####### ",
+        ), (
+        "######  ",
+        "     ## ",
+        "  ####  ",
+        "     ## ",
+        "     ## ",
+        "#####   ",
+        ), (
+        "##   ## ",
+        "##   ## ",
+        "####### ",
+        "     ## ",
+        "     ## ",
+        "     ## ",
+        ), (
+        "######  ",
+        "##      ",
+        "######  ",
+        "     ## ",
+        "     ## ",
+        "######  ",
+        ), (
+        " #####  ",
+        "##      ",
+        "######  ",
+        "##   ## ",
+        "##   ## ",
+        " #####  ",
+        ), (
+        "####### ",
+        "     #  ",
+        "  ##### ",
+        "    #   ",
+        "    #   ",
+        "    #   ",
+        ), (
+        " #####  ",
+        "#     # ",
+        " #####  ",
+        "#     # ",
+        "#     # ",
+        " #####  ",
+        ), (
+        " #####  ",
+        "#     # ",
+        " ###### ",
+        "      # ",
+        "      # ",
+        " #####  ",
+        ))
+    position = [0, 0]
+    increment = 9 * 4
+    for i in list(string):
+        item = alphabet.index(i)
+        sprite = sprites[item]
+        draw(shape, sprite, (200, 200, 200), 8)
