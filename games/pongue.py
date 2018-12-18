@@ -1,5 +1,5 @@
 """
-pong.py
+pongue.py
 
 Description: Pong package file
 
@@ -29,7 +29,7 @@ from pygame.locals import *
 import random
 
 
-class Pong:
+class Pongue:
     def __init__(self, screen):
         self.version = '0.04'
         self.screen = screen
@@ -67,8 +67,8 @@ class Pong:
         self.ball_position[0] *= x_factor
         self.ball_position[1] *= y_factor
         # FIXME: Fix pads position
-        self.pad1_position *= y_factor 
-        self.pad2_position *= y_factor 
+        self.pad1_position *= y_factor
+        self.pad2_position *= y_factor
         # FIXME: Fix ball speed
         self.ball_velocity[0] *= x_factor
         self.ball_velocity[1] *= y_factor

@@ -39,19 +39,19 @@ class UserArgumentParser():
         self.program_website = "https://github.com/marcio-pessoa/marcade"
         self.program_contact = "Marcio Pessoa <marcio.pessoa@gmail.com>"
         self.window_title = self.program_description
-        self.available_games = ["asteroids", "invasion", "pong"]
+        self.available_games = ["rocks", "invasion", "pongue"]
         header = ('marcade <game> [<args>]\n\n' +
                   'Games:\n' +
-                  '  asteroids      amazing Asteroids space\n' +
+                  '  rocks          based on amazing Asteroids\n' +
                   '  invasion       based on memorable Space Invaders\n' +
-                  '  pong           classical Pong\n\n')
+                  '  pongue         based on classical Pong\n\n')
         footer = (self.program_copyright + '\n' +
                   'License: ' + self.program_license + '\n' +
                   'Website: ' + self.program_website + '\n' +
                   'Contact: ' + self.program_contact + '\n')
         examples = ('examples:\n' +
-                    '  marcade asteroids\n' +
-                    '  marcade pong --fullscreen\n')
+                    '  marcade rocks\n' +
+                    '  marcade pongue --fullscreen\n')
         self.version = (self.program_name + " " + self.program_version + " (" +
                         self.program_date + ")")
         epilog = (examples + '\n' + footer)
@@ -127,28 +127,28 @@ class UserArgumentParser():
         pygame.key.set_repeat(0, 0)
         self.keys = set()
 
-    def pong(self):
-        from games.pong import Pong
+    def pongue(self):
+        from games.pongue import Pongue
         parser = argparse.ArgumentParser(
-            prog=self.program_name + ' pong',
-            description='classical Pong')
+            prog=self.program_name + ' pongue',
+            description='based on classical Pong')
         args = parser.parse_args(sys.argv[2:])
-        self.window_title = 'Pong'
+        self.window_title = 'Pongue'
         self.__screen_start()
-        self.game = Pong(self.screen)
+        self.game = Pongue(self.screen)
         self.game.start()
         self.__run()
         sys.exit(False)
 
-    def asteroids(self):
-        from games.asteroids import Asteroids
+    def rocks(self):
+        from games.rocks import Rocks
         parser = argparse.ArgumentParser(
-            prog=self.program_name + ' asteroids',
-            description='amazing Asteroids space')
+            prog=self.program_name + ' rocks',
+            description='based on amazing Asteroids')
         args = parser.parse_args(sys.argv[2:])
         self.window_title = 'Asteroids'
         self.__screen_start()
-        self.game = Asteroids(self.screen)
+        self.game = Rocks(self.screen)
         self.game.start()
         self.__run()
         sys.exit(False)

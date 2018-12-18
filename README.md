@@ -5,7 +5,6 @@ Márcio's Arcade games
 All notable changes to this project will be documented in this [Change log](CHANGELOG.md).
 
 ## Running
-
 To start a random game:
 ``` sh
 ./marcade.py
@@ -18,11 +17,11 @@ To start a random game:
 
 ## Games available
 
-### Asteroids
-![Asteroids](Screenshots/asteroids.png)
+### Rocks
+![Rocks](Screenshots/rocks.png)
 
 ### Invasion
 ![Invasion](Screenshots/invasion.png)
 
-### Pong
-![Pong](Screenshots/pong.png)
+### Pongue
+![Pongue](Screenshots/pongue.png)

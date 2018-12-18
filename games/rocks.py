@@ -1,5 +1,5 @@
 """
-asteroids.py
+rocks.py
 
 Description: Asteroids package file
 
@@ -26,7 +26,7 @@ from pygame.locals import *
 import random
 
 
-class Asteroids:
+class Rocks:
 
     def __init__(self, screen):
         self.version = '0.03'

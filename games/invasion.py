@@ -27,6 +27,7 @@ import pygame
 from pygame.locals import *
 import random
 from tools.timer import Timer
+import time
 
 
 class Invasion:
@@ -66,11 +67,12 @@ class Invasion:
         self.ship.reset()
         self.walls_deploy()
         self.aliens_deploy()
-        print "Level: " + str(self.level) + ", Start March Period: " + str(self.start_march_period)
+        # print "Level: " + str(self.level) + ", Start March Period: " + \
+            # str(self.start_march_period)
 
     def reset(self):
         self.level = 1
-        self.lives = 3
+        self.lives = 0
         self.start_march_period = 600
         self.set()
 
@@ -750,20 +752,20 @@ class Explosion:
         return self.done
 
 
-def draw(shape, sprite, color, zoom):
-    x = y = 0
-    z = zoom
+def draw(shape, sprite, color, zoom, offset=[0, 0]):
+    x = offset[0]
+    y = offset[1]
     shape.fill((0, 0, 0))
     for row in sprite:
         for col in row:
             if col == "#":
-                pygame.draw.rect(shape, color, (x, y, z, z))
-            x += z
-        y += z
-        x = 0
+                pygame.draw.rect(shape, color, (x, y, zoom, zoom))
+            x += zoom
+        y += zoom
+        x = offset[0]
 
 
-def echo(shape, string):
+def echo(screen, string):
     alphabet = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
                 "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
                 " ", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
@@ -1027,9 +1029,12 @@ def echo(shape, string):
         "      # ",
         " #####  ",
         ))
-    position = [0, 0]
-    increment = 9 * 4
+    position = [10, 100]
+    increment = 12 * 4
     for i in list(string):
-        item = alphabet.index(i)
-        sprite = sprites[item]
-        draw(shape, sprite, (200, 200, 200), 8)
+        char = alphabet.index(i)
+        sprite = sprites[char]
+        shape = pygame.Surface((7, 6), SRCALPHA)
+        draw(shape, sprite, (200, 200, 200), 4, (0, 0))
+        screen.blit(shape, position)
+        position[0] += increment
