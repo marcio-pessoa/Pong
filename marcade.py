@@ -32,7 +32,7 @@ class UserArgumentParser():
     def __init__(self):
         self.program_name = "marcade"
         self.program_version = "0.7"
-        self.program_date = "2018-11-25"
+        self.program_date = "2018-12-25"
         self.program_description = "MArcade"
         self.program_copyright = "Copyright (c) 2014-2018 Marcio Pessoa"
         self.program_license = "GPLv2"
@@ -44,7 +44,7 @@ class UserArgumentParser():
                   'Games:\n' +
                   '  rocks          based on amazing Asteroids\n' +
                   '  invasion       based on memorable Space Invaders\n' +
-                  '  pongue         based on classical Pong\n\n')
+                  '  pongue         based on classic Pong\n\n')
         footer = (self.program_copyright + '\n' +
                   'License: ' + self.program_license + '\n' +
                   'Website: ' + self.program_website + '\n' +
@@ -131,7 +131,7 @@ class UserArgumentParser():
         from games.pongue import Pongue
         parser = argparse.ArgumentParser(
             prog=self.program_name + ' pongue',
-            description='based on classical Pong')
+            description='based on classic Pong')
         args = parser.parse_args(sys.argv[2:])
         self.window_title = 'Pongue'
         self.__screen_start()

@@ -1,7 +1,7 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
-## [0.7] - 2018-11-25
+## [0.7] - 2018-12-25
 ### Added
 - Invasion.
 

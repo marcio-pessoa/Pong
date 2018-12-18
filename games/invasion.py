@@ -17,8 +17,8 @@ contributors:
   - name: Nicolas Masaishi Oi Pessoa
     email: masaishi.pessoa@gmail.com
 change-log:
-  2018-12-dd:
-  - version: 0.00
+  2018-12-25:
+  - version: 0.01
     Added: Starting a new game.
 """
 
@@ -33,7 +33,7 @@ import time
 class Invasion:
 
     def __init__(self, screen):
-        self.version = '0.00'
+        self.version = '0.01'
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
