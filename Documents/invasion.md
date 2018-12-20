@@ -14,12 +14,42 @@ To start game:
 
 ## Characters
 
+### Bublebulb
+![Bublebulb](Pictures/Bublebulb.png)
+- Name: Bublebulb
+- Points: 10
+
+### Craby
+![Craby](Pictures/Craby.png)
+- Name: Craby
+- Points: 9
+
+### ThreeNeeTee
+![ThreeNeeTee](Pictures/ThreeNeeTee.png)
+- Name: ThreeNeeTee
+- Points: 8
+
+### Pobah
+![Pobah](Pictures/Pobah.png)
+- Name: Pobah
+- Points: 7
+
+### Androeed
+![Androeed](Pictures/Androeed.png)
+- Name: Androeed
+- Points: 6
+
+### Raken
+![Raken](Pictures/Raken.png)
+- Name: Raken
+- Points: 5
+
 ## Contributors
 
 ### Developers
 - [Márcio Pessoa](https://github.com/marcio-pessoa)
 
-### Designers:
+### Designers
 - Nicolas Masaishi Oi Pessoa <masaishi.pessoa@gmail.com>
 - Gustavo Nuzzo Gass <gustavonuzzogass@gmail.com>
 - [Márcio Pessoa](https://github.com/marcio-pessoa)
@@ -35,4 +65,4 @@ Changes and improvements are more than welcome! Feel free to fork and open a pul
 Licensed under the [GPLv2](LICENSE).
 
 ## Donations
-I made this in my spare time, and it's hosted on GitHub (which means I don't have any hosting costs), but if you enjoyed the game and feel like buying me coffee, you can donate at my PayPal: `marcio.pessoa@gmail.com`. Thank you very much!
+I made this in my spare time, and it's hosted on GitHub (which means I don't have any hosting costs), but if you enjoyed the game and feel like buying me coffee, you can donate at my PayPal: marcio.pessoa@gmail.com. Thank you very much!

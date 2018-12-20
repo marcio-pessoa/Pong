@@ -39,6 +39,7 @@ class UserArgumentParser():
         self.program_website = "https://github.com/marcio-pessoa/marcade"
         self.program_contact = "Marcio Pessoa <marcio.pessoa@gmail.com>"
         self.window_title = self.program_description
+        self.resizeable = False
         self.available_games = ["rocks", "invasion", "pongue"]
         header = ('marcade <game> [<args>]\n\n' +
                   'Games:\n' +
@@ -94,10 +95,15 @@ class UserArgumentParser():
         self.clock = pygame.time.Clock()
 
     def __screen_reset(self):
-        self.screen = pygame.display.set_mode(self.canvas_size,
-                                              HWSURFACE |
-                                              DOUBLEBUF |
-                                              RESIZABLE)
+        if self.resizeable:
+            self.screen = pygame.display.set_mode(self.canvas_size,
+                                                  HWSURFACE |
+                                                  DOUBLEBUF |
+                                                  RESIZABLE)
+        else:
+            self.screen = pygame.display.set_mode(self.canvas_size,
+                                                  HWSURFACE |
+                                                  DOUBLEBUF)
 
     def __run(self):
         while self.running:
@@ -134,6 +140,7 @@ class UserArgumentParser():
             description='based on classic Pong')
         args = parser.parse_args(sys.argv[2:])
         self.window_title = 'Pongue'
+        self.resizeable = True
         self.__screen_start()
         self.game = Pongue(self.screen)
         self.game.start()

@@ -22,12 +22,10 @@ change-log:
     Added: Starting a new game.
 """
 
-import math
 import pygame
 from pygame.locals import *
 import random
 from tools.timer import Timer
-import time
 
 
 class Invasion:
@@ -41,26 +39,18 @@ class Invasion:
                                     HWSURFACE | SRCALPHA, 32)
         self.space.convert_alpha()
         self.running = True
-        self.alien_value = 100
-        self.pad_acceleration = 1
-        self.court_side = 1
         self.ship = Ship(self.space)
         self.shoot_timer = Timer(50)
         self.march_timer = Timer(1)
         self.reset()
 
-    def size_reset(self):
-        # Discover new size factor
-        x_factor = self.screen.get_size()[0] / self.screen_size[0]
-        y_factor = self.screen.get_size()[1] / self.screen_size[1]
-        self.size_set()
-        self.ship.screen_reset()
-
     def set(self):
-        self.burst = set()
+        self.ship_burst = set()
+        self.alien_burst = set()
         self.walls = set()
         self.aliens = set()
         self.explosions = set()
+        self.alien_burst_seed = 2000
         self.march_period = self.start_march_period
         self.march_timer.set(self.march_period)
         self.way = True
@@ -70,11 +60,12 @@ class Invasion:
         self.aliens_deploy()
 
     def reset(self):
-        self.level = 1
-        self.lives = 3
+        self.level = 0
+        self.lives = 2
         self.score = 0
         self.start_march_period = 600
         self.set()
+        self.level_up()
 
     def run(self):
         # Draw Space
@@ -83,10 +74,10 @@ class Invasion:
         self.score_update()
         self.burst_update()
         self.walls_update()
-        self.aliens_update()
         self.ship.update()
+        self.aliens_update()
         self.explosions_update()
-        self.check_collision()
+        self.collision_check()
         self.aliens_check()
         self.lives_check()
         # Join everything
@@ -97,17 +88,17 @@ class Invasion:
         if self.lives == 0:
             self.game_over()
 
-    def check_collision(self):
+    def collision_check(self):
         # Missle againt Alien
         for i in self.aliens:
-            for j in self.burst:
+            for j in self.ship_burst:
                 if i.get_rect().colliderect(j.get_rect()):
                     position = i.get_position()
                     explosion = Explosion(self.space, position)
                     self.explosions.add(explosion)
+                    self.score += i.get_points()
                     self.aliens.remove(i)
-                    self.burst.remove(j)
-                    self.score += self.alien_value
+                    self.ship_burst.remove(j)
                     return
         # Alien againt Wall
         for i in self.aliens:
@@ -135,22 +126,25 @@ class Invasion:
                 self.lives -= 1
                 return
         # Ship againt Missle
-        for i in self.burst:
+        for i in self.alien_burst:
             if i.get_rect().colliderect(self.ship.get_rect()):
                 position = self.ship.get_position()
                 explosion = Explosion(self.space, position)
                 self.explosions.add(explosion)
+                self.alien_burst.remove(i)
                 self.lives -= 1
                 return
 
     def burst_update(self):
         # Update position
-        for i in self.burst:
+        for i in self.ship_burst:
+            i.update()
+        for i in self.alien_burst:
             i.update()
         # Check shoot age
-        for i in self.burst:
+        for i in self.ship_burst:
             if i.is_out():
-                self.burst.remove(i)
+                self.ship_burst.remove(i)
                 break
 
     def aliens_deploy(self):
@@ -158,16 +152,21 @@ class Invasion:
         for y in range(formation[1]):
             for x in range(formation[0]):
                 monster = Monster(self.space, y,
-                                  [(self.space.get_size()[0] /
+                                  [(self.screen_size[0] /
                                     formation[0]) * x +
-                                   (self.space.get_size()[0] /
+                                   (self.screen_size[0] /
                                     formation[0]) / 3,
-                                   ((self.space.get_size()[1] /
+                                   ((self.screen_size[1] /
                                     (formation[1] + 3) * y)) + 30],
                                   [200, 200, 200])
                 self.aliens.add(monster)
 
     def aliens_update(self):
+        # Update
+        for i in self.aliens:
+            i.update()
+        if self.lives == 0:
+            return
         if self.march_timer.check():
             # Aliens lateral boundaries
             for i in self.aliens:
@@ -187,15 +186,22 @@ class Invasion:
             if i.get_position()[1] + i.get_size()[1] >= self.screen_size[1]:
                 self.game_over()
                 break
-        # Update
+        # Fire
         for i in self.aliens:
             i.update()
+            if random.randrange(self.alien_burst_seed) == 1:
+                shoot = Missile(self.space,
+                                i.get_position(), i.get_radius(), 4, -1)
+                self.alien_burst.add(shoot)
+                break
 
     def game_over(self):
         self.ship.stop()
         for i in self.aliens:
             i.stop()
-        for i in self.burst:
+        for i in self.ship_burst:
+            i.stop()
+        for i in self.alien_burst:
             i.stop()
         echo(self.space, "GAME OVER", 12, [20, 60])
 
@@ -205,9 +211,9 @@ class Invasion:
 
     def level_up(self):
         self.level += 1
+        self.lives += 1
+        self.alien_burst_seed -= self.level * 100
         self.start_march_period -= self.start_march_period * self.level / 20
-        echo(self.space, "LEVEL " + str(self.level), 15, [100, 200])
-        time.sleep(2)
         self.set()
 
     def walls_deploy(self):
@@ -224,6 +230,8 @@ class Invasion:
 
     def score_update(self):
         echo(self.space, str(self.score), 3, [10, 5])
+        echo(self.space, str(self.lives), 3, [380, 5])
+        echo(self.space, "LEVEL " + str(self.level), 3, [600, 5])
 
     def explosions_update(self):
         for i in self.explosions:
@@ -241,12 +249,12 @@ class Invasion:
         if not self.shoot_timer.check():
             return
         # Limit burst size
-        if len(self.burst) >= 1:
+        if len(self.ship_burst) >= 1:
             return
         # Shoot!
         shoot = Missile(self.space,
                         self.ship.get_position(), self.ship.get_radius(), 5)
-        self.burst.add(shoot)
+        self.ship_burst.add(shoot)
 
     def control(self, keys):
         if K_ESCAPE in keys:
@@ -328,13 +336,13 @@ class Ship:
 
 
 class Missile:
-    def __init__(self, screen, ship_position, offset, speed):
+    def __init__(self, screen, ship_position, offset, speed, direction=1):
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
         self.out = False
-        self.speed = speed
         self.size = [8, 16]
+        self.speed = speed * direction
         self.color = (250, 250, 250)
         sprite = (
             "##",
@@ -345,8 +353,12 @@ class Missile:
         position = ship_position
         self.shape = pygame.Surface(self.size, SRCALPHA)
         draw(self.shape, sprite, self.color, 4)
-        self.position = [ship_position[0] + offset - self.size[0] / 2,
-                         ship_position[1] - self.size[1]]
+        if direction == 1:
+            self.position = [ship_position[0] + offset - self.size[0] / 2,
+                             ship_position[1] - self.size[1]]
+        elif direction == -1:
+            self.position = [ship_position[0] + offset - self.size[0] / 2,
+                             ship_position[1] + self.size[1] + 20]
         self.enable = True
         self.update()
 
@@ -383,7 +395,9 @@ class Monster:
         self.color = self.color(aspect % 6)
         self.shape = pygame.Surface(self.size, SRCALPHA)
         self.caray = 0
+        self.radius = self.shape.get_rect().center[0]
         draw(self.shape, self.alien[0], self.color, 4)
+        self.points = 10 - aspect
         self.enable = True
         self.update()
 
@@ -594,8 +608,14 @@ class Monster:
     def get_position(self):
         return self.position
 
+    def get_radius(self):
+        return self.radius
+
     def get_size(self):
         return self.size
+
+    def get_points(self):
+        return self.points
 
     def get_rect(self):
         return self.rect
@@ -927,10 +947,10 @@ def echo(screen, string, size, position):
         ), (
         "#    # ",
         "#    # ",
-        "#    # ",
-        "#    # ",
-        " #  #  ",
-        "  ##   ",
+        "#   #  ",
+        "#  #   ",
+        "# #    ",
+        "##     ",
         ), (
         "#    # ",
         "#    # ",
