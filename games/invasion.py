@@ -796,7 +796,7 @@ def draw(shape, sprite, color, zoom, offset=[0, 0]):
 def echo(screen, string, size, position):
     alphabet = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
                 "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
-                " ", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+                " ", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-")
     sprites = ((
         "  ##   ",
         " #  #  ",
@@ -931,7 +931,7 @@ def echo(screen, string, size, position):
         "#    # ",
         " ####  ",
         ), (
-        "#####  ",
+        "###### ",
         "  #    ",
         "  #    ",
         "  #    ",
@@ -966,7 +966,7 @@ def echo(screen, string, size, position):
         " #  #  ",
         "#    # ",
         ), (
-        "#   #  ",
+        "#   ## ",
         " # #   ",
         "  #    ",
         "  #    ",
@@ -1056,6 +1056,13 @@ def echo(screen, string, size, position):
         "     # ",
         "     # ",
         " ####  ",
+        ), (
+        "       ",
+        "       ",
+        "###### ",
+        "       ",
+        "       ",
+        "       ",
         ))
     increment = 7 * size
     for i in list(string):
