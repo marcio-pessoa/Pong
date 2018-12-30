@@ -148,7 +148,7 @@ class Invasion:
                 break
 
     def aliens_deploy(self):
-        formation = (8, 6)
+        formation = (7, 6)
         for y in range(formation[1]):
             for x in range(formation[0]):
                 monster = Monster(self.space, y,
@@ -203,7 +203,7 @@ class Invasion:
             i.stop()
         for i in self.alien_burst:
             i.stop()
-        echo(self.space, "GAME OVER", 12, [20, 60])
+        echo(self.space, "GAME OVER", 9, [40, 60])
 
     def aliens_check(self):
         if len(self.aliens) == 0:
@@ -230,8 +230,8 @@ class Invasion:
 
     def score_update(self):
         echo(self.space, str(self.score), 3, [10, 5])
-        echo(self.space, str(self.lives), 3, [380, 5])
-        echo(self.space, "LEVEL " + str(self.level), 3, [600, 5])
+        echo(self.space, str(self.lives), 3, [330, 5])
+        echo(self.space, str(self.level), 3, [580, 5])
 
     def explosions_update(self):
         for i in self.explosions:
