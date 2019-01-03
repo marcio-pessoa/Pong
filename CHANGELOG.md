@@ -28,6 +28,3 @@ All notable changes to this project will be documented in this file.
 ## [0.1] - 2014-06-06
 ### Added
 - Pong: First version.
-
-
-

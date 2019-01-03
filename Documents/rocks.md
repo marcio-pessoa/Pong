@@ -8,7 +8,7 @@ Based on amazing Asteroids
 
 ## Running
 To start game:
-``` sh
+``` bash
 ./marcade.py rocks
 ```
 

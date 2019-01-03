@@ -8,7 +8,7 @@ Based on classic Pong
 
 ## Running
 To start game:
-``` sh
+``` bash
 ./marcade.py pongue
 ```
 

@@ -6,12 +6,12 @@ All notable changes to this project will be documented in this [Change log](CHAN
 
 ## Running
 To start a random game:
-``` sh
+``` bash
 ./marcade.py
 ```
 
 For help:
-``` sh
+``` bash
 ./marcade.py -h
 ```
 

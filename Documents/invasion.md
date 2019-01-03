@@ -8,7 +8,7 @@ Based on memorable Space Invaders
 
 ## Running
 To start game:
-``` sh
+``` bash
 ./marcade.py invasion
 ```
 
