@@ -79,7 +79,7 @@ class UserArgumentParser():
     def __screen_start(self):
         self.running = True
         self.screen_rate = 30  # FPS
-        self.canvas_size = (640, 480)  # WVGA (width, height) pixels
+        self.canvas_size = (800, 480)  # WVGA (width, height) pixels
         self.__screen_set()
         self.__ctrl_set()
 
