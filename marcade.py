@@ -16,9 +16,19 @@ try:
     import sys
     import argparse
     import os
-    import pygame
-    from pygame.locals import *
     import random
+    if sys.version_info >= (3, 0):
+        import contextlib
+        with contextlib.redirect_stdout(None):
+            import pygame
+            from pygame.locals import *
+    else:
+        with open(os.devnull, 'w') as f:
+            oldstdout = sys.stdout
+            sys.stdout = f
+            import pygame
+            from pygame.locals import *
+            sys.stdout = oldstdout
 except ImportError as err:
     print("Could not load module. " + str(err))
     sys.exit(True)
@@ -78,7 +88,7 @@ class UserArgumentParser():
 
     def __screen_start(self):
         self.running = True
-        self.screen_rate = 30  # FPS
+        self.screen_rate = 60  # FPS
         self.canvas_size = (800, 480)  # WVGA (width, height) pixels
         self.__screen_set()
         self.__ctrl_set()
