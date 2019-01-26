@@ -203,7 +203,7 @@ class Invasion:
             i.stop()
         for i in self.alien_burst:
             i.stop()
-        echo(self.space, "GAME OVER", 9, [40, 60])
+        echo(self.space, "GAME OVER", 9, [120, 60])
 
     def aliens_check(self):
         if len(self.aliens) == 0:
