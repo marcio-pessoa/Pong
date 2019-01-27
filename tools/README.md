@@ -1,1 +1,3 @@
-../../Python/README.md
+# Module
+
+This is a Python module directory.

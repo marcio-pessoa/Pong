@@ -25,6 +25,7 @@ change-log:
 import pygame
 from pygame.locals import *
 import random
+from tools.sound import Sound
 from tools.timer import Timer
 
 
@@ -42,6 +43,7 @@ class Invasion:
         self.ship = Ship(self.space)
         self.shoot_timer = Timer(50)
         self.march_timer = Timer(1)
+        self.sound = Sound()
         self.reset()
 
     def set(self):
@@ -204,6 +206,7 @@ class Invasion:
         for i in self.alien_burst:
             i.stop()
         echo(self.space, "GAME OVER", 9, [120, 60])
+        self.sound.demo()
 
     def aliens_check(self):
         if len(self.aliens) == 0:
@@ -255,6 +258,7 @@ class Invasion:
         shoot = Missile(self.space,
                         self.ship.get_position(), self.ship.get_radius(), 5)
         self.ship_burst.add(shoot)
+        self.sound.tone(1200)
 
     def control(self, keys):
         if K_ESCAPE in keys:

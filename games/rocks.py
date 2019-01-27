@@ -24,6 +24,7 @@ import math
 import pygame
 from pygame.locals import *
 import random
+from tools.sound import Sound
 
 
 class Rocks:
@@ -34,6 +35,7 @@ class Rocks:
         self.running = False
 
     def start(self):
+        self.sound = Sound()
         self.running = True
         self.size_set()
         self.pad_acceleration = 1
@@ -139,6 +141,7 @@ class Rocks:
                         self.ship.get_position(), self.ship.get_radius(),
                         self.ship.get_speed(), self.ship.get_angle())
         self.burst.add(shoot)
+        self.sound.tone(800)
 
     def control(self, keys):
         if K_ESCAPE in keys:

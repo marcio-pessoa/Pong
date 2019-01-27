@@ -4,6 +4,17 @@ Márcio's Arcade games
 ## Changes
 All notable changes to this project will be documented in this [Change log](CHANGELOG.md).
 
+## Dependencies
+Required modules:
+- pyaudio
+
+### Installing modules
+``` bash
+sudo apt install -y python-pygame \
+                    python-pyaudio \
+                    python3-pyaudio
+```
+
 ## Running
 To start a random game:
 ``` bash
