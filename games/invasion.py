@@ -18,6 +18,9 @@ contributors:
     email: masaishi.pessoa@gmail.com
 change-log:
   2018-12-25:
+  - version: 0.02
+    Added: Sound FX.
+  2019-01-30:
   - version: 0.01
     Added: Starting a new game.
 """
@@ -32,7 +35,7 @@ from tools.timer import Timer
 class Invasion:
 
     def __init__(self, screen):
-        self.version = '0.01'
+        self.version = '0.02'
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
@@ -82,6 +85,8 @@ class Invasion:
         self.collision_check()
         self.aliens_check()
         self.lives_check()
+        # Sound
+        self.sound_update()
         # Join everything
         self.screen.blit(self.space, [0, 0])
         return False
@@ -101,6 +106,7 @@ class Invasion:
                     self.score += i.get_points()
                     self.aliens.remove(i)
                     self.ship_burst.remove(j)
+                    self.sound.tone(400)
                     return
         # Alien againt Wall
         for i in self.aliens:
@@ -114,6 +120,7 @@ class Invasion:
                     self.explosions.add(explosion)
                     self.aliens.remove(i)
                     self.walls.remove(j)
+                    self.sound.tone(200)
                     return
         # Ship againt Alien
         for i in self.aliens:
@@ -126,6 +133,7 @@ class Invasion:
                 self.explosions.add(explosion)
                 self.aliens.remove(i)
                 self.lives -= 1
+                self.sound.tone(200)
                 return
         # Ship againt Missle
         for i in self.alien_burst:
@@ -135,6 +143,7 @@ class Invasion:
                 self.explosions.add(explosion)
                 self.alien_burst.remove(i)
                 self.lives -= 1
+                self.sound.tone(200)
                 return
 
     def burst_update(self):
@@ -170,6 +179,7 @@ class Invasion:
         if self.lives == 0:
             return
         if self.march_timer.check():
+            self.sound.tone(600)
             # Aliens lateral boundaries
             for i in self.aliens:
                 if not self.space.get_rect().contains(i.get_rect()):
@@ -178,6 +188,7 @@ class Invasion:
                         self.drop = True
                         self.march_period /= 1.5
                         self.march_timer.set(self.march_period)
+                        self.sound.tone(400)
                     break
             # Aliens fall down
             for i in self.aliens:
@@ -206,7 +217,6 @@ class Invasion:
         for i in self.alien_burst:
             i.stop()
         echo(self.space, "GAME OVER", 9, [120, 60])
-        self.sound.demo()
 
     def aliens_check(self):
         if len(self.aliens) == 0:
@@ -258,6 +268,7 @@ class Invasion:
         shoot = Missile(self.space,
                         self.ship.get_position(), self.ship.get_radius(), 5)
         self.ship_burst.add(shoot)
+        # self.sound_play([1200, 2400, 800])
         self.sound.tone(1200)
 
     def control(self, keys):
@@ -272,6 +283,13 @@ class Invasion:
             self.ship_shoot()
         if K_RETURN in keys:
             self.reset()
+
+    def sound_play(self, array):
+        self.sound.tone(1200)
+
+    def sound_update(self):
+        pass
+        # self.sound.tone(1200)
 
 
 class Ship:

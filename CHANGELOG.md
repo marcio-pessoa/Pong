@@ -1,6 +1,10 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.8] - 2019-01-30
+### Added
+- Sound FX.
+
 ## [0.7] - 2018-12-25
 ### Added
 - Invasion.

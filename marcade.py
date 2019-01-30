@@ -42,7 +42,7 @@ class UserArgumentParser():
     def __init__(self):
         self.program_name = "marcade"
         self.program_version = "0.8"
-        self.program_date = "2019-01-31"
+        self.program_date = "2019-01-30"
         self.program_description = "MArcade"
         self.program_copyright = "Copyright (c) 2014-2019 Marcio Pessoa"
         self.program_license = "GPLv2"

@@ -7,6 +7,10 @@ Author: Marcio Pessoa <marcio.pessoa@gmail.com>
 Contributors: none
 
 Change log:
+2019-01-30
+        * Version: 0.04
+        * Added: Sound FX.
+
 2018-11-25
         * Version: 0.03
         * Fixed: Burst update.
@@ -30,7 +34,7 @@ from tools.sound import Sound
 class Rocks:
 
     def __init__(self, screen):
-        self.version = '0.03'
+        self.version = '0.04'
         self.screen = screen
         self.running = False
 
