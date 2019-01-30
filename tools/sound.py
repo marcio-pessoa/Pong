@@ -9,7 +9,7 @@ contributors:
 change-log:
   2019-01-29:
   - version: 0.01
-    Added: Starting a new game.
+    Added: Starting a new library.
 """
 
 import sys
@@ -21,7 +21,7 @@ class Sound():
 
     def __init__(self):
         self.bitrate = 44100  # Frames per second (frame rate / frameset)
-        self.length = 0.06  # Sound duration (seconds)
+        self.length = 0.015  # Sound duration (seconds)
         self.frames = int(self.bitrate * self.length)
         self.restframes = self.frames % self.bitrate
         self.open()

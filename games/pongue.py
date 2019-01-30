@@ -7,6 +7,10 @@ Author: Marcio Pessoa <marcio.pessoa@gmail.com>
 Contributors: none
 
 Change log:
+2019-01-30
+        * Version: 0.05
+        * Added: Sound FX.
+
 2018-11-11
         * Version: 0.04
         * Changed: Control method, to improve accuracy.
@@ -27,11 +31,12 @@ Change log:
 import pygame
 from pygame.locals import *
 import random
+from tools.sound import Sound
 
 
 class Pongue:
     def __init__(self, screen):
-        self.version = '0.04'
+        self.version = '0.05'
         self.screen = screen
         self.running = False
 
@@ -44,6 +49,7 @@ class Pongue:
         self.reset()
         self.set()
         self.ball_spawn()
+        self.sound = Sound()
 
     def size_set(self):
         self.screen_size = [self.screen.get_size()[0],
@@ -204,10 +210,12 @@ class Pongue:
         # Bounces off of the top
         if self.ball_position[1] - self.ball_radius < 0:
             self.ball_velocity[1] *= -1
+            self.sound.tone(300)
         # Bounces off of the bottom
         if self.ball_position[1] + self.ball_radius > \
            self.play_area.get_size()[1]:
             self.ball_velocity[1] *= -1
+            self.sound.tone(300)
         # Bounces off of the left
         if self.ball_position[0] - self.ball_radius < self.pad_width:
             if ((self.ball_position[1] + self.ball_radius) >
@@ -216,10 +224,12 @@ class Pongue:
                (self.pad1_position + self.pad_height_half)):
                 self.ball_velocity[0] *= -1.1
                 self.ball_velocity[1] *= 1.1
+                self.sound.tone(900)
             else:
                 self.court_side = -1
                 self.ball_spawn()
                 self.score[1] += 1
+                self.sound.tone(200)
         # Bounces off of the right
         if self.ball_position[0] + self.ball_radius > \
            self.play_area.get_size()[0] - self.pad_width:
@@ -229,7 +239,9 @@ class Pongue:
                (self.pad2_position + self.pad_height_half)):
                 self.ball_velocity[0] *= -1.1
                 self.ball_velocity[1] *= 1.1
+                self.sound.tone(900)
             else:
                 self.court_side = 1
                 self.ball_spawn()
                 self.score[0] += 1
+                self.sound.tone(200)
