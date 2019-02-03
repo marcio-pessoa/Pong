@@ -7,6 +7,8 @@ contributors:
   - name: Marcio Pessoa
     email: marcio.pessoa@gmail.com
   designers:
+  - name: Marcio Pessoa
+    email: marcio.pessoa@gmail.com
   - name: Nicolas Masaishi Oi Pessoa
     email: masaishi.pessoa@gmail.com
   - name: Gustavo Nuzzo Gass
@@ -17,10 +19,13 @@ contributors:
   - name: Nicolas Masaishi Oi Pessoa
     email: masaishi.pessoa@gmail.com
 change-log:
-  2018-12-25:
+  2019-02-03:
+  - version: 0.03
+    Added: Minor updates.
+  2019-01-30:
   - version: 0.02
     Added: Sound FX.
-  2019-01-30:
+  2018-12-25:
   - version: 0.01
     Added: Starting a new game.
 """
@@ -28,6 +33,7 @@ change-log:
 import pygame
 from pygame.locals import *
 import random
+from tools.font import Font
 from tools.sound import Sound
 from tools.timer import Timer
 
@@ -35,7 +41,7 @@ from tools.timer import Timer
 class Invasion:
 
     def __init__(self, screen):
-        self.version = '0.02'
+        self.version = '0.03'
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
@@ -46,6 +52,19 @@ class Invasion:
         self.ship = Ship(self.space)
         self.shoot_timer = Timer(50)
         self.march_timer = Timer(1)
+        self.scoreboard = Font(self.space)
+        self.scoreboard.set_size(3)
+        self.scoreboard.set_position([10, 5])
+        self.livesboard = Font(self.space)
+        self.livesboard.set_size(3)
+        self.livesboard.set_position([330, 5])
+        self.levelboard = Font(self.space)
+        self.levelboard.set_size(3)
+        self.levelboard.set_position([580, 5])
+        self.gameovermessage = Font(self.space)
+        self.gameovermessage.set_size(9)
+        self.gameovermessage.set_position([120, 60])
+        self.gameovermessage.set_color((230, 230, 230))
         self.sound = Sound()
         self.reset()
 
@@ -85,8 +104,6 @@ class Invasion:
         self.collision_check()
         self.aliens_check()
         self.lives_check()
-        # Sound
-        self.sound_update()
         # Join everything
         self.screen.blit(self.space, [0, 0])
         return False
@@ -186,7 +203,7 @@ class Invasion:
                     self.way = not self.way
                     if self.way:
                         self.drop = True
-                        self.march_period /= 1.5
+                        self.march_period /= 1.15
                         self.march_timer.set(self.march_period)
                         self.sound.tone(400)
                     break
@@ -216,7 +233,7 @@ class Invasion:
             i.stop()
         for i in self.alien_burst:
             i.stop()
-        echo(self.space, "GAME OVER", 9, [120, 60])
+        self.gameovermessage.echo("GAME OVER")
 
     def aliens_check(self):
         if len(self.aliens) == 0:
@@ -242,9 +259,9 @@ class Invasion:
             i.update()
 
     def score_update(self):
-        echo(self.space, str(self.score), 3, [10, 5])
-        echo(self.space, str(self.lives), 3, [330, 5])
-        echo(self.space, str(self.level), 3, [580, 5])
+        self.scoreboard.echo(str(self.score))
+        self.livesboard.echo(str(self.lives))
+        self.levelboard.echo(str(self.level))
 
     def explosions_update(self):
         for i in self.explosions:
@@ -268,7 +285,6 @@ class Invasion:
         shoot = Missile(self.space,
                         self.ship.get_position(), self.ship.get_radius(), 5)
         self.ship_burst.add(shoot)
-        # self.sound_play([1200, 2400, 800])
         self.sound.tone(1200)
 
     def control(self, keys):
@@ -283,14 +299,6 @@ class Invasion:
             self.ship_shoot()
         if K_RETURN in keys:
             self.reset()
-
-    def sound_play(self, array):
-        self.sound.tone(1200)
-
-    def sound_update(self):
-        pass
-        # self.sound.tone(1200)
-
 
 class Ship:
 
@@ -813,284 +821,3 @@ def draw(shape, sprite, color, zoom, offset=[0, 0]):
             x += zoom
         y += zoom
         x = offset[0]
-
-
-def echo(screen, string, size, position):
-    alphabet = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-                "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
-                " ", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-")
-    sprites = ((
-        "  ##   ",
-        " #  #  ",
-        "#    # ",
-        "###### ",
-        "#    # ",
-        "#    # ",
-        ), (
-        "#####  ",
-        "#    # ",
-        "#####  ",
-        "#    # ",
-        "#    # ",
-        "#####  ",
-        ), (
-        " ####  ",
-        "#    # ",
-        "#      ",
-        "#      ",
-        "#    # ",
-        " ####  ",
-        ), (
-        "#####  ",
-        "#    # ",
-        "#    # ",
-        "#    # ",
-        "#    # ",
-        "#####  ",
-        ), (
-        "###### ",
-        "#      ",
-        "#####  ",
-        "#      ",
-        "#      ",
-        "###### ",
-        ), (
-        "###### ",
-        "#      ",
-        "#####  ",
-        "#      ",
-        "#      ",
-        "#      ",
-        ), (
-        " ####  ",
-        "#    # ",
-        "#      ",
-        "#  ### ",
-        "#    # ",
-        " ####  ",
-        ), (
-        "#    # ",
-        "#    # ",
-        "###### ",
-        "#    # ",
-        "#    # ",
-        "#    # ",
-        ), (
-        "###### ",
-        "  #    ",
-        "  #    ",
-        "  #    ",
-        "  #    ",
-        "###### ",
-        ), (
-        "     # ",
-        "     # ",
-        "     # ",
-        "     # ",
-        "#    # ",
-        " ####  ",
-        ), (
-        "#    # ",
-        "#   #  ",
-        "####   ",
-        "#  #   ",
-        "#   #  ",
-        "#    # ",
-        ), (
-        "#      ",
-        "#      ",
-        "#      ",
-        "#      ",
-        "#      ",
-        "###### ",
-        ), (
-        "#    # ",
-        "##  ## ",
-        "# ## # ",
-        "#    # ",
-        "#    # ",
-        "#    # ",
-        ), (
-        "#    # ",
-        "##   # ",
-        "# #  # ",
-        "#  # # ",
-        "#   ## ",
-        "#    # ",
-        ), (
-        " ####  ",
-        "#    # ",
-        "#    # ",
-        "#    # ",
-        "#    # ",
-        " ####  ",
-        ), (
-        "#####  ",
-        "#    # ",
-        "#    # ",
-        "#####  ",
-        "#      ",
-        "#      ",
-        ), (
-        " ####  ",
-        "#    # ",
-        "#    # ",
-        "#  # # ",
-        "#   #  ",
-        " ### # ",
-        ), (
-        "#####  ",
-        "#    # ",
-        "#    # ",
-        "#####  ",
-        "#   #  ",
-        "#    # ",
-        ), (
-        " ####  ",
-        "#      ",
-        " ####  ",
-        "     # ",
-        "#    # ",
-        " ####  ",
-        ), (
-        "###### ",
-        "  #    ",
-        "  #    ",
-        "  #    ",
-        "  #    ",
-        "  #    ",
-        ), (
-        "#    # ",
-        "#    # ",
-        "#    # ",
-        "#    # ",
-        "#    # ",
-        " ####  ",
-        ), (
-        "#    # ",
-        "#    # ",
-        "#   #  ",
-        "#  #   ",
-        "# #    ",
-        "##     ",
-        ), (
-        "#    # ",
-        "#    # ",
-        "#    # ",
-        "# ## # ",
-        "##  ## ",
-        "#    # ",
-        ), (
-        "#    # ",
-        " #  #  ",
-        "  ##   ",
-        "  ##   ",
-        " #  #  ",
-        "#    # ",
-        ), (
-        "#   ## ",
-        " # #   ",
-        "  #    ",
-        "  #    ",
-        "  #    ",
-        "  #    ",
-        ), (
-        "###### ",
-        "    #  ",
-        "   #   ",
-        "  #    ",
-        " #     ",
-        "###### ",
-        ), (
-        "        "
-        "        "
-        "        "
-        "        "
-        "        "
-        "        "
-        ), (
-        " ####  ",
-        "#   ## ",
-        "#  # # ",
-        "# #  # ",
-        "##   # ",
-        " ####  ",
-        ), (
-        "  ##   ",
-        " # #   ",
-        "#  #   ",
-        "   #   ",
-        "   #   ",
-        "###### ",
-        ), (
-        " ####  ",
-        "#    # ",
-        "   ##  ",
-        " ##    ",
-        "#      ",
-        "###### ",
-        ), (
-        "#####  ",
-        "     # ",
-        " ####  ",
-        "     # ",
-        "     # ",
-        "#####  ",
-        ), (
-        "#    # ",
-        "#    # ",
-        "###### ",
-        "     # ",
-        "     # ",
-        "     # ",
-        ), (
-        "#####  ",
-        "#      ",
-        "#####  ",
-        "     # ",
-        "     # ",
-        "#####  ",
-        ), (
-        " ####  ",
-        "#      ",
-        "#####  ",
-        "#    # ",
-        "#    # ",
-        " ####  ",
-        ), (
-        "###### ",
-        "    #  ",
-        " ##### ",
-        "   #   ",
-        "   #   ",
-        "   #   ",
-        ), (
-        " ####  ",
-        "#    # ",
-        " ####  ",
-        "#    # ",
-        "#    # ",
-        " ####  ",
-        ), (
-        " ####  ",
-        "#    # ",
-        " ##### ",
-        "     # ",
-        "     # ",
-        " ####  ",
-        ), (
-        "       ",
-        "       ",
-        "###### ",
-        "       ",
-        "       ",
-        "       ",
-        ))
-    increment = 7 * size
-    for i in list(string):
-        char = alphabet.index(i)
-        sprite = sprites[char]
-        shape = pygame.Surface((7 * size, 6 * size), SRCALPHA)
-        draw(shape, sprite, (200, 200, 200), size, (0, 0))
-        screen.blit(shape, position)
-        position[0] += increment
