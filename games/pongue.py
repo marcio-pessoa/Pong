@@ -1,42 +1,50 @@
 """
-pongue.py
-
-Description: Pong package file
-
-Author: Marcio Pessoa <marcio.pessoa@gmail.com>
-Contributors: none
-
-Change log:
-2019-01-30
-        * Version: 0.05
-        * Added: Sound FX.
-
-2018-11-11
-        * Version: 0.04
-        * Changed: Control method, to improve accuracy.
-
-2018-10-26
-        * Version: 0.03
-        * Added: Window resizing support.
-
-2018-06-20
-        * Version: 0.02
-        * Fixed: Ball spawn to never raize balls without angle.
-
-2014-06-06
-        * Version: 0.01
-        * Added: First version.
+---
+name: pongue.py
+description: Pongue game package file
+contributors:
+  developers:
+  - name: Marcio Pessoa
+    email: marcio.pessoa@gmail.com
+  designers:
+  - name: Marcio Pessoa
+    email: marcio.pessoa@gmail.com
+  beta-testers:
+  - name: Gustavo Nuzzo Gass
+    email: gustavonuzzogass@gmail.com
+  - name: Nicolas Masaishi Oi Pessoa
+    email: masaishi.pessoa@gmail.com
+change-log:
+  2019-02-03:
+  - version: 0.06
+    Added: Scoreboard.
+  2019-01-30:
+  - version: 0.05
+    Added: Sound FX.
+  2018-11-11:
+  - version: 0.04
+    Changed: Control method, to improve accuracy.
+  2018-10-26:
+  - version: 0.03
+    Added: Window resizing support.
+  2018-06-20:
+  - version: 0.02
+    Fixed: Ball spawn to never raize balls without angle.
+  2014-06-06:
+  - version: 0.01
+    Added: First version.
 """
 
 import pygame
 from pygame.locals import *
 import random
+from tools.font import Font
 from tools.sound import Sound
 
 
 class Pongue:
     def __init__(self, screen):
-        self.version = '0.05'
+        self.version = '0.06'
         self.screen = screen
         self.running = False
 
@@ -50,6 +58,14 @@ class Pongue:
         self.set()
         self.ball_spawn()
         self.sound = Sound()
+        self.score_player1 = Font(self.play_area)
+        self.score_player1.set_size(5)
+        self.score_player1.set_position([290, 20])
+        self.score_player1.set_color((120, 120, 120))
+        self.score_player2 = Font(self.play_area)
+        self.score_player2.set_size(5)
+        self.score_player2.set_position([470, 20])
+        self.score_player2.set_color((120, 120, 120))
 
     def size_set(self):
         self.screen_size = [self.screen.get_size()[0],
@@ -132,10 +148,10 @@ class Pongue:
         self.draw_pad2()
         self.draw_ball()
         self.ball_check()
+        self.score_player1.echo(str(self.score[0]))
+        self.score_player2.echo(str(self.score[1]))
         self.screen.blit(self.court, [0, 0])
         self.screen.blit(self.play_area, [1, 1])
-        # codeln("    Position: " + str(self.ball_position))
-        # codeln("    Velocity: " + str(self.ball_velocity))
         return False
 
     def stop(self):

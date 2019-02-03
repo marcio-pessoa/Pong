@@ -1,40 +1,53 @@
 """
-rocks.py
-
-Description: Asteroids package file
-
-Author: Marcio Pessoa <marcio.pessoa@gmail.com>
-Contributors: none
-
-Change log:
-2019-01-30
-        * Version: 0.04
-        * Added: Sound FX.
-
-2018-11-25
-        * Version: 0.03
-        * Fixed: Burst update.
-
-2018-11-11
-        * Version: 0.02
-        * Added: Pygame version.
-
-2014-09-06
-        * Version: 0.01
-        * Added: First version.
+---
+name: rocks.py
+description: Rocks game package file
+contributors:
+  developers:
+  - name: Marcio Pessoa
+    email: marcio.pessoa@gmail.com
+  designers:
+  - name: Marcio Pessoa
+    email: marcio.pessoa@gmail.com
+  - name: Nicolas Masaishi Oi Pessoa
+    email: masaishi.pessoa@gmail.com
+  - name: Gustavo Nuzzo Gass
+    email: gustavonuzzogass@gmail.com
+  beta-testers:
+  - name: Gustavo Nuzzo Gass
+    email: gustavonuzzogass@gmail.com
+  - name: Nicolas Masaishi Oi Pessoa
+    email: masaishi.pessoa@gmail.com
+change-log:
+  2019-02-03:
+  - version: 0.05
+    Added: Scoreboard.
+  2019-01-30:
+  - version: 0.04
+    Added: Sound FX.
+  2018-11-25:
+  - version: 0.03
+    Fixed: Burst update.
+  2018-11-11:
+  - version: 0.02
+    Added: Pygame version.
+  2014-09-06:
+  - version: 0.01
+    Added: First version.
 """
 
 import math
 import pygame
 from pygame.locals import *
 import random
+from tools.font import Font
 from tools.sound import Sound
 
 
 class Rocks:
 
     def __init__(self, screen):
-        self.version = '0.04'
+        self.version = '0.05'
         self.screen = screen
         self.running = False
 
@@ -46,6 +59,14 @@ class Rocks:
         self.court_side = 1
         self.set()
         self.ship.start()
+        self.scoreboard = Font(self.space)
+        self.scoreboard.set_size(3)
+        self.scoreboard.set_position([10, 10])
+        self.scoreboard.set_color((100, 100, 100))
+        self.livesboard = Font(self.space)
+        self.livesboard.set_size(3)
+        self.livesboard.set_position([300, 10])
+        self.livesboard.set_color((100, 100, 100))
 
     def size_set(self):
         self.screen_size = [self.screen.get_size()[0],
@@ -67,6 +88,7 @@ class Rocks:
 
     def reset(self):
         self.lives = 3
+        self.score = 0
         self.rock_group = set()
         self.burst = set()
         self.ship.reset()
@@ -79,11 +101,19 @@ class Rocks:
         self.burst_update()
         self.rock_update()
         self.check_collision()
+        self.update_scoreboard()
         if not self.lives:
             self.reset()
         # Join everything
         self.screen.blit(self.space, [0, 0])
         return False
+
+    def update_scoreboard(self):
+        self.scoreboard.echo(str(self.score))
+        self.livesboard.echo(str(self.lives))
+        if self.score % 100 == 1 and self.score != 1:
+            self.score += 10
+            self.lives += 1
 
     def check_collision(self):
         for i in self.rock_group:
@@ -97,6 +127,7 @@ class Rocks:
                 if j.get_rect().colliderect(i.get_rect()):
                     self.rock_group.remove(i)
                     self.burst.remove(j)
+                    self.score += 1
                     return
             # Rock against rocks
             for j in self.rock_group:
