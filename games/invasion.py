@@ -205,7 +205,6 @@ class Invasion:
                         self.drop = True
                         self.march_period /= 1.15
                         self.march_timer.set(self.march_period)
-                        self.sound.tone(400)
                     break
             # Aliens fall down
             for i in self.aliens:
