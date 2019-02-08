@@ -347,7 +347,6 @@ class Font:
             char = self.alphabet.index(i)
             sprite = self.sprites[char]
             self.shape = pygame.Surface((6 * self.size, 7 * self.size), SRCALPHA)
-            self.shape.fill((0, 0, 0))
             self.draw(sprite, (0, 0))
             self.screen.blit(self.shape, position)
             position[0] += self.increment
