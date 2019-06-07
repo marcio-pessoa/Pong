@@ -179,6 +179,9 @@ class Rocks:
         self.sound.tone(800)
 
     def control(self, keys):
+        """
+        description:
+        """
         if K_ESCAPE in keys:
             self.stop()
         if K_UP in keys:

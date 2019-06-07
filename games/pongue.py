@@ -43,12 +43,19 @@ from tools.sound import Sound
 
 
 class Pongue:
+
     def __init__(self, screen):
-        self.version = '0.06'
+        """
+        description:
+        """
+        self.version = 0.06
         self.screen = screen
         self.running = False
 
     def start(self):
+        """
+        description:
+        """
         self.running = True
         self.size_set()
         self.pad_acceleration = 1
@@ -68,6 +75,9 @@ class Pongue:
         self.score_player2.set_color((120, 120, 120))
 
     def size_set(self):
+        """
+        description:
+        """
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
         self.court = pygame.Surface(self.screen_size)
@@ -82,6 +92,9 @@ class Pongue:
         self.pad_height = self.pad_height_half * 2
 
     def size_reset(self):
+        """
+        description:
+        """
         # Discover new size factor
         x_factor = self.screen.get_size()[0] / self.screen_size[0]
         y_factor = self.screen.get_size()[1] / self.screen_size[1]
@@ -97,6 +110,9 @@ class Pongue:
         self.size_set()
 
     def set(self):
+        """
+        description:
+        """
         self.pad1_position = int(self.play_area.get_size()[1] / 2)
         self.pad2_position = int(self.play_area.get_size()[1] / 2)
         self.pad1_vel = 0
@@ -108,15 +124,24 @@ class Pongue:
                               self.play_area.get_size()[1] / 2]
 
     def reset(self):
+        """
+        description:
+        """
         self.score = [0, 0]
 
     def draw_ball(self):
+        """
+        description:
+        """
         pygame.draw.rect(self.play_area, (200, 200, 200),
                          [self.ball_position[0] - self.ball_radius,
                           self.ball_position[1] - self.ball_radius,
                           self.ball_radius * 2, self.ball_radius * 2])
 
     def draw_pad1(self):
+        """
+        description:
+        """
         self.pad1_position += self.pad1_vel
         if self.pad1_position - self.pad_height_half < 0:
             self.pad1_position = 0 + self.pad_height_half
@@ -130,6 +155,9 @@ class Pongue:
         self.pad1_vel *= 0.9
 
     def draw_pad2(self):
+        """
+        description:
+        """
         self.pad2_position += self.pad2_vel
         if self.pad2_position - self.pad_height_half < 0:
             self.pad2_position = 0 + self.pad_height_half
@@ -143,6 +171,9 @@ class Pongue:
         self.pad2_vel *= 0.9
 
     def run(self):
+        """
+        description:
+        """
         self.draw_court()
         self.draw_pad1()
         self.draw_pad2()
@@ -155,10 +186,16 @@ class Pongue:
         return False
 
     def stop(self):
+        """
+        description:
+        """
         pygame.event.clear()
         self.running = False
 
     def control(self, keys):
+        """
+        description:
+        """
         if K_ESCAPE in keys:
             self.stop()
         if K_w in keys:
@@ -191,6 +228,9 @@ class Pongue:
             self.ball_velocity[1] *= 2
 
     def draw_court(self):
+        """
+        description:
+        """
         # Clear court
         self.court.fill([0, 0, 0])  # Black
         self.play_area.fill([0, 0, 0])  # Black
@@ -220,6 +260,9 @@ class Pongue:
                               16 + (y * 5)])
 
     def ball_check(self):
+        """
+        description:
+        """
         # update ball position
         self.ball_position[0] += self.ball_velocity[0]
         self.ball_position[1] += self.ball_velocity[1]

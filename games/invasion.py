@@ -30,9 +30,9 @@ change-log:
     Added: Starting a new game.
 """
 
+import random
 import pygame
 from pygame.locals import *
-import random
 from tools.font import Font
 from tools.sound import Sound
 from tools.timer import Timer
@@ -41,6 +41,9 @@ from tools.timer import Timer
 class Invasion:
 
     def __init__(self, screen):
+        """
+        description:
+        """
         self.version = '0.03'
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
@@ -63,12 +66,15 @@ class Invasion:
         self.levelboard.set_position([580, 5])
         self.gameovermessage = Font(self.space)
         self.gameovermessage.set_size(9)
-        self.gameovermessage.set_position([120, 60])
+        self.gameovermessage.set_position([180, 60])
         self.gameovermessage.set_color((230, 230, 230))
         self.sound = Sound()
         self.reset()
 
     def set(self):
+        """
+        description:
+        """
         self.ship_burst = set()
         self.alien_burst = set()
         self.walls = set()
@@ -84,6 +90,9 @@ class Invasion:
         self.aliens_deploy()
 
     def reset(self):
+        """
+        description:
+        """
         self.level = 0
         self.lives = 2
         self.score = 0
@@ -92,6 +101,9 @@ class Invasion:
         self.level_up()
 
     def run(self):
+        """
+        description:
+        """
         # Draw Space
         self.space.fill([0, 0, 0])  # Black
         # Draw objects (ship, rocks, missiles, etc...)
@@ -109,10 +121,16 @@ class Invasion:
         return False
 
     def lives_check(self):
+        """
+        description:
+        """
         if self.lives == 0:
             self.game_over()
 
     def collision_check(self):
+        """
+        description:
+        """
         # Missle againt Alien
         for i in self.aliens:
             for j in self.ship_burst:
@@ -164,6 +182,9 @@ class Invasion:
                 return
 
     def burst_update(self):
+        """
+        description:
+        """
         # Update position
         for i in self.ship_burst:
             i.update()
@@ -176,6 +197,9 @@ class Invasion:
                 break
 
     def aliens_deploy(self):
+        """
+        description:
+        """
         formation = (7, 6)
         for y in range(formation[1]):
             for x in range(formation[0]):
@@ -190,6 +214,9 @@ class Invasion:
                 self.aliens.add(monster)
 
     def aliens_update(self):
+        """
+        description:
+        """
         # Update
         for i in self.aliens:
             i.update()
@@ -225,6 +252,9 @@ class Invasion:
                 break
 
     def game_over(self):
+        """
+        description:
+        """
         self.ship.stop()
         for i in self.aliens:
             i.stop()
@@ -235,10 +265,16 @@ class Invasion:
         self.gameovermessage.echo("GAME OVER")
 
     def aliens_check(self):
+        """
+        description:
+        """
         if len(self.aliens) == 0:
             self.level_up()
 
     def level_up(self):
+        """
+        description:
+        """
         self.level += 1
         self.lives += 1
         self.alien_burst_seed -= self.level * 100
@@ -246,6 +282,9 @@ class Invasion:
         self.set()
 
     def walls_deploy(self):
+        """
+        description:
+        """
         quantity = 4
         for i in range(quantity):
             position = (self.screen.get_size()[0] / quantity * i +
@@ -254,15 +293,24 @@ class Invasion:
             self.walls.add(barrier)
 
     def walls_update(self):
+        """
+        description:
+        """
         for i in self.walls:
             i.update()
 
     def score_update(self):
+        """
+        description:
+        """
         self.scoreboard.echo(str(self.score))
         self.livesboard.echo(str(self.lives))
         self.levelboard.echo(str(self.level))
 
     def explosions_update(self):
+        """
+        description:
+        """
         for i in self.explosions:
             i.update()
             if i.is_done():
@@ -270,10 +318,16 @@ class Invasion:
                 return
 
     def stop(self):
+        """
+        description:
+        """
         pygame.event.clear()
         self.running = False
 
     def ship_shoot(self):
+        """
+        description:
+        """
         # Timer
         if not self.shoot_timer.check():
             return
@@ -287,6 +341,9 @@ class Invasion:
         self.sound.tone(1200)
 
     def control(self, keys):
+        """
+        description:
+        """
         if K_ESCAPE in keys:
             self.stop()
         if K_RIGHT in keys:
@@ -299,9 +356,13 @@ class Invasion:
         if K_RETURN in keys:
             self.reset()
 
+
 class Ship:
 
     def __init__(self, screen):
+        """
+        description:
+        """
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
@@ -326,11 +387,17 @@ class Ship:
         self.update()
 
     def reset(self):
+        """
+        description:
+        """
         self.position = [self.screen_size[0] / 2,
                          self.screen_size[1] - self.size[1]]
         self.start()
 
     def update(self):
+        """
+        description:
+        """
         if self.position[0] < 0:
             self.position[0] = 0
         if self.position[0] + self.size[0] > self.screen.get_size()[0]:
@@ -339,33 +406,58 @@ class Ship:
         self.screen.blit(self.shape, self.position)
 
     def move_right(self):
+        """
+        description:
+        """
         if not self.enable:
             return
         self.position[0] += self.move_increment
 
     def move_left(self):
+        """
+        description:
+        """
         if not self.enable:
             return
         self.position[0] -= self.move_increment
 
     def get_rect(self):
+        """
+        description:
+        """
         return self.rect
 
     def get_radius(self):
+        """
+        description:
+        """
         return self.radius
 
     def get_position(self):
+        """
+        description:
+        """
         return self.position
 
     def start(self):
+        """
+        description:
+        """
         self.enable = True
 
     def stop(self):
+        """
+        description:
+        """
         self.enable = False
 
 
 class Missile:
+
     def __init__(self, screen, ship_position, offset, speed, direction=1):
+        """
+        description:
+        """
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
@@ -392,6 +484,9 @@ class Missile:
         self.update()
 
     def update(self):
+        """
+        description:
+        """
         if self.enable:
             self.position[1] = self.position[1] - self.speed
         if self.position[1] < 0:
@@ -400,20 +495,36 @@ class Missile:
         self.screen.blit(self.shape, self.position)
 
     def is_out(self):
+        """
+        description:
+        """
         return self.out
 
     def get_rect(self):
+        """
+        description:
+        """
         return self.rect
 
     def stop(self):
+        """
+        description:
+        """
         self.enable = False
 
     def start(self):
+        """
+        description:
+        """
         self.enable = True
 
 
 class Monster:
+
     def __init__(self, screen, aspect, position, color):
+        """
+        description:
+        """
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
@@ -431,6 +542,9 @@ class Monster:
         self.update()
 
     def color(self, monster):
+        """
+        description:
+        """
         aliens = []
         aliens.append((150, 200, 100))
         aliens.append((200, 200, 100))
@@ -441,185 +555,203 @@ class Monster:
         return aliens[monster]
 
     def sprite(self, monster):
+        """
+        description:
+        """
         aliens = []
-        aliens.append(((
-            "    ####    ",
-            " ########## ",
-            "############",
-            "###  ##  ###",
-            "############",
-            "   ##  ##   ",
-            "  ## ## ##  ",
-            "##        ##",
+        aliens.append((
+            (
+                "    ####    ",
+                " ########## ",
+                "############",
+                "###  ##  ###",
+                "############",
+                "   ##  ##   ",
+                "  ## ## ##  ",
+                "##        ##",
             ), (
-            "    ####    ",
-            " ########## ",
-            "############",
-            "###  ##  ###",
-            "############",
-            "  ###  ###  ",
-            " ##  ##  ## ",
-            "  ##    ##  ",
+                "    ####    ",
+                " ########## ",
+                "############",
+                "###  ##  ###",
+                "############",
+                "  ###  ###  ",
+                " ##  ##  ## ",
+                "  ##    ##  ",
             )))
-        aliens.append(((
-            "  #      #  ",
-            "   #    #   ",
-            "  ########  ",
-            " ## #### ## ",
-            "############",
-            "# ######## #",
-            "# #      # #",
-            "   ##  ##   ",
+        aliens.append((
+            (
+                "  #      #  ",
+                "   #    #   ",
+                "  ########  ",
+                " ## #### ## ",
+                "############",
+                "# ######## #",
+                "# #      # #",
+                "   ##  ##   ",
             ), (
-            "  #      #  ",
-            "#  #    #  #",
-            "# ######## #",
-            "### #### ###",
-            "############",
-            " ########## ",
-            "  #      #  ",
-            " #        # ",
+                "  #      #  ",
+                "#  #    #  #",
+                "# ######## #",
+                "### #### ###",
+                "############",
+                " ########## ",
+                "  #      #  ",
+                " #        # ",)
+            ))
+        aliens.append((
+            (
+                "    ####    ",
+                "#####  #####",
+                "# ######## #",
+                "#  ######  #",
+                "#  ######   ",
+                "#   ####    ",
+                "    #  #    ",
+                "    #  ##   ",
+            ), (
+                "    ####    ",
+                "#####  #####",
+                "# ######## #",
+                "#  ######  #",
+                "   ######  #",
+                "    ####   #",
+                "    #  #    ",
+                "   ##  #    ",
             )))
-        aliens.append(((
-            "    ####    ",
-            "#####  #####",
-            "# ######## #",
-            "#  ######  #",
-            "#  ######   ",
-            "#   ####    ",
-            "    #  #    ",
-            "    #  ##   ",
+        aliens.append((
+            (
+                "   ##  ##   ",
+                "     ##     ",
+                "#### ## ####",
+                " ########## ",
+                "  ########  ",
+                "   ######   ",
+                "    #  #    ",
+                "    #  #    ",
             ), (
-            "    ####    ",
-            "#####  #####",
-            "# ######## #",
-            "#  ######  #",
-            "   ######  #",
-            "    ####   #",
-            "    #  #    ",
-            "   ##  #    ",
+                "   ##  ##   ",
+                "     ##     ",
+                "  ## ## ##  ",
+                "  ########  ",
+                "   ######   ",
+                "    ####    ",
+                "    #  #    ",
+                "    #  #    ",
             )))
-        aliens.append(((
-            "   ##  ##   ",
-            "     ##     ",
-            "#### ## ####",
-            " ########## ",
-            "  ########  ",
-            "   ######   ",
-            "    #  #    ",
-            "    #  #    ",
+        aliens.append((
+            (
+                "    #  #    ",
+                "   ######  #",
+                "  ## ## ## #",
+                "#### ## ####",
+                "# ########  ",
+                "# ########  ",
+                "   #    #   ",
+                "  ##    #   ",
             ), (
-            "   ##  ##   ",
-            "     ##     ",
-            "  ## ## ##  ",
-            "  ########  ",
-            "   ######   ",
-            "    ####    ",
-            "    #  #    ",
-            "    #  #    ",
+                "    #  #    ",
+                "#  ######   ",
+                "# ## ## ##  ",
+                "#### ## ####",
+                "  ######## #",
+                "  ######## #",
+                "   #    #   ",
+                "   #    ##  ",
             )))
-        aliens.append(((
-            "    #  #    ",
-            "   ######  #",
-            "  ## ## ## #",
-            "#### ## ####",
-            "# ########  ",
-            "# ########  ",
-            "   #    #   ",
-            "  ##    #   ",
+        aliens.append((
+            (
+                "  #      #  ",
+                "   #    #   ",
+                "   ######   ",
+                " # ##  ## # ",
+                " ########## ",
+                " #   ##   # ",
+                " #       # #",
+                "# #         ",
             ), (
-            "    #  #    ",
-            "#  ######   ",
-            "# ## ## ##  ",
-            "#### ## ####",
-            "  ######## #",
-            "  ######## #",
-            "   #    #   ",
-            "   #    ##  ",
+                "  #      #  ",
+                "   #    #   ",
+                "   ######   ",
+                " # ##  ## # ",
+                " ########## ",
+                " #   ##   # ",
+                "# #       # ",
+                "         # #",
             )))
-        aliens.append(((
-            "  #      #  ",
-            "   #    #   ",
-            "   ######   ",
-            " # ##  ## # ",
-            " ########## ",
-            " #   ##   # ",
-            " #       # #",
-            "# #         ",
+        aliens.append((
+            (
+                "  #      #  ",
+                "   #    #   ",
+                "  ########  ",
+                " ## #### ## ",
+                "### #### ###",
+                "# ######## #",
+                "# #      # #",
+                "  ##    ##  ",
             ), (
-            "  #      #  ",
-            "   #    #   ",
-            "   ######   ",
-            " # ##  ## # ",
-            " ########## ",
-            " #   ##   # ",
-            "# #       # ",
-            "         # #",
+                "  #      #  ",
+                "#  #    #  #",
+                "# ######## #",
+                "### #### ###",
+                "### #### ###",
+                " ########## ",
+                " # #    # # ",
+                "##        ##",
             )))
-        aliens.append(((
-            "  #      #  ",
-            "   #    #   ",
-            "  ########  ",
-            " ## #### ## ",
-            "### #### ###",
-            "# ######## #",
-            "# #      # #",
-            "  ##    ##  ",
+        aliens.append((
+            (
+                "    ####    ",
+                " ########## ",
+                "############",
+                "#   ####   #",
+                "############",
+                "   #    #   ",
+                "  # #### #  ",
+                " #        # ",
             ), (
-            "  #      #  ",
-            "#  #    #  #",
-            "# ######## #",
-            "### #### ###",
-            "### #### ###",
-            " ########## ",
-            " # #    # # ",
-            "##        ##",
+                "    ####    ",
+                " ########## ",
+                "############",
+                "#   ####   #",
+                "############",
+                "   # ## #   ",
+                "  #      #  ",
+                "   #    #   ",
             )))
-        aliens.append(((
-            "    ####    ",
-            " ########## ",
-            "############",
-            "#   ####   #",
-            "############",
-            "   #    #   ",
-            "  # #### #  ",
-            " #        # ",
+        aliens.append((
+            (
+                "            ",
+                "     ###    ",
+                "    #   #   ",
+                "        #   ",
+                "       #    ",
+                "      #     ",
+                "            ",
+                "      #     ",
             ), (
-            "    ####    ",
-            " ########## ",
-            "############",
-            "#   ####   #",
-            "############",
-            "   # ## #   ",
-            "  #      #  ",
-            "   #    #   ",
-            )))
-        aliens.append(((
-            "            ",
-            "     ###    ",
-            "    #   #   ",
-            "        #   ",
-            "       #    ",
-            "      #     ",
-            "            ",
-            "      #     ",
-            ), (
-            "            ",
-            "     ###    ",
-            "    #   #   ",
-            "    #       ",
-            "     #      ",
-            "      #     ",
-            "            ",
-            "      #     ",
+                "            ",
+                "     ###    ",
+                "    #   #   ",
+                "    #       ",
+                "     #      ",
+                "      #     ",
+                "            ",
+                "      #     ",
             )))
         return aliens[monster]
 
     def update(self):
+        """
+        description:
+        """
         self.rect = self.shape.get_rect().move(self.position)
         self.screen.blit(self.shape, self.position)
 
     def march(self, way, drop):
+        """
+        description:
+        """
         if not self.enable:
             return
         # Position
@@ -635,30 +767,54 @@ class Monster:
         self.caray = (self.caray + 1) % 2
 
     def get_position(self):
+        """
+        description:
+        """
         return self.position
 
     def get_radius(self):
+        """
+        description:
+        """
         return self.radius
 
     def get_size(self):
+        """
+        description:
+        """
         return self.size
 
     def get_points(self):
+        """
+        description:
+        """
         return self.points
 
     def get_rect(self):
+        """
+        description:
+        """
         return self.rect
 
     def stop(self):
+        """
+        description:
+        """
         self.enable = False
 
     def start(self):
+        """
+        description:
+        """
         self.enable = True
 
 
 class Barrier:
 
     def __init__(self, screen, position):
+        """
+        description:
+        """
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
@@ -680,113 +836,128 @@ class Barrier:
         self.update()
 
     def update(self):
+        """
+        description:
+        """
         self.rect = self.shape.get_rect().move(self.position)
         self.screen.blit(self.shape, self.position)
 
     def get_position(self):
+        """
+        description:
+        """
         return self.position
 
     def get_rect(self):
+        """
+        description:
+        """
         return self.rect
 
 
 class Explosion:
 
     def __init__(self, screen, position):
+        """
+        description:
+        """
         self.screen = screen
         self.position = position
         self.update_timer = Timer(50)
         self.done = False
-        self.sprites = ((
-            "     ##     ",
-            "   ######   ",
-            " ########## ",
-            "############",
-            "############",
-            " ########## ",
-            "   ######   ",
-            "     ##     ",
+        self.sprites = (
+            (
+                "     ##     ",
+                "   ######   ",
+                " ########## ",
+                "############",
+                "############",
+                " ########## ",
+                "   ######   ",
+                "     ##     ",
+                ),
+            (
+                "            ",
+                "     ##     ",
+                "   ######   ",
+                " ########## ",
+                " ########## ",
+                "   ######   ",
+                "     ##     ",
+                "            ",
             ), (
-            "            ",
-            "     ##     ",
-            "   ######   ",
-            " ########## ",
-            " ########## ",
-            "   ######   ",
-            "     ##     ",
-            "            ",
+                "            ",
+                "            ",
+                "     ##     ",
+                "   ######   ",
+                "   ######   ",
+                "     ##     ",
+                "            ",
+                "            ",
+                ),
+            (
+                "            ",
+                "            ",
+                "            ",
+                "     ##     ",
+                "     ##     ",
+                "            ",
+                "            ",
+                "            ",
             ), (
-            "            ",
-            "            ",
-            "     ##     ",
-            "   ######   ",
-            "   ######   ",
-            "     ##     ",
-            "            ",
-            "            ",
+                "            ",
+                "            ",
+                "    #  #    ",
+                "     ##     ",
+                "     ##     ",
+                "    #  #    ",
+                "            ",
+                "            ",
             ), (
-            "            ",
-            "            ",
-            "            ",
-            "     ##     ",
-            "     ##     ",
-            "            ",
-            "            ",
-            "            ",
+                "            ",
+                "   #    #   ",
+                "    #  #    ",
+                "     ##     ",
+                "     ##     ",
+                "    #  #    ",
+                "   #    #   ",
+                "            ",
             ), (
-            "            ",
-            "            ",
-            "    #  #    ",
-            "     ##     ",
-            "     ##     ",
-            "    #  #    ",
-            "            ",
-            "            ",
+                "  #      #  ",
+                "   #    #   ",
+                "    #  #    ",
+                "     ##     ",
+                "     ##     ",
+                "    #  #    ",
+                "   #    #   ",
+                "  #      #  ",
             ), (
-            "            ",
-            "   #    #   ",
-            "    #  #    ",
-            "     ##     ",
-            "     ##     ",
-            "    #  #    ",
-            "   #    #   ",
-            "            ",
+                "  #      #  ",
+                "   #    #   ",
+                "    #  #  # ",
+                "            ",
+                " #          ",
+                "    #  #    ",
+                "   #    #   ",
+                "  #      #  ",
             ), (
-            "  #      #  ",
-            "   #    #   ",
-            "    #  #    ",
-            "     ##     ",
-            "     ##     ",
-            "    #  #    ",
-            "   #    #   ",
-            "  #      #  ",
+                "  #      #  ",
+                "   #    #   ",
+                "            ",
+                "            ",
+                "            ",
+                "            ",
+                "   #    #   ",
+                "  #      #  ",
             ), (
-            "  #      #  ",
-            "   #    #   ",
-            "    #  #  # ",
-            "            ",
-            " #          ",
-            "    #  #    ",
-            "   #    #   ",
-            "  #      #  ",
-            ), (
-            "  #      #  ",
-            "   #    #   ",
-            "            ",
-            "            ",
-            "            ",
-            "            ",
-            "   #    #   ",
-            "  #      #  ",
-            ), (
-            "  #      #  ",
-            "            ",
-            "            ",
-            "            ",
-            "            ",
-            "            ",
-            "            ",
-            "  #      #  ",
+                "  #      #  ",
+                "            ",
+                "            ",
+                "            ",
+                "            ",
+                "            ",
+                "            ",
+                "  #      #  ",
             ))
         self.frame = 0
         self.size = [48, 32]
@@ -796,6 +967,9 @@ class Explosion:
         self.update()
 
     def update(self):
+        """
+        description:
+        """
         if self.update_timer.check():
             self.frame += 1
             if self.frame >= len(self.sprites):
@@ -806,6 +980,9 @@ class Explosion:
         self.screen.blit(self.shape, self.position)
 
     def is_done(self):
+        """
+        description:
+        """
         return self.done
 
 

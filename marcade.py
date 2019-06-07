@@ -35,14 +35,15 @@ except ImportError as err:
 
 
 class UserArgumentParser():
-    """
-    https://docs.python.org/2/library/argparse.html
-    http://chase-seibert.github.io/blog/
-    """
+
     def __init__(self):
+        """
+        https://docs.python.org/2/library/argparse.html
+        http://chase-seibert.github.io/blog/
+        """
         self.program_name = "marcade"
-        self.program_version = "0.8"
-        self.program_date = "2019-01-30"
+        self.program_version = "0.9"
+        self.program_date = "2019-02-17"
         self.program_description = "MArcade"
         self.program_copyright = "Copyright (c) 2014-2019 Marcio Pessoa"
         self.program_license = "GPLv2"
@@ -50,19 +51,19 @@ class UserArgumentParser():
         self.program_contact = "Marcio Pessoa <marcio.pessoa@gmail.com>"
         self.window_title = self.program_description
         self.resizeable = False
-        self.available_games = ["rocks", "invasion", "pongue"]
+        self.available_games = ["invasion", "p2048", "pongue", "rocks"]
         header = ('marcade <game> [<args>]\n\n' +
                   'Games:\n' +
-                  '  rocks          based on amazing Asteroids\n' +
                   '  invasion       based on memorable Space Invaders\n' +
-                  '  pongue         based on classic Pong\n\n')
+                  '  pongue         based on classic Pong\n' +
+                  '  rocks          based on amazing Asteroids\n\n')
         footer = (self.program_copyright + '\n' +
                   'License: ' + self.program_license + '\n' +
                   'Website: ' + self.program_website + '\n' +
                   'Contact: ' + self.program_contact + '\n')
         examples = ('examples:\n' +
                     '  marcade rocks\n' +
-                    '  marcade pongue --fullscreen\n')
+                    '  marcade\n')
         self.version = (self.program_name + " " + self.program_version + " (" +
                         self.program_date + ")")
         epilog = (examples + '\n' + footer)
@@ -144,6 +145,9 @@ class UserArgumentParser():
         self.keys = set()
 
     def pongue(self):
+        """
+        description:
+        """
         from games.pongue import Pongue
         parser = argparse.ArgumentParser(
             prog=self.program_name + ' pongue',
@@ -158,12 +162,15 @@ class UserArgumentParser():
         sys.exit(False)
 
     def rocks(self):
+        """
+        description:
+        """
         from games.rocks import Rocks
         parser = argparse.ArgumentParser(
             prog=self.program_name + ' rocks',
             description='based on amazing Asteroids')
         args = parser.parse_args(sys.argv[2:])
-        self.window_title = 'Asteroids'
+        self.window_title = 'Rocks'
         self.__screen_start()
         self.game = Rocks(self.screen)
         self.game.start()
@@ -171,6 +178,9 @@ class UserArgumentParser():
         sys.exit(False)
 
     def invasion(self):
+        """
+        description:
+        """
         from games.invasion import Invasion
         parser = argparse.ArgumentParser(
             prog=self.program_name + ' invasion',
@@ -179,6 +189,21 @@ class UserArgumentParser():
         self.window_title = 'Invasion'
         self.__screen_start()
         self.game = Invasion(self.screen)
+        self.__run()
+        sys.exit(False)
+
+    def p2048(self):
+        """
+        description:
+        """
+        from games.p2048 import P2048
+        parser = argparse.ArgumentParser(
+            prog=self.program_name + ' p2048',
+            description='based on 2048 by Gabriele Cirulli')
+        args = parser.parse_args(sys.argv[2:])
+        self.window_title = '2048'
+        self.__screen_start()
+        self.game = P2048(self.screen)
         self.__run()
         sys.exit(False)
 

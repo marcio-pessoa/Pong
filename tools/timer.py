@@ -30,20 +30,20 @@ import time
 
 class Timer:
     """
+    description:
     """
 
-    def __init__(self, period, type="LOOP"):
-        """
-        """
+    def __init__(self, period, kind="LOOP"):
         self.version = '0.03b'
         self.millis = lambda: int(round(time.time() * 1000))
         self.period = period * 1.0
-        self.type = type
+        self.type = kind
         self.enable = True
         self.counter = self.millis()
 
     def set(self, period):
         """
+        description:
         """
         self.period = period * 1.0
         self.reset()
@@ -51,21 +51,27 @@ class Timer:
 
     def get(self):
         """
+        description:
         """
         return self.period
 
     def reset(self):
         """
+        description:
         """
         self.enable = True
         self.counter = self.millis()
 
     def enable(self):
         """
+        description:
         """
         self.enable = True
 
     def disable(self):
+        """
+        description:
+        """
         self.enable = False
 
     def unit(self, unit):
@@ -79,21 +85,24 @@ class Timer:
 
     def check(self):
         """
+        description:
         """
         if self.type == "LOOP":
-            if (self.millis() - self.counter >= self.period):
+            if self.millis() - self.counter >= self.period:
                 self.counter = self.millis()
                 return True
         elif self.type == "COUNTDOWN":
-            if (self.millis() - self.counter >= self.period):
+            if self.millis() - self.counter >= self.period:
                 self.enable = False
                 return True
         elif self.type == "STOPWATCH":
             return self.millis() - self.counter
         else:
             return False
+        return False
 
     def status(self):
         """
+        description:
         """
         return (self.millis() - self.counter) / self.period
