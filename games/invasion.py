@@ -209,7 +209,7 @@ class Invasion:
                                    (self.screen_size[0] /
                                     formation[0]) / 3,
                                    ((self.screen_size[1] /
-                                    (formation[1] + 3) * y)) + 30],
+                                     (formation[1] + 3) * y)) + 30],
                                   [200, 200, 200])
                 self.aliens.add(monster)
 
