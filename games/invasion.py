@@ -19,6 +19,9 @@ contributors:
   - name: Nicolas Masaishi Oi Pessoa
     email: masaishi.pessoa@gmail.com
 change-log:
+  2019-07-13:
+  - version: 0.04
+    Fixed: Barrier destruction.
   2019-02-03:
   - version: 0.03
     Added: Minor updates.
@@ -44,7 +47,7 @@ class Invasion:
         """
         description:
         """
-        self.version = '0.03'
+        self.version = '0.04'
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
@@ -131,7 +134,7 @@ class Invasion:
         """
         description:
         """
-        # Missle againt Alien
+        # Ship Missle against Alien
         for i in self.aliens:
             for j in self.ship_burst:
                 if i.get_rect().colliderect(j.get_rect()):
@@ -143,7 +146,26 @@ class Invasion:
                     self.ship_burst.remove(j)
                     self.sound.tone(400)
                     return
-        # Alien againt Wall
+        # Ship Missle against Wall
+        for i in self.walls:
+            for j in self.ship_burst:
+                if i.get_rect().colliderect(j.get_rect()):
+                    self.score += i.get_points()
+                    if i.add_damage() <= 0:
+                        self.walls.remove(i)
+                    self.ship_burst.remove(j)
+                    self.sound.tone(200)
+                    return
+        # Alien Missle against Wall
+        for i in self.walls:
+            for j in self.alien_burst:
+                if i.get_rect().colliderect(j.get_rect()):
+                    if i.add_damage() <= 0:
+                        self.walls.remove(i)
+                    self.alien_burst.remove(j)
+                    self.sound.tone(200)
+                    return
+        # Alien against Wall
         for i in self.aliens:
             for j in self.walls:
                 if i.get_rect().colliderect(j.get_rect()):
@@ -157,7 +179,7 @@ class Invasion:
                     self.walls.remove(j)
                     self.sound.tone(200)
                     return
-        # Ship againt Alien
+        # Ship against Alien
         for i in self.aliens:
             if i.get_rect().colliderect(self.ship.get_rect()):
                 position = i.get_position()
@@ -170,7 +192,7 @@ class Invasion:
                 self.lives -= 1
                 self.sound.tone(200)
                 return
-        # Ship againt Missle
+        # Alien Missle againt Ship
         for i in self.alien_burst:
             if i.get_rect().colliderect(self.ship.get_rect()):
                 position = self.ship.get_position()
@@ -821,19 +843,74 @@ class Barrier:
         self.position = position
         self.size = [48, 32]
         self.color = (139, 105, 20)
-        sprite = (
-            "    ####    ",
-            "  ########  ",
-            " ########## ",
-            " ########## ",
-            " ########## ",
-            "############",
-            "############",
-            "###      ###",
+        self.sprites = (
+            (
+                "            ",
+                "            ",
+                "            ",
+                "            ",
+                "            ",
+                "     ####   ",
+                "  ######### ",
+                "###      ###",
+                ),
+            (
+                "            ",
+                "            ",
+                "            ",
+                "            ",
+                "      ##    ",
+                "    #####   ",
+                " ########## ",
+                "###      ###",
+                ),
+            (
+                "            ",
+                "            ",
+                "     ##     ",
+                "   ######   ",
+                "    ######  ",
+                "  ########  ",
+                "############",
+                "###      ###",
+                ),
+            (
+                "            ",
+                "            ",
+                "     ##     ",
+                "   ######   ",
+                "   #######  ",
+                " ########## ",
+                "############",
+                "###      ###",
+                ),
+            (
+                "            ",
+                "    ###     ",
+                "   #####    ",
+                "  ########  ",
+                "  ########  ",
+                "########### ",
+                "############",
+                "###      ###",
+                ),
+            (
+                "    ####    ",
+                "  ########  ",
+                " ########## ",
+                " ########## ",
+                " ########## ",
+                "############",
+                "############",
+                "###      ###",
+                )
             )
+        self.status = len(self.sprites) - 1
+        print(self.status)
         self.shape = pygame.Surface(self.size, SRCALPHA)
-        draw(self.shape, sprite, self.color, 4)
+        draw(self.shape, self.sprites[self.status], self.color, 4)
         self.update()
+        self.points = 1
 
     def update(self):
         """
@@ -841,6 +918,18 @@ class Barrier:
         """
         self.rect = self.shape.get_rect().move(self.position)
         self.screen.blit(self.shape, self.position)
+
+    def add_damage(self):
+        self.status -= 1
+        draw(self.shape, self.sprites[self.status], self.color, 4)
+        # self.update()
+        return self.status
+
+    def get_points(self):
+        """
+        description:
+        """
+        return self.points
 
     def get_position(self):
         """
