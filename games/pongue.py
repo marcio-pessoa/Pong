@@ -280,7 +280,7 @@ class Pongue:
             if ((self.ball_position[1] + self.ball_radius) >
                 (self.pad1_position - self.pad_height_half)) and \
                ((self.ball_position[1] - self.ball_radius) <
-               (self.pad1_position + self.pad_height_half)):
+                (self.pad1_position + self.pad_height_half)):
                 self.ball_velocity[0] *= -1.1
                 self.ball_velocity[1] *= 1.1
                 self.sound.tone(900)

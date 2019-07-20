@@ -51,6 +51,7 @@ class UserArgumentParser():
         self.program_contact = "Marcio Pessoa <marcio.pessoa@gmail.com>"
         self.window_title = self.program_description
         self.resizeable = False
+        self.game = None
         self.available_games = ["invasion", "p2048", "pongue", "rocks"]
         header = ('marcade <game> [<args>]\n\n' +
                   'Games:\n' +
