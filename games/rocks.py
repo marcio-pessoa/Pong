@@ -264,37 +264,67 @@ class Ship:
         self.double_rect = __ship_double.get_rect()
 
     def thrust_on(self):
+        """
+        description:
+        """
         # TODO: Play sound using code here
         # ship_thrust_sound.rewind()
         # ship_thrust_sound.play()
         self.thrust = True
 
     def thrust_off(self):
+        """
+        description:
+        """
         # ship_thrust_sound.pause()
         self.thrust = False
 
     def increment_angle_vel(self):
+        """
+        description:
+        """
         self.angle_vel += math.radians(math.pi / 50)
 
     def decrement_angle_vel(self):
+        """
+        description:
+        """
         self.angle_vel -= math.radians(math.pi / 50)
 
     def get_rect(self):
+        """
+        description:
+        """
         return self.rect
 
     def get_double_rect(self):
+        """
+        description:
+        """
         return self.double_rect
 
     def get_radius(self):
+        """
+        description:
+        """
         return self.radius
 
     def get_position(self):
+        """
+        description:
+        """
         return self.position
 
     def get_speed(self):
+        """
+        description:
+        """
         return self.speed
 
     def get_angle(self):
+        """
+        description:
+        """
         return self.angle
 
 
@@ -368,7 +398,7 @@ class Sprite:
                              (random.uniform(size[0] / 3, size[1] / 1.5),
                               random.uniform(size[0] / 1.5, size[1])),
                              (random.uniform(0, size[1] / 4),
-                             random.uniform(size[0] / 1.5, size[1])),
+                              random.uniform(size[0] / 1.5, size[1])),
                              ], 0)
         self.ship = pygame.Surface([48, 48], SRCALPHA)
         # self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
@@ -381,6 +411,9 @@ class Sprite:
         self.update()
 
     def upgrade(self, size):
+        """
+        description:
+        """
         self.size[0] += size[0]
         self.size[1] += size[1]
         size = self.size
@@ -400,13 +433,16 @@ class Sprite:
                              (random.uniform(size[0] / 3, size[1] / 1.5),
                               random.uniform(size[0] / 1.5, size[1])),
                              (random.uniform(0, size[1] / 4),
-                             random.uniform(size[0] / 1.5, size[1])),
+                              random.uniform(size[0] / 1.5, size[1])),
                              ], 0)
         self.radius = self.ship.get_rect().center[1]
         self.__rect = self.ship.get_rect()
         self.update()
 
     def update(self):
+        """
+        description:
+        """
         # Angle
         acc = []
         self.angle += self.angle_vel
@@ -430,7 +466,13 @@ class Sprite:
         self.screen.blit(ship, position)
 
     def get_size(self):
+        """
+        description:
+        """
         return self.size
 
     def get_rect(self):
+        """
+        description:
+        """
         return self.rect
