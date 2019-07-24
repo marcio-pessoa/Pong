@@ -327,4 +327,3 @@ class P2048:
         Return the value of the tile at position row, col.
         """
         return self._grid[row][col]
-

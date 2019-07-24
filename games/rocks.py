@@ -420,21 +420,22 @@ class Sprite:
         self.ship = pygame.Surface(self.size, SRCALPHA)
         # self.ship.fill([50, 50, 50])  # FIXME: Remove after tests
         color_tone = random.randrange(50, 100)
-        pygame.draw.polygon(self.ship,
-                            [color_tone, color_tone, color_tone],
-                            [(random.uniform(0, size[1] / 4),
-                              random.uniform(0, size[1] / 3)),
-                             (random.uniform(size[0] / 4, size[1] / 1.5),
-                              random.uniform(0, size[1] / 2)),
-                             (random.uniform(size[0] / 1.5, size[1]),
-                              random.uniform(0, size[1] / 2)),
-                             (random.uniform(size[0] / 1.1, size[1]),
-                              random.uniform(size[0] / 1.5, size[1])),
-                             (random.uniform(size[0] / 3, size[1] / 1.5),
-                              random.uniform(size[0] / 1.5, size[1])),
-                             (random.uniform(0, size[1] / 4),
-                              random.uniform(size[0] / 1.5, size[1])),
-                             ], 0)
+        pygame.draw.polygon(
+            self.ship,
+            [color_tone, color_tone, color_tone],
+            [(random.uniform(0, size[1] / 4),
+              random.uniform(0, size[1] / 3)),
+             (random.uniform(size[0] / 4, size[1] / 1.5),
+              random.uniform(0, size[1] / 2)),
+             (random.uniform(size[0] / 1.5, size[1]),
+              random.uniform(0, size[1] / 2)),
+             (random.uniform(size[0] / 1.1, size[1]),
+              random.uniform(size[0] / 1.5, size[1])),
+             (random.uniform(size[0] / 3, size[1] / 1.5),
+              random.uniform(size[0] / 1.5, size[1])),
+             (random.uniform(0, size[1] / 4),
+              random.uniform(size[0] / 1.5, size[1])),
+             ], 0)
         self.radius = self.ship.get_rect().center[1]
         self.__rect = self.ship.get_rect()
         self.update()
