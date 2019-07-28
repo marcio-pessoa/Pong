@@ -479,7 +479,7 @@ class Ship:  # pylint: disable=too-many-instance-attributes
         self.enable = False
 
 
-class Missile:
+class Missile:   # pylint: disable=too-many-arguments,too-many-instance-attributes
     """
     description:
     """
