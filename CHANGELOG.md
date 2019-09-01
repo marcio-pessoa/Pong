@@ -1,6 +1,10 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [1] - 2019-09-01
+### Added
+- Joystick support.
+
 ## [0.8] - 2019-01-30
 ### Added
 - Sound FX on all games.

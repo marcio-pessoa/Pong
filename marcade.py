@@ -29,6 +29,7 @@ try:
             import pygame
             from pygame.locals import *
             sys.stdout = oldstdout
+    import tools.joystick.joystick as joystick
 except ImportError as err:
     print("Could not load module. " + str(err))
     sys.exit(True)
@@ -42,7 +43,7 @@ class UserArgumentParser():
         http://chase-seibert.github.io/blog/
         """
         self.program_name = "marcade"
-        self.program_version = "0.9"
+        self.program_version = 1
         self.program_date = "2019-02-17"
         self.program_description = "MArcade"
         self.program_copyright = "Copyright (c) 2014-2019 Marcio Pessoa"
@@ -65,7 +66,8 @@ class UserArgumentParser():
         examples = ('examples:\n' +
                     '  marcade rocks\n' +
                     '  marcade\n')
-        self.version = (self.program_name + " " + self.program_version + " (" +
+        self.version = (self.program_name + " " +
+                        str(self.program_version) + " (" +
                         self.program_date + ")")
         epilog = (examples + '\n' + footer)
         parser = argparse.ArgumentParser(
@@ -125,6 +127,7 @@ class UserArgumentParser():
             pygame.display.flip()
 
     def __check_event(self):
+        joy_state = None
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -138,12 +141,17 @@ class UserArgumentParser():
                 self.canvas_size = event.dict['size']
                 self.__screen_reset()
                 self.game.size_reset()
-        self.game.control(self.keys)
+        joy_state = self.joystick.all()
+        self.game.control(self.keys, joy_state)
 
     def __ctrl_set(self):
         # Set keyboard speed
         pygame.key.set_repeat(0, 0)
         self.keys = set()
+        self.joystick = joystick.Joystick()
+        if joystick.detect():
+            self.joystick.identification(joystick.detect()[0])
+            print(self.joystick.configuration())
 
     def pongue(self):
         """
