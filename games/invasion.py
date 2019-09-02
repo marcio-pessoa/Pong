@@ -20,6 +20,9 @@ contributors:
   - name: Nicolas Masaishi Oi Pessoa
     email: masaishi.pessoa@gmail.com
 change-log:
+  2019-09-01:
+  - version: 0.5
+    Added: Joystick support.
   2019-07-13:
   - version: 0.04
     Fixed: Barrier destruction.
@@ -48,7 +51,7 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
     """
 
     def __init__(self, screen):
-        self.version = '0.04'
+        self._version = 0.5
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
@@ -368,10 +371,21 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
         self.ship_burst.add(shoot)
         self.sound.tone(1200)
 
-    def control(self, keys):
+    def control(self, keys, joystick):
         """
         description:
         """
+        if joystick:
+            if joystick['hat'][0]['x'] < 0 or \
+               joystick['axis'][0] < 0:
+                self.ship.move_left()
+            if joystick['hat'][0]['x'] > 0 or \
+               joystick['axis'][0] > 0:
+                self.ship.move_right()
+            if joystick['button'][10]:
+                self.reset()
+            if joystick['button'][0]:
+                self.ship_shoot()
         if K_ESCAPE in keys:  # pylint: disable=undefined-variable
             self.stop()
         if K_RIGHT in keys:  # pylint: disable=undefined-variable
