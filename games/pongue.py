@@ -192,10 +192,25 @@ class Pongue:
         pygame.event.clear()
         self.running = False
 
-    def control(self, keys):
+    def control(self, keys, joystick):
         """
         description:
         """
+        if joystick:
+            if joystick['axis'][1] < 0:
+                self.pad1_vel -= self.pad_acceleration * abs(joystick['axis'][1])
+                self.pad1_pressed += self.delta_increment * abs(joystick['axis'][1])
+            if joystick['axis'][1] > 0:
+                self.pad1_vel += self.pad_acceleration * abs(joystick['axis'][1])
+                self.pad1_pressed += self.delta_increment * abs(joystick['axis'][1])
+            if joystick['axis'][4] < 0:
+                self.pad2_vel -= self.pad_acceleration * abs(joystick['axis'][4])
+                self.pad2_pressed += self.delta_increment * abs(joystick['axis'][4])
+            if joystick['axis'][4] > 0:
+                self.pad2_vel += self.pad_acceleration * abs(joystick['axis'][4])
+                self.pad2_pressed += self.delta_increment * abs(joystick['axis'][4])
+            if joystick['button'][10]:
+                self.reset()
         if K_ESCAPE in keys:
             self.stop()
         if K_w in keys:
