@@ -17,18 +17,9 @@ try:
     import argparse
     import os
     import random
-    if sys.version_info >= (3, 0):
-        import contextlib
-        with contextlib.redirect_stdout(None):
-            import pygame
-            from pygame.locals import *
-    else:
-        with open(os.devnull, 'w') as f:
-            oldstdout = sys.stdout
-            sys.stdout = f
-            import pygame
-            from pygame.locals import *
-            sys.stdout = oldstdout
+    import contextlib
+    import pygame
+    from pygame.locals import *
     import tools.joystick.joystick as joystick
 except ImportError as err:
     print("Could not load module. " + str(err))
@@ -44,7 +35,7 @@ class UserArgumentParser():
         """
         self.program_name = "marcade"
         self.program_version = 1
-        self.program_date = "2019-02-17"
+        self.program_date = "2019-09-01"
         self.program_description = "MArcade"
         self.program_copyright = "Copyright (c) 2014-2019 Marcio Pessoa"
         self.program_license = "GPLv2"

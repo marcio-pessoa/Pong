@@ -15,19 +15,10 @@ change-log:
 
 import sys
 import os
-
-if sys.version_info >= (3, 0):
-    import contextlib
-    with contextlib.redirect_stdout(None):
-        import pygame
-        from pygame.locals import *
-else:
-    with open(os.devnull, 'w') as f:
-        OLDSTDOUT = sys.stdout
-        sys.stdout = f
-        import pygame
-        from pygame.locals import *
-        sys.stdout = OLDSTDOUT
+import contextlib
+with contextlib.redirect_stdout(None):
+    import pygame
+    from pygame.locals import *
 
 
 class Joystick():
@@ -53,6 +44,7 @@ class Joystick():
         returns:
           False: Initialization OK
           True: Initialization fails
+          None: Not initialized
           int: Joystick ID
         """
         # Return current ID
@@ -293,7 +285,6 @@ def detect():
     joystick_list = []
     for i in range(count):
         joystick_list.append(i)
-    # pygame.quit()  # pylint: disable=no-member
     if count == 0:
         return False
     return tuple(joystick_list)
