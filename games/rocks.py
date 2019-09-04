@@ -178,11 +178,26 @@ class Rocks:
         self.burst.add(shoot)
         self.sound.tone(800)
 
-    def control(self, keys):
+    def control(self, keys, joystick):
         """
         description:
         """
-        if K_ESCAPE in keys:
+        if joystick:
+            if joystick['hat'][0]['x'] < 0 or \
+               joystick['axis'][0] < 0:
+                self.ship.increment_angle_vel()
+            if joystick['hat'][0]['x'] > 0 or \
+               joystick['axis'][0] > 0:
+                self.ship.decrement_angle_vel()
+            if joystick['hat'][0]['y'] > 0 or \
+               joystick['axis'][1] < 0:
+                self.ship.thrust_on()
+                return
+            if joystick['button'][10]:
+                self.reset()
+            if joystick['button'][0]:
+                self.shoot()
+        if K_ESCAPE in keys:  # pylint: disable=undefined-variable
             self.stop()
         if K_UP in keys:
             self.ship.thrust_on()
