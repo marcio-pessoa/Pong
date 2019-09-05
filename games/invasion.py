@@ -384,7 +384,7 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
                 self.ship.move_right()
             if joystick['button'][10]:
                 self.reset()
-            if joystick['button'][0]:
+            if joystick['button'][0] or joystick['button'][7]:
                 self.ship_shoot()
         if K_ESCAPE in keys:  # pylint: disable=undefined-variable
             self.stop()
