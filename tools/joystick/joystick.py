@@ -13,12 +13,10 @@ change-log:
     added: First version.
 """
 
-import sys
-import os
 import contextlib
 with contextlib.redirect_stdout(None):
     import pygame
-    from pygame.locals import *
+    from pygame.locals import *  # pylint: disable=wildcard-import, unused-import, unused-wildcard-import
 
 
 class Joystick():
