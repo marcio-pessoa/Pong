@@ -17,16 +17,23 @@ try:
     import argparse
     import os
     import random
-    import contextlib
     import pygame
-    from pygame.locals import *
+    from pygame.locals import \
+    HWSURFACE, DOUBLEBUF, RESIZABLE, QUIT, KEYDOWN, K_ESCAPE, VIDEORESIZE, KEYUP
     import tools.joystick.joystick as joystick
 except ImportError as err:
     print("Could not load module. " + str(err))
     sys.exit(True)
 
 
-class UserArgumentParser():
+class UserArgumentParser():  # pylint: disable=too-many-instance-attributes
+    """
+    description:
+
+    reference:
+    - https://docs.python.org/2/library/argparse.html
+      http://chase-seibert.github.io/blog/
+    """
 
     def __init__(self):
         """
@@ -45,6 +52,13 @@ class UserArgumentParser():
         self.resizeable = False
         self.game = None
         self.available_games = ["invasion", "p2048", "pongue", "rocks"]
+        self.canvas_size = None
+        self.clock = None
+        self.joystick = None
+        self.keys = None
+        self.running = None
+        self.screen = None
+        self.screen_rate = None
         header = ('marcade <game> [<args>]\n\n' +
                   'Games:\n' +
                   '  invasion       based on memorable Space Invaders\n' +
@@ -73,7 +87,8 @@ class UserArgumentParser():
                             help='show version information and exit')
         if len(sys.argv) < 2:
             # Select a random game
-            eval("self." + str(random.choice(self.available_games)) + "()")
+            game = random.choice(self.available_games)
+            eval("self." + str(game) + "()")  # pylint: disable=eval-used
         args = parser.parse_args(sys.argv[1:2])
         if not hasattr(self, args.game):
             print('Unrecognized command')
@@ -92,7 +107,7 @@ class UserArgumentParser():
         # Window position
         os.environ['SDL_VIDEO_CENTERED'] = '1'
         # Initialise screen
-        pygame.init()
+        pygame.init()  # pylint: disable=no-member
         self.__screen_reset()
         # Window caption
         pygame.display.set_caption(self.window_title)
@@ -120,7 +135,7 @@ class UserArgumentParser():
     def __check_event(self):
         joy_state = None
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == QUIT:
                 self.running = False
             elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
@@ -152,7 +167,7 @@ class UserArgumentParser():
         parser = argparse.ArgumentParser(
             prog=self.program_name + ' pongue',
             description='based on classic Pong')
-        args = parser.parse_args(sys.argv[2:])
+        args = parser.parse_args(sys.argv[2:])  # pylint: disable=unused-variable
         self.window_title = 'Pongue'
         self.resizeable = True
         self.__screen_start()
@@ -169,7 +184,7 @@ class UserArgumentParser():
         parser = argparse.ArgumentParser(
             prog=self.program_name + ' rocks',
             description='based on amazing Asteroids')
-        args = parser.parse_args(sys.argv[2:])
+        args = parser.parse_args(sys.argv[2:])  # pylint: disable=unused-variable
         self.window_title = 'Rocks'
         self.__screen_start()
         self.game = Rocks(self.screen)
@@ -185,7 +200,7 @@ class UserArgumentParser():
         parser = argparse.ArgumentParser(
             prog=self.program_name + ' invasion',
             description='based on Space Invaders')
-        args = parser.parse_args(sys.argv[2:])
+        args = parser.parse_args(sys.argv[2:])  # pylint: disable=unused-variable
         self.window_title = 'Invasion'
         self.__screen_start()
         self.game = Invasion(self.screen)
@@ -200,7 +215,7 @@ class UserArgumentParser():
         parser = argparse.ArgumentParser(
             prog=self.program_name + ' p2048',
             description='based on 2048 by Gabriele Cirulli')
-        args = parser.parse_args(sys.argv[2:])
+        args = parser.parse_args(sys.argv[2:])  # pylint: disable=unused-variable
         self.window_title = '2048'
         self.__screen_start()
         self.game = P2048(self.screen)
