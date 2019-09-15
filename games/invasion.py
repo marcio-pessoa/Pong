@@ -14,11 +14,6 @@ contributors:
     email: masaishi.pessoa@gmail.com
   - name: Gustavo Nuzzo Gass
     email: gustavonuzzogass@gmail.com
-  beta-testers:
-  - name: Gustavo Nuzzo Gass
-    email: gustavonuzzogass@gmail.com
-  - name: Nicolas Masaishi Oi Pessoa
-    email: masaishi.pessoa@gmail.com
 change-log:
   2019-09-01:
   - version: 0.5
@@ -39,10 +34,10 @@ change-log:
 
 import random
 import pygame
-from pygame.locals import *  # pylint: disable=wildcard-import,unused-wildcard-import
+from pygame.locals import *
 from tools.font import Font
 from tools.sound import Sound
-from tools.timer import Timer
+from tools.pytimer.pytimer import Timer
 
 
 class Invasion:  # pylint: disable=too-many-instance-attributes
@@ -53,8 +48,7 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
     def __init__(self, screen):
         self._version = 0.5
         self.screen = screen
-        self.screen_size = [self.screen.get_size()[0],
-                            self.screen.get_size()[1]]
+        self.screen_size = [self.screen.get_size()[0], self.screen.get_size()[1]]
         self.space = pygame.Surface(self.screen_size,
                                     HWSURFACE | SRCALPHA, 32)  # pylint: disable=undefined-variable
         self.space.convert_alpha()
@@ -116,9 +110,7 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
         """
         description:
         """
-        # Draw Space
         self.space.fill([0, 0, 0])  # Black
-        # Draw objects (ship, rocks, missiles, etc...)
         self.score_update()
         self.burst_update()
         self.walls_update()
@@ -128,7 +120,6 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
         self.collision_check()
         self.aliens_check()
         self.lives_check()
-        # Join everything
         self.screen.blit(self.space, [0, 0])
         return False
 
@@ -359,7 +350,7 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
         """
         description:
         """
-        # Timer
+        # Limit shoot frequency
         if not self.shoot_timer.check():
             return
         # Limit burst size
@@ -795,7 +786,6 @@ class Monster:  # pylint: disable=too-many-instance-attributes
         """
         if not self.enable:
             return
-        # Position
         if way:
             increment = 1
         else:
@@ -803,7 +793,6 @@ class Monster:  # pylint: disable=too-many-instance-attributes
         self.position[0] += increment * 4
         if drop:
             self.position[1] += increment * 16
-        # Look
         draw(self.shape, self.alien[self.caray], self.color, 4)
         self.caray = (self.caray + 1) % 2
 
@@ -925,7 +914,6 @@ class Barrier:  # pylint: disable=too-many-instance-attributes
                 )
             )
         self.status = len(self.sprites) - 1
-        print(self.status)
         self.shape = pygame.Surface(self.size, SRCALPHA)  # pylint: disable=undefined-variable
         draw(self.shape, self.sprites[self.status], self.color, 4)
         self.update()
@@ -944,7 +932,6 @@ class Barrier:  # pylint: disable=too-many-instance-attributes
         """
         self.status -= 1
         draw(self.shape, self.sprites[self.status], self.color, 4)
-        # self.update()
         return self.status
 
     def get_points(self):
@@ -1097,10 +1084,12 @@ class Explosion:  # pylint: disable=too-many-instance-attributes
         return self.done
 
 
-def draw(shape, sprite, color, zoom, offset=[0, 0]):
+def draw(shape, sprite, color, zoom, offset=None):
     """
     description:
     """
+    if offset is None:
+        offset = [0, 0]
     x_axis = offset[0]
     y_axis = offset[1]
     shape.fill((0, 0, 0))
