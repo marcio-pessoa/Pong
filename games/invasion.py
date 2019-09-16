@@ -231,8 +231,7 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
                                    (self.screen_size[0] /
                                     formation[0]) / 3,
                                    ((self.screen_size[1] /
-                                     (formation[1] + 3) * y)) + 30],
-                                  [200, 200, 200])
+                                     (formation[1] + 3) * y)) + 30])
                 self.aliens.add(monster)
 
     def aliens_update(self):
@@ -556,7 +555,7 @@ class Monster:  # pylint: disable=too-many-instance-attributes
     description:
     """
 
-    def __init__(self, screen, aspect, position, color):
+    def __init__(self, screen, aspect, position):
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
