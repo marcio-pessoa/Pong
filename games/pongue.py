@@ -293,7 +293,7 @@ class Pongue:
         # Bounces off of the left
         if self.ball_position[0] - self.ball_radius < self.pad_width:
             if ((self.ball_position[1] + self.ball_radius) >
-                (self.pad1_position - self.pad_height_half)) and \
+                    (self.pad1_position - self.pad_height_half)) and \
                ((self.ball_position[1] - self.ball_radius) <
                 (self.pad1_position + self.pad_height_half)):
                 self.ball_velocity[0] *= -1.1
@@ -308,7 +308,7 @@ class Pongue:
         if self.ball_position[0] + self.ball_radius > \
            self.play_area.get_size()[0] - self.pad_width:
             if ((self.ball_position[1] + self.ball_radius) >
-                (self.pad2_position - self.pad_height_half)) and \
+                    (self.pad2_position - self.pad_height_half)) and \
                ((self.ball_position[1] - self.ball_radius) <
                 (self.pad2_position + self.pad_height_half)):
                 self.ball_velocity[0] *= -1.1

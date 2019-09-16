@@ -22,7 +22,7 @@ class Font:
     """
 
     def __init__(self, screen):
-        self.version = '0.01'
+        self.version = 0.02
         self.screen = screen
         self.alphabet = (
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
@@ -343,10 +343,14 @@ class Font:
                 "      ",
             ))
         self.set_size(1)
+        self.shape = None
         self.position = [0, 0]
         self.color = [200, 200, 200]
 
     def echo(self, string):
+        """
+        description:
+        """
         position = list(self.position)
         for i in list(string):
             char = self.alphabet.index(i)
@@ -358,23 +362,36 @@ class Font:
             position[0] += self.increment
 
     def set_size(self, size):
+        """
+        description:
+        """
         self.size = size
         self.increment = 6 * self.size
 
     def set_position(self, position):
+        """
+        description:
+        """
         self.position = position
 
     def set_color(self, color):
+        """
+        description:
+        """
         self.color = color
 
     def draw(self, sprite, position):
-        x = position[0]
-        y = position[1]
+        """
+        description:
+        """
+        x_position = position[0]
+        y_position = position[1]
         for row in sprite:
             for col in row:
                 if col == "#":
                     pygame.draw.rect(self.shape, self.color,
-                                     (x, y, self.size, self.size))
-                x += self.size
-            y += self.size
-            x = position[0]
+                                     (x_position, y_position,
+                                      self.size, self.size))
+                x_position += self.size
+            y_position += self.size
+            x_position = position[0]

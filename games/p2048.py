@@ -25,7 +25,7 @@ from pygame.locals import *
 import random
 from tools.font import Font
 from tools.sound import Sound
-from tools.timer import Timer
+from tools.pytimer.pytimer import Timer
 
 
 class P2048:

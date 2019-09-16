@@ -37,14 +37,17 @@ change-log:
 """
 
 import math
+import random
 import pygame
 from pygame.locals import *
-import random
 from tools.font import Font
 from tools.sound import Sound
 
 
 class Rocks:
+    """
+    description:
+    """
 
     def __init__(self, screen):
         self.version = '0.05'
@@ -52,6 +55,9 @@ class Rocks:
         self.running = False
 
     def start(self):
+        """
+        description:
+        """
         self.sound = Sound()
         self.running = True
         self.size_set()
@@ -69,6 +75,9 @@ class Rocks:
         self.livesboard.set_color((100, 100, 100))
 
     def size_set(self):
+        """
+        description:
+        """
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
         self.space = pygame.Surface(self.screen_size,
@@ -76,10 +85,16 @@ class Rocks:
         self.space.convert_alpha()
 
     def set(self):
+        """
+        description:
+        """
         self.ship = Ship(self.space)
         self.reset()
 
     def size_reset(self):
+        """
+        description:
+        """
         # Discover new size factor
         x_factor = self.screen.get_size()[0] / self.screen_size[0]
         y_factor = self.screen.get_size()[1] / self.screen_size[1]
@@ -87,6 +102,9 @@ class Rocks:
         self.ship.screen_reset()
 
     def reset(self):
+        """
+        description:
+        """
         self.lives = 3
         self.score = 0
         self.rock_group = set()
@@ -94,6 +112,9 @@ class Rocks:
         self.ship.reset()
 
     def run(self):
+        """
+        description:
+        """
         # Draw Space
         self.space.fill([0, 0, 0])  # Black
         # Draw objects (ship, rocks, missiles, etc...)
@@ -109,6 +130,9 @@ class Rocks:
         return False
 
     def update_scoreboard(self):
+        """
+        description:
+        """
         self.scoreboard.echo(str(self.score))
         self.livesboard.echo(str(self.lives))
         if self.score % 100 == 1 and self.score != 1:
@@ -116,6 +140,9 @@ class Rocks:
             self.lives += 1
 
     def check_collision(self):
+        """
+        description:
+        """
         for i in self.rock_group:
             # Ship against rocks
             if i.get_rect().colliderect(self.ship.get_rect()):
@@ -144,6 +171,9 @@ class Rocks:
                 return
 
     def rock_update(self):
+        """
+        description:
+        """
         # Need more?
         while len(self.rock_group) < 8:
             rock = Sprite(self.space)
@@ -154,6 +184,9 @@ class Rocks:
             i.update()
 
     def burst_update(self):
+        """
+        description:
+        """
         # Update position
         for i in self.burst:
             i.update()
@@ -164,10 +197,16 @@ class Rocks:
                 break
 
     def stop(self):
+        """
+        description:
+        """
         pygame.event.clear()
         self.running = False
 
     def shoot(self):
+        """
+        description:
+        """
         # Limit burst size
         if len(self.burst) >= 10:
             return
@@ -213,6 +252,9 @@ class Rocks:
 
 
 class Ship:
+    """
+    description:
+    """
 
     def __init__(self, screen):
         self.screen = screen
@@ -221,23 +263,26 @@ class Ship:
         self.reset()
 
     def reset(self):
-        self.position = [self.screen_size[0] / 2,
-                         self.screen_size[1] / 2]
+        """
+        description:
+        """
+        self.position = [self.screen_size[0] / 2, self.screen_size[1] / 2]
         self.speed = [0, 0]
         self.angle = math.pi / -2
         self.thrust = False
         self.angle_vel = 0
 
     def start(self):
+        """
+        description:
+        """
         self.ship_size = [31, 31]
         position = [0, 0]
         ship = pygame.Surface(self.ship_size, SRCALPHA)
-        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
         # Draw ship
         pygame.draw.polygon(ship, (200, 200, 200),
                             [(0, 30), (15, 0), (30, 30), (15, 23)], 0)
         self.ship = pygame.Surface([48, 48], SRCALPHA)
-        # self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
         ship = pygame.transform.rotate(ship, 90)
         position[0] = self.ship.get_rect().center[0] - ship.get_rect().center[0]
         position[1] = self.ship.get_rect().center[1] - ship.get_rect().center[1]
@@ -247,6 +292,9 @@ class Ship:
         self.update()
 
     def update(self):
+        """
+        description:
+        """
         # Angle
         acc = []
         self.angle += self.angle_vel
@@ -282,9 +330,6 @@ class Ship:
         """
         description:
         """
-        # TODO: Play sound using code here
-        # ship_thrust_sound.rewind()
-        # ship_thrust_sound.play()
         self.thrust = True
 
     def thrust_off(self):
@@ -344,6 +389,10 @@ class Ship:
 
 
 class Missile:
+    """
+    description:
+    """
+
     def __init__(self, screen,
                  ship_position, ship_radius, ship_speed, ship_angle,):
         self.screen = screen
@@ -364,6 +413,9 @@ class Missile:
         self.update()
 
     def update(self):
+        """
+        description:
+        """
         self.position[0] = ((self.position[0] + self.speed[0]) %
                             self.screen_size[0])
         self.position[1] = ((self.position[1] + self.speed[1]) %
@@ -374,16 +426,29 @@ class Missile:
         self.screen.blit(self.missile, position)
 
     def age(self):
+        """
+        description:
+        """
         return pygame.time.get_ticks() - self.time_born
 
     def get_radius(self):
+        """
+        description:
+        """
         return self.radius
 
     def get_rect(self):
+        """
+        description:
+        """
         return self.rect
 
 
 class Sprite:
+    """
+    description:
+    """
+
     def __init__(self, screen):
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0],
@@ -398,7 +463,6 @@ class Sprite:
         size = self.size
         position = [0, 0]
         ship = pygame.Surface(self.size, SRCALPHA)
-        # ship.fill([50, 50, 50])  # FIXME: Remove after tests
         color_tone = random.randrange(50, 100)
         pygame.draw.polygon(ship,
                             [color_tone, color_tone, color_tone],
@@ -416,7 +480,6 @@ class Sprite:
                               random.uniform(size[0] / 1.5, size[1])),
                              ], 0)
         self.ship = pygame.Surface([48, 48], SRCALPHA)
-        # self.ship.fill([20, 20, 20])  # FIXME: Remove after tests
         position[0] = self.ship.get_rect().center[0] - ship.get_rect().center[0]
         position[1] = self.ship.get_rect().center[1] - ship.get_rect().center[1]
         self.ship.blit(ship, position)
@@ -433,7 +496,6 @@ class Sprite:
         self.size[1] += size[1]
         size = self.size
         self.ship = pygame.Surface(self.size, SRCALPHA)
-        # self.ship.fill([50, 50, 50])  # FIXME: Remove after tests
         color_tone = random.randrange(50, 100)
         pygame.draw.polygon(
             self.ship,
@@ -460,7 +522,6 @@ class Sprite:
         description:
         """
         # Angle
-        acc = []
         self.angle += self.angle_vel
         # Position
         self.position[0] = ((self.position[0] + self.speed[0]) %
@@ -476,7 +537,6 @@ class Sprite:
         rot_rect = orig_rect.copy()
         rot_rect.center = rot_image.get_rect().center
         ship = rot_image.subsurface(rot_rect).copy()
-        # ship.fill([20, 20, 20])  # FIXME: Remove after tests
         self.radius = ship.get_rect().center[0]
         self.rect = self.__rect.move(position)
         self.screen.blit(ship, position)
