@@ -51,6 +51,14 @@ class Pongue:
         self.version = 0.06
         self.screen = screen
         self.running = False
+        self.pad1_position = [0, 0]
+        self.pad2_position = [0, 0]
+        self.pad1_vel = 0
+        self.pad2_vel = 0
+        self.ball_velocity = [0, 0]
+        self.pad1_pressed = False
+        self.pad2_pressed = False
+        self.ball_position = [0, 0]
 
     def start(self):
         """
