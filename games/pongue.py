@@ -36,8 +36,8 @@ change-log:
 """
 
 import pygame
-from pygame.locals import *
 import random
+from pygame.locals import *
 from tools.font import Font
 from tools.sound import Sound
 

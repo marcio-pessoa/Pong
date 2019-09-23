@@ -560,11 +560,12 @@ class Monster:  # pylint: disable=too-many-instance-attributes
         self.screen_size = [self.screen.get_size()[0],
                             self.screen.get_size()[1]]
         self.aspect = aspect % 6
+        self.__color = []
         self.position = position
         self.alien = self.sprite(self.aspect)
         self.size = [48, 32]
-        self.color = self.color(aspect % 6)
-        self.shape = pygame.Surface(self.size, SRCALPHA)  # pylint: disable=undefined-variable
+        self.color = self.color(self.aspect)
+        self.shape = pygame.Surface(self.size, SRCALPHA)
         self.caray = 0
         self.radius = self.shape.get_rect().center[0]
         draw(self.shape, self.alien[0], self.color, 4)
@@ -576,14 +577,16 @@ class Monster:  # pylint: disable=too-many-instance-attributes
         """
         description:
         """
-        aliens = []
-        aliens.append((150, 200, 100))
-        aliens.append((200, 200, 100))
-        aliens.append((100, 200, 200))
-        aliens.append((200, 100, 200))
-        aliens.append((100, 100, 200))
-        aliens.append((200, 100, 100))
-        return aliens[monster]
+        self.__color = \
+            [
+                (150, 200, 100),
+                (200, 200, 100),
+                (100, 200, 200),
+                (200, 100, 200),
+                (100, 100, 200),
+                (200, 100, 100)
+            ]
+        return self.__color[monster]
 
     def sprite(self, monster):
         """
