@@ -223,15 +223,15 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
         description:
         """
         formation = (7, 6)
-        for y in range(formation[1]):
-            for x in range(formation[0]):
-                monster = Monster(self.space, y,
+        for cartesian_y in range(formation[1]):
+            for cartesian_x in range(formation[0]):
+                monster = Monster(self.space, cartesian_y,
                                   [(self.screen_size[0] /
-                                    formation[0]) * x +
+                                    formation[0]) * cartesian_x +
                                    (self.screen_size[0] /
                                     formation[0]) / 3,
                                    ((self.screen_size[1] /
-                                     (formation[1] + 3) * y)) + 30])
+                                     (formation[1] + 3) * cartesian_y)) + 30])
                 self.aliens.add(monster)
 
     def aliens_update(self):
