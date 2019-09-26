@@ -564,11 +564,11 @@ class Monster:  # pylint: disable=too-many-instance-attributes
         self.position = position
         self.alien = self.sprite(self.aspect)
         self.size = [48, 32]
-        self.color = self.color(self.aspect)
+        self._color = self.color(self.aspect)
         self.shape = pygame.Surface(self.size, SRCALPHA)
         self.caray = 0
         self.radius = self.shape.get_rect().center[0]
-        draw(self.shape, self.alien[0], self.color, 4)
+        draw(self.shape, self.alien[0], self._color, 4)
         self.points = 10 - aspect
         self.enable = True
         self.update()
@@ -795,7 +795,7 @@ class Monster:  # pylint: disable=too-many-instance-attributes
         self.position[0] += increment * 4
         if drop:
             self.position[1] += increment * 16
-        draw(self.shape, self.alien[self.caray], self.color, 4)
+        draw(self.shape, self.alien[self.caray], self._color, 4)
         self.caray = (self.caray + 1) % 2
 
     def get_position(self):
