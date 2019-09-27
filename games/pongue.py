@@ -35,8 +35,8 @@ change-log:
     Added: First version.
 """
 
-import pygame
 import random
+import pygame
 from pygame.locals import *
 from tools.font import Font
 from tools.sound import Sound
@@ -59,6 +59,7 @@ class Pongue:
         self.pad1_pressed = False
         self.pad2_pressed = False
         self.ball_position = [0, 0]
+        self.score = [0, 0]
 
     def start(self):
         """
