@@ -60,6 +60,9 @@ class Pongue:
         self.pad2_pressed = False
         self.ball_position = [0, 0]
         self.score = [0, 0]
+        self.ball_radius = 0
+        self.pad_width = 0
+        self.pad_height = 0
 
     def start(self):
         """
