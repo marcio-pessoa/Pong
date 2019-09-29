@@ -43,11 +43,11 @@ from tools.sound import Sound
 
 
 class Pongue:
+    """
+    description:
+    """
 
     def __init__(self, screen):
-        """
-        description:
-        """
         self.version = 0.06
         self.screen = screen
         self.running = False
@@ -63,6 +63,7 @@ class Pongue:
         self.ball_radius = 0
         self.pad_width = 0
         self.pad_height = 0
+        self.sound = Sound()
 
     def start(self):
         """
@@ -76,7 +77,6 @@ class Pongue:
         self.reset()
         self.set()
         self.ball_spawn()
-        self.sound = Sound()
         self.score_player1 = Font(self.play_area)
         self.score_player1.set_size(5)
         self.score_player1.set_position([290, 20])
