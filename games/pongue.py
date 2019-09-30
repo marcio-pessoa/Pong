@@ -64,6 +64,9 @@ class Pongue:
         self.pad_width = 0
         self.pad_height = 0
         self.sound = Sound()
+        self.court_side = 1
+        self.pad_acceleration = 1
+        self.delta_increment = 6
 
     def start(self):
         """
