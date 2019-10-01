@@ -282,12 +282,12 @@ class Pongue:
                          [self.court.get_size()[0] - 1,
                           self.court.get_size()[1] - 1])
         # Draw mid dashed line
-        for y in range(0, self.play_area.get_size()[1], 5):
+        for i in range(0, self.play_area.get_size()[1], 5):
             pygame.draw.line(self.play_area, (128, 128, 128),
                              [self.play_area.get_size()[0] / 2,
-                              4 + (y * 5)],
+                              4 + (i * 5)],
                              [self.play_area.get_size()[0] / 2,
-                              16 + (y * 5)])
+                              16 + (i * 5)])
 
     def ball_check(self):
         """
