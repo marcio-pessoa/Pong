@@ -63,10 +63,16 @@ class Pongue:
         self.ball_radius = 0
         self.pad_width = 0
         self.pad_height = 0
+        self.pad_height_half = 0
         self.sound = Sound()
         self.court_side = 1
         self.pad_acceleration = 1
         self.delta_increment = 6
+        self.screen_size = []
+        self.court = 0
+        self.play_area = 0
+        self.score_player1 = 0
+        self.score_player2 = 0
 
     def start(self):
         """
