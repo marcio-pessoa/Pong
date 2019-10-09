@@ -42,7 +42,7 @@ from tools.font import Font
 from tools.sound import Sound
 
 
-class Pongue:
+class Pongue:  # pylint: disable=too-many-instance-attributes
     """
     description:
     """

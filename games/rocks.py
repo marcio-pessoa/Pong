@@ -53,12 +53,12 @@ class Rocks:
         self.version = '0.05'
         self.screen = screen
         self.running = False
+        self.sound = Sound()
 
     def start(self):
         """
         description:
         """
-        self.sound = Sound()
         self.running = True
         self.size_set()
         self.pad_acceleration = 1
