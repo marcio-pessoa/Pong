@@ -16,7 +16,7 @@ change-log:
 import contextlib
 with contextlib.redirect_stdout(None):
     import pygame
-    from pygame.locals import *  # pylint: disable=wildcard-import, unused-import, unused-wildcard-import
+from pygame.locals import *  # pylint: disable=wildcard-import, unused-import, unused-wildcard-import
 
 
 class Joystick():

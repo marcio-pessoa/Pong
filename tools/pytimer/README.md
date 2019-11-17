@@ -16,6 +16,7 @@ All notable changes to this project will be documented here.
 - get method.
 - status method.
 - status to check method.
+
 ### changed
 - Requied library "datetime" to "time".
 
@@ -27,8 +28,7 @@ All notable changes to this project will be documented here.
 ### added
 - Ported from C++ to Python.
 
-## 2015-10-04
-- version: 0.04
+## 2015-10-04 (version: 0.04)
 ### fixed
 - COUNTDOWN timer. Now counter stop decreasing after reaches 0.
 
