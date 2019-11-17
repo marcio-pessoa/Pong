@@ -1,0 +1,3 @@
+[submodule "tools/pytimer"]
+	path = tools/pytimer
+	url = https://github.com/marcio-pessoa/pytimer
