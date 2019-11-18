@@ -37,7 +37,7 @@ import pygame
 from pygame.locals import *
 from tools.font import Font
 from tools.sound import Sound
-from tools.pytimer.pytimer import Timer
+from tools.timer.timer import Timer
 
 
 class Invasion:  # pylint: disable=too-many-instance-attributes

@@ -51,7 +51,7 @@ class UserArgumentParser():  # pylint: disable=too-many-instance-attributes
         self.window_title = self.program_description
         self.resizeable = False
         self.game = None
-        self.available_games = ["invasion", "p2048", "pongue", "rocks"]
+        self.available_games = ["invasion", "pongue", "rocks"]
         self.canvas_size = None
         self.clock = None
         self.joystick = None
@@ -204,21 +204,6 @@ class UserArgumentParser():  # pylint: disable=too-many-instance-attributes
         self.window_title = 'Invasion'
         self.__screen_start()
         self.game = Invasion(self.screen)
-        self.__run()
-        sys.exit(False)
-
-    def p2048(self):
-        """
-        description:
-        """
-        from games.p2048 import P2048
-        parser = argparse.ArgumentParser(
-            prog=self.program_name + ' p2048',
-            description='based on 2048 by Gabriele Cirulli')
-        args = parser.parse_args(sys.argv[2:])  # pylint: disable=unused-variable
-        self.window_title = '2048'
-        self.__screen_start()
-        self.game = P2048(self.screen)
         self.__run()
         sys.exit(False)
 
