@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Log files
+*.log
+
+# Other files
+*.tmp
+*.geany
+.geany
+
+# Backup files
+*~
+*.bak
+*.old
+
+# Compressed files
+*.tar.gz
+*.zip
+*.img.xz
+*.AppImage
+
+# System configuration
+system-connections/
+
+# User files
+HOURS
+HOURS.md
+HOURS.yaml
+Reference
+
+# Test files
+*-test.*
+*_test.*
