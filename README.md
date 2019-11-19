@@ -4,15 +4,14 @@ Márcio's Arcade games
 ## Changes
 All notable changes to this project will be documented in this [Change log](CHANGELOG.md).
 
-## Dependencies
-Required modules:
-- pyaudio
-
-### Installing modules
+### Installing required Python modules
 ``` bash
-sudo apt install -y python-pygame \
-                    python-pyaudio \
-                    python3-pyaudio
+sudo pip install pygame PyAudio
+```
+
+## Cloning
+```
+git clone --recurse-submodules git@github.com:marcio-pessoa/marcade.git
 ```
 
 ## Running
