@@ -10,11 +10,16 @@ sudo pip install pygame PyAudio
 ```
 
 ## Cloning
-```
+``` bash
 git clone --recurse-submodules git@github.com:marcio-pessoa/marcade.git
 ```
 
 ## Running
+Enter MArcade directory:
+``` bash
+cd marcade
+```
+
 To start a random game:
 ``` bash
 ./marcade.py
