@@ -11,7 +11,7 @@ sudo pip install pygame PyAudio
 
 ## Cloning
 ``` bash
-git clone --recurse-submodules git@github.com:marcio-pessoa/marcade.git
+git clone --recurse-submodules https://github.com/marcio-pessoa/marcade.git
 ```
 
 ## Running
