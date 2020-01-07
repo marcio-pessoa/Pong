@@ -49,8 +49,9 @@ class Rocks:
     description:
     """
 
+    __version__ = '0.05'
+
     def __init__(self, screen):
-        self.version = '0.05'
         self.screen = screen
         self.running = False
         self.sound = Sound()

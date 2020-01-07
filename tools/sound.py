@@ -21,8 +21,9 @@ class Sound():
     description:
     """
 
+    __version__ = '0.01'
+
     def __init__(self):
-        self.version = '0.01'
         self.bitrate = 44100  # Frames per second (frame rate / frameset)
         self.length = 0.015  # Sound duration (seconds)
         self.frames = int(self.bitrate * self.length)

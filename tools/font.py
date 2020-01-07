@@ -21,8 +21,9 @@ class Font:
     description:
     """
 
+    __version__ = 0.02
+
     def __init__(self, screen):
-        self.version = 0.02
         self.screen = screen
         self.alphabet = (
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",

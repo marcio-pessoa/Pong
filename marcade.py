@@ -16,6 +16,7 @@ try:
     import sys
     import argparse
     import os
+    import logging
     import random
     import pygame
     from pygame.locals import \
@@ -26,7 +27,7 @@ except ImportError as err:
     sys.exit(True)
 
 
-class UserArgumentParser():  # pylint: disable=too-many-instance-attributes
+class MArcade():  # pylint: disable=too-many-instance-attributes
     """
     description:
 
@@ -35,16 +36,17 @@ class UserArgumentParser():  # pylint: disable=too-many-instance-attributes
       http://chase-seibert.github.io/blog/
     """
 
+    __version__ = 1.1
+
     def __init__(self):
         """
         https://docs.python.org/2/library/argparse.html
         http://chase-seibert.github.io/blog/
         """
         self.program_name = "marcade"
-        self.program_version = 1
-        self.program_date = "2019-09-01"
+        self.program_date = "2020-01-07"
         self.program_description = "MArcade"
-        self.program_copyright = "Copyright (c) 2014-2019 Marcio Pessoa"
+        self.program_copyright = "Copyright (c) 2014-2020 Marcio Pessoa"
         self.program_license = "GPLv2"
         self.program_website = "https://github.com/marcio-pessoa/marcade"
         self.program_contact = "Marcio Pessoa <marcio.pessoa@gmail.com>"
@@ -59,6 +61,7 @@ class UserArgumentParser():  # pylint: disable=too-many-instance-attributes
         self.running = None
         self.screen = None
         self.screen_rate = None
+        verbosity('INFO')
         header = ('marcade <game> [<args>]\n\n' +
                   'Games:\n' +
                   '  invasion       based on memorable Space Invaders\n' +
@@ -72,7 +75,7 @@ class UserArgumentParser():  # pylint: disable=too-many-instance-attributes
                     '  marcade rocks\n' +
                     '  marcade\n')
         self.version = (self.program_name + " " +
-                        str(self.program_version) + " (" +
+                        str(self.__version__) + " (" +
                         self.program_date + ")")
         epilog = (examples + '\n' + footer)
         parser = argparse.ArgumentParser(
@@ -169,6 +172,7 @@ class UserArgumentParser():  # pylint: disable=too-many-instance-attributes
             description='based on classic Pong')
         args = parser.parse_args(sys.argv[2:])  # pylint: disable=unused-variable
         self.window_title = 'Pongue'
+        game_start_message(self.window_title, Pongue.__version__)
         self.resizeable = True
         self.__screen_start()
         self.game = Pongue(self.screen)
@@ -186,6 +190,7 @@ class UserArgumentParser():  # pylint: disable=too-many-instance-attributes
             description='based on amazing Asteroids')
         args = parser.parse_args(sys.argv[2:])  # pylint: disable=unused-variable
         self.window_title = 'Rocks'
+        game_start_message(self.window_title, Rocks.__version__)
         self.__screen_start()
         self.game = Rocks(self.screen)
         self.game.start()
@@ -202,17 +207,41 @@ class UserArgumentParser():  # pylint: disable=too-many-instance-attributes
             description='based on Space Invaders')
         args = parser.parse_args(sys.argv[2:])  # pylint: disable=unused-variable
         self.window_title = 'Invasion'
+        game_start_message(self.window_title, Invasion.__version__)
         self.__screen_start()
         self.game = Invasion(self.screen)
         self.__run()
         sys.exit(False)
 
 
+def verbosity(level):
+    """
+    description:
+    """
+    if level == 'DEBUG':
+        logging.basicConfig(level=logging.DEBUG)
+    elif level == 'INFO':
+        logging.basicConfig(level=logging.INFO)
+    elif level == 'WARNING':
+        logging.basicConfig(level=logging.WARNING)
+    elif level == 'ERROR':
+        logging.basicConfig(level=logging.ERROR)
+    elif level == 'CRITICAL':
+        logging.basicConfig(level=logging.CRITICAL)
+    else:
+        logging.basicConfig(level=logging.ERROR)
+
+def game_start_message(name, version):
+    """
+    description:
+    """
+    logging.info("Starting %s version %s", name, version)
+
 def main():
     """
     description:
     """
-    UserArgumentParser()
+    MArcade()
 
 
 if __name__ == '__main__':

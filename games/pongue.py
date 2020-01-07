@@ -47,8 +47,9 @@ class Pongue:  # pylint: disable=too-many-instance-attributes
     description:
     """
 
+    __version__ = 0.06
+
     def __init__(self, screen):
-        self.version = 0.06
         self.screen = screen
         self.running = False
         self.pad1_position = [0, 0]

@@ -45,8 +45,9 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
     description:
     """
 
+    __version__ = 0.5
+
     def __init__(self, screen):
-        self._version = 0.5
         self.screen = screen
         self.screen_size = [self.screen.get_size()[0], self.screen.get_size()[1]]
         self.space = pygame.Surface(self.screen_size,
