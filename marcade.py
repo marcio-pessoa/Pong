@@ -44,7 +44,7 @@ class MArcade():  # pylint: disable=too-many-instance-attributes
         http://chase-seibert.github.io/blog/
         """
         self.program_name = "marcade"
-        self.program_date = "2020-01-07"
+        self.program_date = "2020-01-08"
         self.program_description = "MArcade"
         self.program_copyright = "Copyright (c) 2014-2020 Marcio Pessoa"
         self.program_license = "GPLv2"
@@ -61,7 +61,6 @@ class MArcade():  # pylint: disable=too-many-instance-attributes
         self.running = None
         self.screen = None
         self.screen_rate = None
-        verbosity('INFO')
         header = ('marcade <game> [<args>]\n\n' +
                   'Games:\n' +
                   '  invasion       based on memorable Space Invaders\n' +
@@ -85,7 +84,8 @@ class MArcade():  # pylint: disable=too-many-instance-attributes
             add_help=True,
             usage=header)
         parser.add_argument('game', help='game to run')
-        parser.add_argument('-V', '--version', action='version',
+        parser.add_argument('-V', '--version',
+                            action='version',
                             version=self.version,
                             help='show version information and exit')
         if len(sys.argv) < 2:
@@ -170,7 +170,14 @@ class MArcade():  # pylint: disable=too-many-instance-attributes
         parser = argparse.ArgumentParser(
             prog=self.program_name + ' pongue',
             description='based on classic Pong')
-        args = parser.parse_args(sys.argv[2:])  # pylint: disable=unused-variable
+        parser.add_argument('-v', '--verbosity',
+                            type=str,
+                            default='ERROR',
+                            choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG'],
+                            help='verbose mode, options: ' +
+                            'CRITICAL, ERROR (default), WARNING, INFO, DEBUG')
+        args = parser.parse_args(sys.argv[2:])
+        verbosity(args.verbosity)
         self.window_title = 'Pongue'
         game_start_message(self.window_title, Pongue.__version__)
         self.resizeable = True
@@ -188,7 +195,14 @@ class MArcade():  # pylint: disable=too-many-instance-attributes
         parser = argparse.ArgumentParser(
             prog=self.program_name + ' rocks',
             description='based on amazing Asteroids')
-        args = parser.parse_args(sys.argv[2:])  # pylint: disable=unused-variable
+        parser.add_argument('-v', '--verbosity',
+                            type=str,
+                            default='ERROR',
+                            choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG'],
+                            help='verbose mode, options: ' +
+                            'CRITICAL, ERROR (default), WARNING, INFO, DEBUG')
+        args = parser.parse_args(sys.argv[2:])
+        verbosity(args.verbosity)
         self.window_title = 'Rocks'
         game_start_message(self.window_title, Rocks.__version__)
         self.__screen_start()
@@ -205,7 +219,14 @@ class MArcade():  # pylint: disable=too-many-instance-attributes
         parser = argparse.ArgumentParser(
             prog=self.program_name + ' invasion',
             description='based on Space Invaders')
-        args = parser.parse_args(sys.argv[2:])  # pylint: disable=unused-variable
+        parser.add_argument('-v', '--verbosity',
+                            type=str,
+                            default='ERROR',
+                            choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG'],
+                            help='verbose mode, options: ' +
+                            'CRITICAL, ERROR (default), WARNING, INFO, DEBUG')
+        args = parser.parse_args(sys.argv[2:])
+        verbosity(args.verbosity)
         self.window_title = 'Invasion'
         game_start_message(self.window_title, Invasion.__version__)
         self.__screen_start()
