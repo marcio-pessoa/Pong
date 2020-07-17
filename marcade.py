@@ -166,7 +166,7 @@ class MArcade():  # pylint: disable=too-many-instance-attributes
         """
         description:
         """
-        from games.pongue import Pongue
+        from games.pongue import Pongue  # pylint: disable=import-outside-toplevel
         parser = argparse.ArgumentParser(
             prog=self.program_name + ' pongue',
             description='based on classic Pong')
@@ -191,7 +191,7 @@ class MArcade():  # pylint: disable=too-many-instance-attributes
         """
         description:
         """
-        from games.rocks import Rocks
+        from games.rocks import Rocks  # pylint: disable=import-outside-toplevel
         parser = argparse.ArgumentParser(
             prog=self.program_name + ' rocks',
             description='based on amazing Asteroids')
@@ -215,7 +215,7 @@ class MArcade():  # pylint: disable=too-many-instance-attributes
         """
         description:
         """
-        from games.invasion import Invasion
+        from games.invasion import Invasion  # pylint: disable=import-outside-toplevel
         parser = argparse.ArgumentParser(
             prog=self.program_name + ' invasion',
             description='based on Space Invaders')

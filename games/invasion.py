@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 """
 ---
 name: invasion.py
@@ -93,8 +92,8 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
         self.way = True
         self.drop = False
         self.ship.reset()
-        self.walls_deploy()
-        self.aliens_deploy()
+        self._walls_deploy()
+        self._aliens_deploy()
 
     def reset(self):
         """
@@ -105,36 +104,30 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
         self.score = 0
         self.start_march_period = 600
         self.set()
-        self.level_up()
+        self._level_up()
 
     def run(self):
         """
         description:
         """
         self.space.fill([0, 0, 0])  # Black
-        self.score_update()
-        self.burst_update()
-        self.walls_update()
+        self._score_update()
+        self._burst_update()
+        self._walls_update()
         self.ship.update()
-        self.aliens_update()
-        self.explosions_update()
-        self.collision_check()
-        self.aliens_check()
-        self.lives_check()
+        self._aliens_update()
+        self._explosions_update()
+        self._collision_check()
+        self._aliens_check()
+        self._lives_check()
         self.screen.blit(self.space, [0, 0])
         return False
 
-    def lives_check(self):
-        """
-        description:
-        """
+    def _lives_check(self):
         if self.lives == 0:
-            self.game_over()
+            self._game_over()
 
-    def collision_check(self):  # pylint: disable=too-many-branches
-        """
-        description:
-        """
+    def _collision_check(self):  # pylint: disable=too-many-branches
         # Ship Missle against Alien
         for i in self.aliens:
             for j in self.ship_burst:
@@ -204,10 +197,7 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
                 self.sound.tone(200)
                 return
 
-    def burst_update(self):
-        """
-        description:
-        """
+    def _burst_update(self):
         # Update position
         for i in self.ship_burst:
             i.update()
@@ -219,10 +209,7 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
                 self.ship_burst.remove(i)
                 break
 
-    def aliens_deploy(self):
-        """
-        description:
-        """
+    def _aliens_deploy(self):
         formation = (7, 6)
         for cartesian_y in range(formation[1]):
             for cartesian_x in range(formation[0]):
@@ -235,10 +222,7 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
                                      (formation[1] + 3) * cartesian_y)) + 30])
                 self.aliens.add(monster)
 
-    def aliens_update(self):
-        """
-        description:
-        """
+    def _aliens_update(self):
         # Update
         for i in self.aliens:
             i.update()
@@ -262,7 +246,7 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
         # Aliens landing
         for i in self.aliens:
             if i.get_position()[1] + i.get_size()[1] >= self.screen_size[1]:
-                self.game_over()
+                self._game_over()
                 break
         # Fire
         for i in self.aliens:
@@ -273,10 +257,7 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
                 self.alien_burst.add(shoot)
                 break
 
-    def game_over(self):
-        """
-        description:
-        """
+    def _game_over(self):
         self.ship.stop()
         for i in self.aliens:
             i.stop()
@@ -286,27 +267,18 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
             i.stop()
         self.gameovermessage.echo("GAME OVER")
 
-    def aliens_check(self):
-        """
-        description:
-        """
+    def _aliens_check(self):
         if len(self.aliens) == 0:
-            self.level_up()
+            self._level_up()
 
-    def level_up(self):
-        """
-        description:
-        """
+    def _level_up(self):
         self.level += 1
         self.lives += 1
         self.alien_burst_seed -= self.level * 100
         self.start_march_period -= self.start_march_period * self.level / 20
         self.set()
 
-    def walls_deploy(self):
-        """
-        description:
-        """
+    def _walls_deploy(self):
         quantity = 4
         for i in range(quantity):
             position = (self.screen.get_size()[0] / quantity * i +
@@ -314,42 +286,27 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
             barrier = Barrier(self.space, position)
             self.walls.add(barrier)
 
-    def walls_update(self):
-        """
-        description:
-        """
+    def _walls_update(self):
         for i in self.walls:
             i.update()
 
-    def score_update(self):
-        """
-        description:
-        """
+    def _score_update(self):
         self.scoreboard.echo(str(self.score))
         self.livesboard.echo(str(self.lives))
         self.levelboard.echo(str(self.level))
 
-    def explosions_update(self):
-        """
-        description:
-        """
+    def _explosions_update(self):
         for i in self.explosions:
             i.update()
             if i.is_done():
                 self.explosions.remove(i)
                 return
 
-    def stop(self):
-        """
-        description:
-        """
+    def _stop(self):
         pygame.event.clear()
         self.running = False
 
-    def ship_shoot(self):
-        """
-        description:
-        """
+    def _ship_shoot(self):
         # Limit shoot frequency
         if not self.shoot_timer.check():
             return
@@ -376,15 +333,15 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
             if joystick['button'][10]:
                 self.reset()
             if joystick['button'][0] or joystick['button'][7]:
-                self.ship_shoot()
+                self._ship_shoot()
         if K_ESCAPE in keys:  # pylint: disable=undefined-variable
-            self.stop()
+            self._stop()
         if K_RIGHT in keys:  # pylint: disable=undefined-variable
             self.ship.move_right()
         if K_LEFT in keys:  # pylint: disable=undefined-variable
             self.ship.move_left()
         if K_SPACE in keys or K_a in keys:  # pylint: disable=undefined-variable
-            self.ship_shoot()
+            self._ship_shoot()
         if K_RETURN in keys:  # pylint: disable=undefined-variable
             self.reset()
 
@@ -416,7 +373,6 @@ class Ship:  # pylint: disable=too-many-instance-attributes
         self.shape = pygame.Surface(self.size, SRCALPHA)  # pylint: disable=undefined-variable
         draw(self.shape, sprite, self.color, 4)
         self.radius = self.shape.get_rect().center[0]
-        self.update()
 
     def reset(self):
         """
@@ -563,7 +519,7 @@ class Monster:  # pylint: disable=too-many-instance-attributes
         self.aspect = aspect % 6
         self.__color = []
         self.position = position
-        self.alien = self.sprite(self.aspect)
+        self.alien = self._sprite(self.aspect)
         self.size = [48, 32]
         self._color = self.color(self.aspect)
         self.shape = pygame.Surface(self.size, SRCALPHA)
@@ -572,7 +528,6 @@ class Monster:  # pylint: disable=too-many-instance-attributes
         draw(self.shape, self.alien[0], self._color, 4)
         self.points = 10 - aspect
         self.enable = True
-        self.update()
 
     def color(self, monster):
         """
@@ -589,191 +544,198 @@ class Monster:  # pylint: disable=too-many-instance-attributes
             ]
         return self.__color[monster]
 
-    def sprite(self, monster):
-        """
-        description:
-        """
-        aliens = []
-        aliens.append((
+    def _sprite(self, monster):
+        aliens = [
             (
-                "    ####    ",
-                " ########## ",
-                "############",
-                "###  ##  ###",
-                "############",
-                "   ##  ##   ",
-                "  ## ## ##  ",
-                "##        ##",
-            ), (
-                "    ####    ",
-                " ########## ",
-                "############",
-                "###  ##  ###",
-                "############",
-                "  ###  ###  ",
-                " ##  ##  ## ",
-                "  ##    ##  ",
-            )))
-        aliens.append((
+                (
+                    "    ####    ",
+                    " ########## ",
+                    "############",
+                    "###  ##  ###",
+                    "############",
+                    "   ##  ##   ",
+                    "  ## ## ##  ",
+                    "##        ##",
+                ), (
+                    "    ####    ",
+                    " ########## ",
+                    "############",
+                    "###  ##  ###",
+                    "############",
+                    "  ###  ###  ",
+                    " ##  ##  ## ",
+                    "  ##    ##  ",
+                )
+            ),
             (
-                "  #      #  ",
-                "   #    #   ",
-                "  ########  ",
-                " ## #### ## ",
-                "############",
-                "# ######## #",
-                "# #      # #",
-                "   ##  ##   ",
-            ), (
-                "  #      #  ",
-                "#  #    #  #",
-                "# ######## #",
-                "### #### ###",
-                "############",
-                " ########## ",
-                "  #      #  ",
-                " #        # ",)
-            ))
-        aliens.append((
+                (
+                    "  #      #  ",
+                    "   #    #   ",
+                    "  ########  ",
+                    " ## #### ## ",
+                    "############",
+                    "# ######## #",
+                    "# #      # #",
+                    "   ##  ##   ",
+                ), (
+                    "  #      #  ",
+                    "#  #    #  #",
+                    "# ######## #",
+                    "### #### ###",
+                    "############",
+                    " ########## ",
+                    "  #      #  ",
+                    " #        # ",
+                )
+            ),
             (
-                "    ####    ",
-                "#####  #####",
-                "# ######## #",
-                "#  ######  #",
-                "#  ######   ",
-                "#   ####    ",
-                "    #  #    ",
-                "    #  ##   ",
-            ), (
-                "    ####    ",
-                "#####  #####",
-                "# ######## #",
-                "#  ######  #",
-                "   ######  #",
-                "    ####   #",
-                "    #  #    ",
-                "   ##  #    ",
-            )))
-        aliens.append((
+                (
+                    "    ####    ",
+                    "#####  #####",
+                    "# ######## #",
+                    "#  ######  #",
+                    "#  ######   ",
+                    "#   ####    ",
+                    "    #  #    ",
+                    "    #  ##   ",
+                ), (
+                    "    ####    ",
+                    "#####  #####",
+                    "# ######## #",
+                    "#  ######  #",
+                    "   ######  #",
+                    "    ####   #",
+                    "    #  #    ",
+                    "   ##  #    ",
+                )
+            ),
             (
-                "   ##  ##   ",
-                "     ##     ",
-                "#### ## ####",
-                " ########## ",
-                "  ########  ",
-                "   ######   ",
-                "    #  #    ",
-                "    #  #    ",
-            ), (
-                "   ##  ##   ",
-                "     ##     ",
-                "  ## ## ##  ",
-                "  ########  ",
-                "   ######   ",
-                "    ####    ",
-                "    #  #    ",
-                "    #  #    ",
-            )))
-        aliens.append((
+                (
+                    "   ##  ##   ",
+                    "     ##     ",
+                    "#### ## ####",
+                    " ########## ",
+                    "  ########  ",
+                    "   ######   ",
+                    "    #  #    ",
+                    "    #  #    ",
+                ), (
+                    "   ##  ##   ",
+                    "     ##     ",
+                    "  ## ## ##  ",
+                    "  ########  ",
+                    "   ######   ",
+                    "    ####    ",
+                    "    #  #    ",
+                    "    #  #    ",
+                )
+            ),
             (
-                "    #  #    ",
-                "   ######  #",
-                "  ## ## ## #",
-                "#### ## ####",
-                "# ########  ",
-                "# ########  ",
-                "   #    #   ",
-                "  ##    #   ",
-            ), (
-                "    #  #    ",
-                "#  ######   ",
-                "# ## ## ##  ",
-                "#### ## ####",
-                "  ######## #",
-                "  ######## #",
-                "   #    #   ",
-                "   #    ##  ",
-            )))
-        aliens.append((
+                (
+                    "    #  #    ",
+                    "   ######  #",
+                    "  ## ## ## #",
+                    "#### ## ####",
+                    "# ########  ",
+                    "# ########  ",
+                    "   #    #   ",
+                    "  ##    #   ",
+                ), (
+                    "    #  #    ",
+                    "#  ######   ",
+                    "# ## ## ##  ",
+                    "#### ## ####",
+                    "  ######## #",
+                    "  ######## #",
+                    "   #    #   ",
+                    "   #    ##  ",
+                )
+            ),
             (
-                "  #      #  ",
-                "   #    #   ",
-                "   ######   ",
-                " # ##  ## # ",
-                " ########## ",
-                " #   ##   # ",
-                " #       # #",
-                "# #         ",
-            ), (
-                "  #      #  ",
-                "   #    #   ",
-                "   ######   ",
-                " # ##  ## # ",
-                " ########## ",
-                " #   ##   # ",
-                "# #       # ",
-                "         # #",
-            )))
-        aliens.append((
+                (
+                    "  #      #  ",
+                    "   #    #   ",
+                    "   ######   ",
+                    " # ##  ## # ",
+                    " ########## ",
+                    " #   ##   # ",
+                    " #       # #",
+                    "# #         ",
+                ), (
+                    "  #      #  ",
+                    "   #    #   ",
+                    "   ######   ",
+                    " # ##  ## # ",
+                    " ########## ",
+                    " #   ##   # ",
+                    "# #       # ",
+                    "         # #",
+                )
+            ),
             (
-                "  #      #  ",
-                "   #    #   ",
-                "  ########  ",
-                " ## #### ## ",
-                "### #### ###",
-                "# ######## #",
-                "# #      # #",
-                "  ##    ##  ",
-            ), (
-                "  #      #  ",
-                "#  #    #  #",
-                "# ######## #",
-                "### #### ###",
-                "### #### ###",
-                " ########## ",
-                " # #    # # ",
-                "##        ##",
-            )))
-        aliens.append((
+                (
+                    "  #      #  ",
+                    "   #    #   ",
+                    "  ########  ",
+                    " ## #### ## ",
+                    "### #### ###",
+                    "# ######## #",
+                    "# #      # #",
+                    "  ##    ##  ",
+                ), (
+                    "  #      #  ",
+                    "#  #    #  #",
+                    "# ######## #",
+                    "### #### ###",
+                    "### #### ###",
+                    " ########## ",
+                    " # #    # # ",
+                    "##        ##",
+                )
+            ),
             (
-                "    ####    ",
-                " ########## ",
-                "############",
-                "#   ####   #",
-                "############",
-                "   #    #   ",
-                "  # #### #  ",
-                " #        # ",
-            ), (
-                "    ####    ",
-                " ########## ",
-                "############",
-                "#   ####   #",
-                "############",
-                "   # ## #   ",
-                "  #      #  ",
-                "   #    #   ",
-            )))
-        aliens.append((
+                (
+                    "    ####    ",
+                    " ########## ",
+                    "############",
+                    "#   ####   #",
+                    "############",
+                    "   #    #   ",
+                    "  # #### #  ",
+                    " #        # ",
+                ), (
+                    "    ####    ",
+                    " ########## ",
+                    "############",
+                    "#   ####   #",
+                    "############",
+                    "   # ## #   ",
+                    "  #      #  ",
+                    "   #    #   ",
+                )
+            ),
             (
-                "            ",
-                "     ###    ",
-                "    #   #   ",
-                "        #   ",
-                "       #    ",
-                "      #     ",
-                "            ",
-                "      #     ",
-            ), (
-                "            ",
-                "     ###    ",
-                "    #   #   ",
-                "    #       ",
-                "     #      ",
-                "      #     ",
-                "            ",
-                "      #     ",
-            )))
+                (
+                    "            ",
+                    "     ###    ",
+                    "    #   #   ",
+                    "        #   ",
+                    "       #    ",
+                    "      #     ",
+                    "            ",
+                    "      #     ",
+                ), (
+                    "            ",
+                    "     ###    ",
+                    "    #   #   ",
+                    "    #       ",
+                    "     #      ",
+                    "      #     ",
+                    "            ",
+                    "      #     ",
+                )
+            )
+        ]
         return aliens[monster]
 
     def update(self):
@@ -919,7 +881,6 @@ class Barrier:  # pylint: disable=too-many-instance-attributes
         self.status = len(self.sprites) - 1
         self.shape = pygame.Surface(self.size, SRCALPHA)  # pylint: disable=undefined-variable
         draw(self.shape, self.sprites[self.status], self.color, 4)
-        self.update()
         self.points = 1
 
     def update(self):
@@ -1065,7 +1026,6 @@ class Explosion:  # pylint: disable=too-many-instance-attributes
         self.color = (255, 150, 150)
         self.shape = pygame.Surface(self.size, SRCALPHA)  # pylint: disable=undefined-variable
         self.sprite = self.sprites[self.frame]
-        self.update()
 
     def update(self):
         """
