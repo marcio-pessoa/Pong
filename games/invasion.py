@@ -123,6 +123,32 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
         self.screen.blit(self.space, [0, 0])
         return False
 
+    def control(self, keys, joystick):
+        """
+        description:
+        """
+        if joystick:
+            if joystick['hat'][0]['x'] < 0 or \
+               joystick['axis'][0] < 0:
+                self.ship.move_left()
+            if joystick['hat'][0]['x'] > 0 or \
+               joystick['axis'][0] > 0:
+                self.ship.move_right()
+            if joystick['button'][10]:
+                self.reset()
+            if joystick['button'][0] or joystick['button'][7]:
+                self._ship_shoot()
+        if K_ESCAPE in keys:  # pylint: disable=undefined-variable
+            self._stop()
+        if K_RIGHT in keys:  # pylint: disable=undefined-variable
+            self.ship.move_right()
+        if K_LEFT in keys:  # pylint: disable=undefined-variable
+            self.ship.move_left()
+        if K_SPACE in keys or K_a in keys:  # pylint: disable=undefined-variable
+            self._ship_shoot()
+        if K_RETURN in keys:  # pylint: disable=undefined-variable
+            self.reset()
+
     def _lives_check(self):
         if self.lives == 0:
             self._game_over()
@@ -319,32 +345,6 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
         self.ship_burst.add(shoot)
         self.sound.tone(1200)
 
-    def control(self, keys, joystick):
-        """
-        description:
-        """
-        if joystick:
-            if joystick['hat'][0]['x'] < 0 or \
-               joystick['axis'][0] < 0:
-                self.ship.move_left()
-            if joystick['hat'][0]['x'] > 0 or \
-               joystick['axis'][0] > 0:
-                self.ship.move_right()
-            if joystick['button'][10]:
-                self.reset()
-            if joystick['button'][0] or joystick['button'][7]:
-                self._ship_shoot()
-        if K_ESCAPE in keys:  # pylint: disable=undefined-variable
-            self._stop()
-        if K_RIGHT in keys:  # pylint: disable=undefined-variable
-            self.ship.move_right()
-        if K_LEFT in keys:  # pylint: disable=undefined-variable
-            self.ship.move_left()
-        if K_SPACE in keys or K_a in keys:  # pylint: disable=undefined-variable
-            self._ship_shoot()
-        if K_RETURN in keys:  # pylint: disable=undefined-variable
-            self.reset()
-
 
 class Ship:  # pylint: disable=too-many-instance-attributes
     """
@@ -353,8 +353,7 @@ class Ship:  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, screen):
         self.screen = screen
-        self.screen_size = [self.screen.get_size()[0],
-                            self.screen.get_size()[1]]
+        self.screen_size = [self.screen.get_size()[0], self.screen.get_size()[1]]
         self.size = [48, 32]
         self.color = (180, 180, 240)
         self.enable = True
@@ -367,7 +366,7 @@ class Ship:  # pylint: disable=too-many-instance-attributes
             "  ########  ",
             " ########## ",
             "############",
-            )
+        )
         self.move_increment = 5
         self.reset()
         self.shape = pygame.Surface(self.size, SRCALPHA)  # pylint: disable=undefined-variable
@@ -447,8 +446,7 @@ class Missile:   # pylint: disable=too-many-arguments,too-many-instance-attribut
 
     def __init__(self, screen, ship_position, offset, speed, direction=1):
         self.screen = screen
-        self.screen_size = [self.screen.get_size()[0],
-                            self.screen.get_size()[1]]
+        self.screen_size = [self.screen.get_size()[0], self.screen.get_size()[1]]
         self.out = False
         self.size = [8, 16]
         self.speed = speed * direction
@@ -458,8 +456,7 @@ class Missile:   # pylint: disable=too-many-arguments,too-many-instance-attribut
             "##",
             "##",
             "##",
-            )
-        # position = ship_position
+        )
         self.shape = pygame.Surface(self.size, SRCALPHA)  # pylint: disable=undefined-variable
         draw(self.shape, sprite, self.color, 4)
         if direction == 1:
@@ -500,12 +497,6 @@ class Missile:   # pylint: disable=too-many-arguments,too-many-instance-attribut
         """
         self.enable = False
 
-    def start(self):
-        """
-        description:
-        """
-        self.enable = True
-
 
 class Monster:  # pylint: disable=too-many-instance-attributes
     """
@@ -514,8 +505,7 @@ class Monster:  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, screen, aspect, position):
         self.screen = screen
-        self.screen_size = [self.screen.get_size()[0],
-                            self.screen.get_size()[1]]
+        self.screen_size = [self.screen.get_size()[0], self.screen.get_size()[1]]
         self.aspect = aspect % 6
         self.__color = []
         self.position = position
@@ -545,7 +535,7 @@ class Monster:  # pylint: disable=too-many-instance-attributes
         return self.__color[monster]
 
     def _sprite(self, monster):
-        aliens = [
+        aliens = (
             (
                 (
                     "    ####    ",
@@ -735,7 +725,7 @@ class Monster:  # pylint: disable=too-many-instance-attributes
                     "      #     ",
                 )
             )
-        ]
+        )
         return aliens[monster]
 
     def update(self):
@@ -797,12 +787,6 @@ class Monster:  # pylint: disable=too-many-instance-attributes
         """
         self.enable = False
 
-    def start(self):
-        """
-        description:
-        """
-        self.enable = True
-
 
 class Barrier:  # pylint: disable=too-many-instance-attributes
     """
@@ -811,8 +795,7 @@ class Barrier:  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, screen, position):
         self.screen = screen
-        self.screen_size = [self.screen.get_size()[0],
-                            self.screen.get_size()[1]]
+        self.screen_size = [self.screen.get_size()[0], self.screen.get_size()[1]]
         self.position = position
         self.size = [48, 32]
         self.color = (139, 105, 20)
@@ -1047,7 +1030,7 @@ class Explosion:  # pylint: disable=too-many-instance-attributes
         return self.done
 
 
-def draw(shape, sprite, color, zoom, offset=None):
+def draw(shape, sprite, tone, zoom, offset=None):
     """
     description:
     """
@@ -1059,7 +1042,7 @@ def draw(shape, sprite, color, zoom, offset=None):
     for row in sprite:
         for col in row:
             if col == "#":
-                pygame.draw.rect(shape, color, (x_axis, y_axis, zoom, zoom))
+                pygame.draw.rect(shape, tone, (x_axis, y_axis, zoom, zoom))
             x_axis += zoom
         y_axis += zoom
         x_axis = offset[0]
