@@ -809,7 +809,7 @@ class Barrier:  # pylint: disable=too-many-instance-attributes
                 "     ####   ",
                 "  ######### ",
                 "###      ###",
-                ),
+            ),
             (
                 "            ",
                 "            ",
@@ -819,7 +819,7 @@ class Barrier:  # pylint: disable=too-many-instance-attributes
                 "    #####   ",
                 " ########## ",
                 "###      ###",
-                ),
+            ),
             (
                 "            ",
                 "            ",
@@ -829,7 +829,7 @@ class Barrier:  # pylint: disable=too-many-instance-attributes
                 "  ########  ",
                 "############",
                 "###      ###",
-                ),
+            ),
             (
                 "            ",
                 "            ",
@@ -839,7 +839,7 @@ class Barrier:  # pylint: disable=too-many-instance-attributes
                 " ########## ",
                 "############",
                 "###      ###",
-                ),
+            ),
             (
                 "            ",
                 "    ###     ",
@@ -849,7 +849,7 @@ class Barrier:  # pylint: disable=too-many-instance-attributes
                 "########### ",
                 "############",
                 "###      ###",
-                ),
+            ),
             (
                 "    ####    ",
                 "  ########  ",
@@ -859,8 +859,8 @@ class Barrier:  # pylint: disable=too-many-instance-attributes
                 "############",
                 "############",
                 "###      ###",
-                )
             )
+        )
         self.status = len(self.sprites) - 1
         self.shape = pygame.Surface(self.size, SRCALPHA)  # pylint: disable=undefined-variable
         draw(self.shape, self.sprites[self.status], self.color, 4)
@@ -920,7 +920,7 @@ class Explosion:  # pylint: disable=too-many-instance-attributes
                 " ########## ",
                 "   ######   ",
                 "     ##     ",
-                ),
+            ),
             (
                 "            ",
                 "     ##     ",
@@ -930,7 +930,8 @@ class Explosion:  # pylint: disable=too-many-instance-attributes
                 "   ######   ",
                 "     ##     ",
                 "            ",
-            ), (
+            ),
+            (
                 "            ",
                 "            ",
                 "     ##     ",
@@ -939,7 +940,7 @@ class Explosion:  # pylint: disable=too-many-instance-attributes
                 "     ##     ",
                 "            ",
                 "            ",
-                ),
+            ),
             (
                 "            ",
                 "            ",
@@ -949,7 +950,8 @@ class Explosion:  # pylint: disable=too-many-instance-attributes
                 "            ",
                 "            ",
                 "            ",
-            ), (
+            ),
+            (
                 "            ",
                 "            ",
                 "    #  #    ",
@@ -958,7 +960,8 @@ class Explosion:  # pylint: disable=too-many-instance-attributes
                 "    #  #    ",
                 "            ",
                 "            ",
-            ), (
+            ),
+            (
                 "            ",
                 "   #    #   ",
                 "    #  #    ",
@@ -967,7 +970,8 @@ class Explosion:  # pylint: disable=too-many-instance-attributes
                 "    #  #    ",
                 "   #    #   ",
                 "            ",
-            ), (
+            ),
+            (
                 "  #      #  ",
                 "   #    #   ",
                 "    #  #    ",
@@ -976,7 +980,8 @@ class Explosion:  # pylint: disable=too-many-instance-attributes
                 "    #  #    ",
                 "   #    #   ",
                 "  #      #  ",
-            ), (
+            ),
+            (
                 "  #      #  ",
                 "   #    #   ",
                 "    #  #  # ",
@@ -985,7 +990,8 @@ class Explosion:  # pylint: disable=too-many-instance-attributes
                 "    #  #    ",
                 "   #    #   ",
                 "  #      #  ",
-            ), (
+            ),
+            (
                 "  #      #  ",
                 "   #    #   ",
                 "            ",
@@ -994,7 +1000,8 @@ class Explosion:  # pylint: disable=too-many-instance-attributes
                 "            ",
                 "   #    #   ",
                 "  #      #  ",
-            ), (
+            ),
+            (
                 "  #      #  ",
                 "            ",
                 "            ",
@@ -1003,7 +1010,8 @@ class Explosion:  # pylint: disable=too-many-instance-attributes
                 "            ",
                 "            ",
                 "  #      #  ",
-            ))
+            )
+        )
         self.frame = 0
         self.size = [48, 32]
         self.color = (255, 150, 150)
