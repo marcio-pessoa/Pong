@@ -18,7 +18,7 @@ change-log: Check CHANGELOG.md file.
 
 import random
 import pygame
-from pygame.locals import *
+from pygame.locals import *  # pylint: disable=wildcard-import
 from tools.font import Font
 from tools.sound import Sound
 from tools.timer.timer import Timer
@@ -142,11 +142,11 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
         # Ship Missle against Alien
         for i in self.aliens:
             for j in self.ship_burst:
-                if i.get_rect().colliderect(j.get_rect()):
+                if i.rect.colliderect(j.rect):
                     position = i.get_position()
                     explosion = Explosion(self.space, position)
                     self.explosions.add(explosion)
-                    self.score += i.get_points()
+                    self.score += i.points
                     self.aliens.remove(i)
                     self.ship_burst.remove(j)
                     self.sound.tone(400)
@@ -154,8 +154,8 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
         # Ship Missle against Wall
         for i in self.walls:
             for j in self.ship_burst:
-                if i.get_rect().colliderect(j.get_rect()):
-                    self.score += i.get_points()
+                if i.rect.colliderect(j.rect):
+                    self.score += i.points
                     if i.add_damage() <= 0:
                         self.walls.remove(i)
                     self.ship_burst.remove(j)
@@ -164,7 +164,7 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
         # Alien Missle against Wall
         for i in self.walls:
             for j in self.alien_burst:
-                if i.get_rect().colliderect(j.get_rect()):
+                if i.rect.colliderect(j.rect):
                     if i.add_damage() <= 0:
                         self.walls.remove(i)
                     self.alien_burst.remove(j)
@@ -173,7 +173,7 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
         # Alien against Wall
         for i in self.aliens:
             for j in self.walls:
-                if i.get_rect().colliderect(j.get_rect()):
+                if i.rect.colliderect(j.rect):
                     position = i.get_position()
                     explosion = Explosion(self.space, position)
                     self.explosions.add(explosion)
@@ -186,7 +186,7 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
                     return
         # Ship against Alien
         for i in self.aliens:
-            if i.get_rect().colliderect(self.ship.get_rect()):
+            if i.rect.colliderect(self.ship.rect):
                 position = i.get_position()
                 explosion = Explosion(self.space, position)
                 self.explosions.add(explosion)
@@ -199,7 +199,7 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
                 return
         # Alien Missle againt Ship
         for i in self.alien_burst:
-            if i.get_rect().colliderect(self.ship.get_rect()):
+            if i.rect.colliderect(self.ship.rect):
                 position = self.ship.get_position()
                 explosion = Explosion(self.space, position)
                 self.explosions.add(explosion)
@@ -243,7 +243,7 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
             self.sound.tone(600)
             # Aliens lateral boundaries
             for i in self.aliens:
-                if not self.space.get_rect().contains(i.get_rect()):
+                if not self.space.get_rect().contains(i.rect):
                     self.way = not self.way
                     if self.way:
                         self.drop = True
@@ -309,7 +309,7 @@ class Invasion:  # pylint: disable=too-many-instance-attributes
     def _explosions_update(self):
         for i in self.explosions:
             i.update()
-            if i.is_done():
+            if i.done:
                 self.explosions.remove(i)
                 return
 
@@ -394,12 +394,6 @@ class Ship:  # pylint: disable=too-many-instance-attributes
             return
         self.position[0] -= self.move_increment
 
-    def get_rect(self):
-        """
-        description:
-        """
-        return self.rect
-
     def get_radius(self):
         """
         description:
@@ -471,12 +465,6 @@ class Missile:   # pylint: disable=too-many-arguments,too-many-instance-attribut
         description:
         """
         return self.out
-
-    def get_rect(self):
-        """
-        description:
-        """
-        return self.rect
 
     def stop(self):
         """
@@ -729,18 +717,6 @@ class Monster:  # pylint: disable=too-many-instance-attributes
         """
         return self.size
 
-    def get_points(self):
-        """
-        description:
-        """
-        return self.points
-
-    def get_rect(self):
-        """
-        description:
-        """
-        return self.rect
-
     def stop(self):
         """
         description:
@@ -842,26 +818,14 @@ class Barrier:  # pylint: disable=too-many-instance-attributes
         draw(self.shape, self.sprites[self.status], self.color, 4)
         return self.status
 
-    def get_points(self):
-        """
-        description:
-        """
-        return self.points
-
     def get_position(self):
         """
         description:
         """
         return self.position
 
-    def get_rect(self):
-        """
-        description:
-        """
-        return self.rect
 
-
-class Explosion:  # pylint: disable=too-many-instance-attributes
+class Explosion:  # pylint: disable=too-many-instance-attributes,too-few-public-methods
     """
     description:
     """
@@ -992,12 +956,6 @@ class Explosion:  # pylint: disable=too-many-instance-attributes
             self.sprite = self.sprites[self.frame]
         draw(self.shape, self.sprite, self.color, 4)
         self.screen.blit(self.shape, self.position)
-
-    def is_done(self):
-        """
-        description:
-        """
-        return self.done
 
 
 def draw(shape, sprite, tone, zoom, offset=None):
