@@ -14,25 +14,7 @@ contributors:
     email: gustavonuzzogass@gmail.com
   - name: Nicolas Masaishi Oi Pessoa
     email: masaishi.pessoa@gmail.com
-change-log:
-  2019-02-03:
-  - version: 0.06
-    Added: Scoreboard.
-  2019-01-30:
-  - version: 0.05
-    Added: Sound FX.
-  2018-11-11:
-  - version: 0.04
-    Changed: Control method, to improve accuracy.
-  2018-10-26:
-  - version: 0.03
-    Added: Window resizing support.
-  2018-06-20:
-  - version: 0.02
-    Fixed: Ball spawn to never raize balls without angle.
-  2014-06-06:
-  - version: 0.01
-    Added: First version.
+change-log: Check CHANGELOG.md file.
 """
 
 import random

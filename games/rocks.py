@@ -18,22 +18,7 @@ contributors:
     email: gustavonuzzogass@gmail.com
   - name: Nicolas Masaishi Oi Pessoa
     email: masaishi.pessoa@gmail.com
-change-log:
-  2019-02-03:
-  - version: 0.05
-    Added: Scoreboard.
-  2019-01-30:
-  - version: 0.04
-    Added: Sound FX.
-  2018-11-25:
-  - version: 0.03
-    Fixed: Burst update.
-  2018-11-11:
-  - version: 0.02
-    Added: Pygame version.
-  2014-09-06:
-  - version: 0.01
-    Added: First version.
+change-log: Check CHANGELOG.md file.
 """
 
 import math
